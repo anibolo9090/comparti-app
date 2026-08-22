@@ -26,7 +26,9 @@
     .hero h1 { font-size: 2rem; margin-bottom: 10px; background: linear-gradient(135deg, #60a5fa 0%, #a855f7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     .hero p { color: var(--text-muted); font-size: 1rem; line-height: 1.5; max-width: 500px; margin: 0 auto 20px; }
     
+    .btn-group { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
     .btn-hero { display: inline-block; background: #2563eb; color: #fff; text-decoration: none; padding: 12px 24px; border-radius: 12px; font-weight: 700; font-size: 1rem; }
+    .btn-secondary { display: inline-block; background: var(--card-bg); border: 1px solid var(--card-border); color: #cbd5e1; text-decoration: none; padding: 12px 20px; border-radius: 12px; font-weight: 600; font-size: 0.95rem; }
 
     /* Calculadora */
     .calc-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 20px; margin: 24px 0; text-align: center; }
@@ -51,7 +53,10 @@
     <div class="hero">
       <h1>Ahorrá hasta un 75% en tus suscripciones</h1>
       <p>Unite a grupos para compartir Netflix, Spotify, ChatGPT y decenas de servicios con personas de confianza.</p>
-      <a href="explorar.html" class="btn-hero">🔍 Explorar Cuentas</a>
+      <div class="btn-group">
+        <a href="explorar.html" class="btn-hero">🔍 Explorar Cuentas</a>
+        <a href="faq.html" class="btn-secondary">🛡️ Seguridad y FAQ</a>
+      </div>
     </div>
 
     <!-- CALCULADORA DE AHORRO -->
