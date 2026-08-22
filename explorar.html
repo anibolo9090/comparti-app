@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Explorar Ofertas — Compartí</title>
+  <title>Explorar Plataformas — Compartí</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root { 
@@ -19,34 +19,37 @@
     
     .navbar { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(8px); border-bottom: 1px solid var(--card-border); padding: 12px 20px; position: sticky; top: 0; z-index: 100; }
     .navbar-inner { max-width: 800px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
-    .logo { font-size: 1.25rem; font-weight: 800; color: #60a5fa; text-decoration: none; display: flex; align-items: center; gap: 6px; }
+    .logo { font-size: 1.25rem; font-weight: 800; color: #60a5fa; text-decoration: none; }
     .btn-nav { background: rgba(59, 130, 246, 0.15); color: #60a5fa; padding: 8px 16px; border-radius: 20px; text-decoration: none; font-size: 0.85rem; font-weight: 700; border: 1px solid rgba(96, 165, 250, 0.3); }
 
     .main-container { max-width: 800px; margin: 24px auto; padding: 0 16px; }
-    h1 { font-size: 1.6rem; margin-bottom: 18px; background: linear-gradient(135deg, #60a5fa 0%, #a855f7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .header-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+    h1 { font-size: 1.6rem; margin: 0; background: linear-gradient(135deg, #60a5fa 0%, #a855f7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    
+    .btn-back { background: var(--card-bg); color: var(--text-muted); border: 1px solid var(--card-border); padding: 8px 14px; border-radius: 10px; font-weight: 600; cursor: pointer; display: none; }
+    .btn-back:hover { color: #fff; }
 
     .search-box { position: relative; margin-bottom: 24px; }
-    .search-input { width: 100%; padding: 14px 16px; border: 1px solid var(--card-border); border-radius: 12px; font-size: 1rem; background: var(--card-bg); color: var(--text); outline: none; transition: all 0.2s; }
-    .search-input::placeholder { color: #64748b; }
+    .search-input { width: 100%; padding: 14px 16px; border: 1px solid var(--card-border); border-radius: 12px; font-size: 1rem; background: var(--card-bg); color: var(--text); outline: none; }
     .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25); }
 
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
-    .card { background: var(--card-bg); border-radius: 16px; padding: 20px; border: 1px solid var(--card-border); display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s; }
-    
-    .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
-    .service-badge { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 1.1rem; color: #fff; }
-    
-    .status-pill { padding: 4px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; }
-    .status-permitida { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.3); }
-    .status-condicionada { background: rgba(234, 179, 8, 0.15); color: #facc15; border: 1px solid rgba(250, 204, 21, 0.3); }
+    /* Grilla de Plataformas / Servicios */
+    .services-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; }
+    .service-card { background: var(--card-bg); border-radius: 16px; padding: 20px; border: 1px solid var(--card-border); text-align: center; cursor: pointer; transition: all 0.2s; }
+    .service-card:hover { transform: translateY(-3px); border-color: #60a5fa; }
+    .service-card .icon { font-size: 2.8rem; margin-bottom: 10px; }
+    .service-card h3 { margin: 0 0 6px; font-size: 1.05rem; }
+    .service-card .offers-count { font-size: 0.8rem; color: #60a5fa; font-weight: 600; background: rgba(96, 165, 250, 0.1); padding: 4px 8px; border-radius: 12px; display: inline-block; }
 
+    /* Grilla de Ofertas Individuales */
+    .offers-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; display: none; }
+    .card { background: var(--card-bg); border-radius: 16px; padding: 20px; border: 1px solid var(--card-border); display: flex; flex-direction: column; justify-content: space-between; }
+    .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+    .service-badge { font-weight: 700; font-size: 1.1rem; color: #fff; display: flex; align-items: center; gap: 8px; }
     .price-tag { font-size: 1.7rem; font-weight: 800; color: #fff; margin: 8px 0; }
     .price-tag small { font-size: 0.85rem; font-weight: 500; color: var(--text-muted); }
-
     .details-box { background: rgba(15, 23, 42, 0.6); padding: 12px; border-radius: 10px; font-size: 0.85rem; color: #cbd5e1; margin: 12px 0 16px; line-height: 1.4; border: 1px solid rgba(255,255,255,0.05); }
-
-    .btn-ws { display: flex; align-items: center; justify-content: center; gap: 8px; background: #25D366; color: #fff; text-decoration: none; font-weight: 700; padding: 12px; border-radius: 10px; transition: opacity 0.2s; }
-    .btn-ws:hover { opacity: 0.9; }
+    .btn-ws { display: flex; align-items: center; justify-content: center; gap: 8px; background: #25D366; color: #fff; text-decoration: none; font-weight: 700; padding: 12px; border-radius: 10px; }
 
     #status { text-align: center; color: var(--text-muted); font-weight: 600; margin-top: 40px; }
   </style>
@@ -61,14 +64,22 @@
   </nav>
 
   <div class="main-container">
-    <h1>Todas las Ofertas Disponibles</h1>
-
-    <div class="search-box">
-      <input type="text" id="searchInput" class="search-input" placeholder="🔍 Buscar (NBA, ChatGPT, Spotify, Netflix, Crunchyroll)...">
+    <div class="header-bar">
+      <h1 id="titleText">Elegí una Plataforma</h1>
+      <button id="btnBack" class="btn-back" onclick="volverACatalogo()">← Ver todas las plataformas</button>
     </div>
 
-    <div id="status">Cargando ofertas activas...</div>
-    <div class="grid" id="offers-grid"></div>
+    <div class="search-box">
+      <input type="text" id="searchInput" class="search-input" placeholder="🔍 Buscar servicio (Netflix, Spotify, NBA, ChatGPT)...">
+    </div>
+
+    <div id="status">Cargando catálogo de servicios...</div>
+
+    <!-- VISTA 1: Catálogo de Servicios -->
+    <div class="services-grid" id="servicesGrid"></div>
+
+    <!-- VISTA 2: Ofertas de la plataforma elegida -->
+    <div class="offers-grid" id="offersGrid"></div>
   </div>
 
   <script>
@@ -76,37 +87,80 @@
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh5Z2F0Z3Z6ZG5paXZ6d25kYXh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc0MDU1MTcsImV4cCI6MjEwMjk4MTUxN30.oSoJcTxCw69F0AXmVVw5LFeF0HjdCSwHd_yOH4HwbS8';
     const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+    let serviciosConOfertas = [];
     let todasLasOfertas = [];
 
-    async function cargarOfertas() {
+    async function inicializar() {
       const statusEl = document.getElementById('status');
 
-      const { data: offers, error } = await db
-        .from('offers')
-        .select('*, plans(name, compatibility_status, services(name, icon, color))');
+      // Traer servicios, planes y ofertas asociadas
+      const { data: services, error: errServ } = await db.from('services').select('*');
+      const { data: offers, error: errOff } = await db.from('offers').select('*, plans(*, services(*))');
 
-      if (error) {
-        statusEl.innerText = 'Error al cargar ofertas.';
+      if (errServ || errOff) {
+        statusEl.innerText = 'Error al obtener datos.';
         return;
       }
 
-      if (!offers || offers.length === 0) {
-        statusEl.innerText = 'No hay ofertas publicadas aún.';
-        return;
-      }
+      todasLasOfertas = offers || [];
+      
+      // Mapear cantidad de ofertas por servicio
+      serviciosConOfertas = services.map(srv => {
+        const ofertasDelServicio = todasLasOfertas.filter(o => o.plans && o.plans.service_id === srv.id);
+        return {
+          ...srv,
+          totalOffers: ofertasDelServicio.length
+        };
+      });
 
-      todasLasOfertas = offers;
-      renderizarOfertas(offers);
+      statusEl.style.display = 'none';
+      renderizarCatalogo(serviciosConOfertas);
+    }
+
+    function renderizarCatalogo(listaServicios) {
+      const grid = document.getElementById('servicesGrid');
+      grid.innerHTML = '';
+
+      listaServicios.forEach(srv => {
+        const card = document.createElement('div');
+        card.className = 'service-card';
+        card.onclick = () => verOfertasDePlataforma(srv);
+
+        card.innerHTML = `
+          <div class="icon">${srv.icon || '📺'}</div>
+          <h3>${srv.name}</h3>
+          <div class="offers-count">${srv.totalOffers} ${srv.totalOffers === 1 ? 'oferta' : 'ofertas'}</div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function verOfertasDePlataforma(servicio) {
+      document.getElementById('servicesGrid').style.display = 'none';
+      document.getElementById('offersGrid').style.display = 'grid';
+      document.getElementById('btnBack').style.display = 'block';
+      document.getElementById('titleText').innerText = `${servicio.icon} Ofertas de ${servicio.name}`;
+
+      const ofertasFiltradas = todasLasOfertas.filter(o => o.plans && o.plans.service_id === servicio.id);
+      renderizarOfertas(ofertasFiltradas);
+    }
+
+    function volverACatalogo() {
+      document.getElementById('servicesGrid').style.display = 'grid';
+      document.getElementById('offersGrid').style.display = 'none';
+      document.getElementById('btnBack').style.display = 'none';
+      document.getElementById('titleText').innerText = 'Elegí una Plataforma';
+      document.getElementById('status').style.display = 'none';
     }
 
     function renderizarOfertas(lista) {
-      const gridEl = document.getElementById('offers-grid');
+      const grid = document.getElementById('offersGrid');
       const statusEl = document.getElementById('status');
-      gridEl.innerHTML = '';
+      grid.innerHTML = '';
 
       if (lista.length === 0) {
         statusEl.style.display = 'block';
-        statusEl.innerText = 'No se encontraron ofertas para esa búsqueda.';
+        statusEl.innerText = 'Aún no hay ofertas publicadas para esta plataforma.';
         return;
       } else {
         statusEl.style.display = 'none';
@@ -116,11 +170,7 @@
         const card = document.createElement('div');
         card.className = 'card';
         
-        const planName = offer.plans ? offer.plans.name : 'Servicio general';
-        const icon = (offer.plans && offer.plans.services) ? offer.plans.services.icon : '📺';
-        const status = offer.plans ? offer.plans.compatibility_status : 'permitida';
-        const statusText = status === 'permitida' ? '🟢 Permitida' : '🟡 Condicionada';
-        
+        const planName = offer.plans ? offer.plans.name : 'Plataforma';
         const phone = offer.whatsapp_number || '5491112345678';
         const mensajeWS = encodeURIComponent(`¡Hola! Vi tu oferta de ${planName} ($${offer.price_per_slot}/mes) en Compartí y me interesa ocupar un cupo.`);
         const urlWhatsApp = `https://wa.me/${phone}?text=${mensajeWS}`;
@@ -128,10 +178,7 @@
         card.innerHTML = `
           <div>
             <div class="card-header">
-              <div class="service-badge">
-                <span>${icon}</span> ${planName}
-              </div>
-              <span class="status-pill status-${status}">${statusText}</span>
+              <div class="service-badge">${planName}</div>
             </div>
 
             <div class="price-tag">
@@ -148,22 +195,22 @@
             <span>💬</span> Contactar por WhatsApp
           </a>
         `;
-        gridEl.appendChild(card);
+        grid.appendChild(card);
       });
     }
 
+    // Buscador interactivo
     document.getElementById('searchInput').addEventListener('input', (e) => {
       const busqueda = e.target.value.toLowerCase().trim();
-      const filtradas = todasLasOfertas.filter(o => {
-        const nombrePlan = o.plans ? o.plans.name.toLowerCase() : '';
-        const nombreServicio = (o.plans && o.plans.services) ? o.plans.services.name.toLowerCase() : '';
-        const descripcion = o.description ? o.description.toLowerCase() : '';
-        return nombrePlan.includes(busqueda) || nombreServicio.includes(busqueda) || descripcion.includes(busqueda);
-      });
-      renderizarOfertas(filtradas);
+      
+      // Si está en la vista del catálogo, filtra las tarjetas de plataformas
+      if (document.getElementById('servicesGrid').style.display !== 'none') {
+        const filtrados = serviciosConOfertas.filter(s => s.name.toLowerCase().includes(busqueda));
+        renderizarCatalogo(filtrados);
+      }
     });
 
-    cargarOfertas();
+    inicializar();
   </script>
 </body>
 </html>
