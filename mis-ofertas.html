@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mis Publicaciones — Compartí</title>
+  <title>Mis Ofertas — Compartí</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root { 
@@ -15,35 +15,39 @@
       --text-muted: #94a3b8; 
     }
     * { box-sizing: border-box; }
-    body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 80px; }
-
+    body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
+    
     .navbar { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(8px); border-bottom: 1px solid var(--card-border); padding: 12px 20px; position: sticky; top: 0; z-index: 100; }
-    .navbar-inner { max-width: 600px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+    .navbar-inner { max-width: 800px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
     .logo { font-size: 1.25rem; font-weight: 800; color: #60a5fa; text-decoration: none; }
-    .user-email { font-size: 0.85rem; color: var(--text-muted); }
 
-    .main-container { max-width: 600px; margin: 24px auto; padding: 0 16px; }
-    h1 { font-size: 1.5rem; margin-top: 0; margin-bottom: 20px; background: linear-gradient(135deg, #60a5fa 0%, #a855f7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .main-container { max-width: 800px; margin: 24px auto; padding: 0 16px; }
+    h1 { font-size: 1.5rem; margin-bottom: 20px; background: linear-gradient(135deg, #60a5fa 0%, #a855f7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-    .offers-list { display: flex; flex-direction: column; gap: 16px; }
-    .card { background: var(--card-bg); border-radius: 16px; padding: 20px; border: 1px solid var(--card-border); }
-    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-    .plan-title { font-weight: 700; font-size: 1.1rem; color: #fff; }
-    .price-tag { font-size: 1.3rem; font-weight: 800; color: #60a5fa; margin: 6px 0; }
-    .details { font-size: 0.85rem; color: #cbd5e1; margin-bottom: 16px; line-height: 1.4; }
+    .search-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 20px; margin-bottom: 24px; }
+    .search-group { display: flex; gap: 10px; margin-top: 10px; }
+    input { flex: 1; padding: 12px; background: #0f172a; border: 1px solid var(--card-border); border-radius: 10px; color: #fff; font-size: 0.95rem; outline: none; }
+    input:focus { border-color: var(--primary); }
+    
+    .btn-search { background: #2563eb; color: #fff; border: none; padding: 0 20px; border-radius: 10px; font-weight: 700; cursor: pointer; }
+    .btn-search:hover { background: #1d4ed8; }
 
-    .actions { display: flex; gap: 10px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 14px; }
-    .btn-action { flex: 1; padding: 10px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; font-size: 0.85rem; }
-    .btn-delete { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
-    .btn-delete:hover { background: rgba(239, 68, 68, 0.3); }
+    .my-offers-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+    .card { background: var(--card-bg); border-radius: 16px; padding: 20px; border: 1px solid var(--card-border); display: flex; flex-direction: column; justify-content: space-between; }
+    .plan-title { font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 6px; }
+    .price-text { font-size: 1.2rem; font-weight: 800; color: #60a5fa; margin-bottom: 12px; }
 
-    /* Bottom Navigation Bar Fija para Mobile */
+    .actions-bar { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+    .btn-action { flex: 1; padding: 10px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; font-size: 0.85rem; text-align: center; }
+    .btn-slot { background: #334155; color: #fff; }
+    .btn-delete { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 1000; }
     .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); text-decoration: none; font-size: 0.75rem; font-weight: 600; gap: 2px; }
     .nav-item.active { color: #60a5fa; }
     .nav-item .icon { font-size: 1.2rem; }
 
-    #status { text-align: center; color: var(--text-muted); margin-top: 40px; font-weight: 600; }
+    #status { text-align: center; color: var(--text-muted); font-size: 0.9rem; margin-top: 20px; }
   </style>
 </head>
 <body>
@@ -51,18 +55,24 @@
   <nav class="navbar">
     <div class="navbar-inner">
       <a href="index.html" class="logo">🤝 Compartí</a>
-      <span id="userEmail" class="user-email"></span>
     </div>
   </nav>
 
   <div class="main-container">
-    <h1>📂 Mis Publicaciones</h1>
+    <h1>Administrar Mis Ofertas</h1>
 
-    <div id="status">Cargando tus publicaciones...</div>
-    <div id="offersList" class="offers-list"></div>
+    <div class="search-card">
+      <label style="font-weight: 600; font-size: 0.9rem; color: #cbd5e1;">Ingresá tu Usuario o WhatsApp para ver tus ofertas:</label>
+      <div class="search-group">
+        <input type="text" id="userInput" placeholder="Ej: luca_streaming o 5491112345678">
+        <button class="btn-search" onclick="buscarMisOfertas()">Buscar</button>
+      </div>
+    </div>
+
+    <div id="status">Ingresá tus datos para gestionar tus publicaciones.</div>
+    <div class="my-offers-grid" id="myOffersGrid"></div>
   </div>
 
-  <!-- Menú Inferior Fijo -->
   <div class="bottom-nav">
     <a href="index.html" class="nav-item">
       <span class="icon">🏠</span>
@@ -87,80 +97,84 @@
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh5Z2F0Z3Z6ZG5paXZ6d25kYXh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc0MDU1MTcsImV4cCI6MjEwMjk4MTUxN30.oSoJcTxCw69F0AXmVVw5LFeF0HjdCSwHd_yOH4HwbS8';
     const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    let usuarioActual = null;
-
-    async function cargarMisOfertas() {
+    async function buscarMisOfertas() {
+      const val = document.getElementById('userInput').value.trim();
       const statusEl = document.getElementById('status');
-      const listEl = document.getElementById('offersList');
+      const grid = document.getElementById('myOffersGrid');
 
-      const { data: { session } } = await db.auth.getSession();
-
-      if (!session) {
-        window.location.href = 'login.html';
+      if (!val) {
+        alert('Por favor ingresá un usuario o número de WhatsApp');
         return;
       }
 
-      usuarioActual = session.user;
-      document.getElementById('userEmail').innerText = usuarioActual.email;
+      statusEl.innerText = 'Buscando publicaciones...';
+      grid.innerHTML = '';
 
-      const { data: offers, error } = await db
-        .from('offers')
+      const { data, error } = await db.from('offers')
         .select('*, plans(*, services(*))')
-        .eq('user_id', usuarioActual.id)
-        .order('created_at', { ascending: false });
+        .or(`seller_username.eq.${val},whatsapp_number.eq.${val}`);
 
       if (error) {
-        statusEl.innerText = 'Error al cargar tus ofertas.';
+        statusEl.innerText = 'Error al buscar datos.';
         return;
       }
 
-      statusEl.style.display = 'none';
-
-      if (!offers || offers.length === 0) {
-        listEl.innerHTML = '<p style="text-align:center; color:#94a3b8; margin-top:30px;">Aún no tenés ninguna publicación activa.</p>';
+      if (!data || data.length === 0) {
+        statusEl.innerText = 'No se encontraron publicaciones asociadas a esos datos.';
         return;
       }
 
-      listEl.innerHTML = '';
-      offers.forEach(o => {
+      statusEl.innerText = '';
+
+      data.forEach(offer => {
         const card = document.createElement('div');
         card.className = 'card';
-
-        const planName = o.plans ? o.plans.name : 'Servicio';
-        const serviceName = o.plans && o.plans.services ? o.plans.services.name : '';
+        const planName = offer.plans ? offer.plans.name : 'Plataforma';
 
         card.innerHTML = `
-          <div class="card-header">
-            <div class="plan-title">${serviceName} — ${planName}</div>
+          <div>
+            <div class="plan-title">${planName}</div>
+            <div class="price-text">$${offer.price_per_slot.toLocaleString('es-AR')} / mes</div>
+            <div style="font-size: 0.85rem; color: #cbd5e1; margin-bottom: 6px;">
+              📍 Cupos disponibles: <strong id="slot-count-${offer.id}">${offer.available_slots}</strong>
+            </div>
+            <div style="font-size: 0.8rem; color: #94a3b8;">
+              💬 ${offer.description || 'Sin descripción'}
+            </div>
           </div>
-          <div class="price-tag">$${o.price_per_slot.toLocaleString('es-AR')} / mes</div>
-          <div class="details">
-            📍 Cupos libres: <strong>${o.available_slots}</strong><br>
-            💬 ${o.description || 'Sin notas adicionales'}
-          </div>
-          <div class="actions">
-            <button onclick="eliminarOferta('${o.id}')" class="btn-action btn-delete">🗑️ Eliminar publicación</button>
+
+          <div class="actions-bar">
+            <button class="btn-action btn-slot" onclick="actualizarCupo('${offer.id}', ${offer.available_slots - 1})">➖ 1 Cupo</button>
+            <button class="btn-action btn-slot" onclick="actualizarCupo('${offer.id}', ${offer.available_slots + 1})">➕ 1 Cupo</button>
+            <button class="btn-action btn-delete" onclick="eliminarOferta('${offer.id}')">🗑️ Eliminar</button>
           </div>
         `;
-
-        listEl.appendChild(card);
+        grid.appendChild(card);
       });
     }
 
-    async function eliminarOferta(id) {
-      if (!confirm('¿Estás seguro de que querés eliminar esta publicación?')) return;
+    async function actualizarCupo(id, nuevoCupo) {
+      if (nuevoCupo < 0) return;
 
-      const { error } = await db.from('offers').delete().eq('id', id);
-
+      const { error } = await db.from('offers').update({ available_slots: nuevoCupo }).eq('id', id);
       if (error) {
-        alert('Error al eliminar: ' + error.message);
+        alert('Error al actualizar cupos: ' + error.message);
       } else {
-        alert('Publicación eliminada correctamente.');
-        cargarMisOfertas();
+        buscarMisOfertas();
       }
     }
 
-    cargarMisOfertas();
+    async function eliminarOferta(id) {
+      if (!confirm('¿Estás seguro de eliminar esta oferta?')) return;
+
+      const { error } = await db.from('offers').delete().eq('id', id);
+      if (error) {
+        alert('Error al eliminar: ' + error.message);
+      } else {
+        alert('Oferta eliminada correctamente');
+        buscarMisOfertas();
+      }
+    }
   </script>
 </body>
 </html>
