@@ -7,7 +7,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root { 
-      --primary: #2563eb; 
+      --primary: #3b82f6; 
       --bg: #0f172a; 
       --card-bg: #1e293b; 
       --card-border: #334155; 
@@ -16,39 +16,28 @@
     }
     * { box-sizing: border-box; }
     body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
-
-    .navbar { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(8px); border-bottom: 1px solid var(--card-border); padding: 12px 20px; position: sticky; top: 0; z-index: 100; }
-    .navbar-inner { max-width: 600px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
-    .logo { font-size: 1.25rem; font-weight: 800; color: #60a5fa; text-decoration: none; display: flex; align-items: center; gap: 6px; }
-    .user-badge { font-size: 0.85rem; color: #94a3b8; display: flex; align-items: center; gap: 10px; }
-    .btn-logout { background: transparent; border: none; color: #f87171; font-size: 0.85rem; cursor: pointer; text-decoration: underline; font-weight: 600; }
-
-    .card { max-width: 600px; margin: 24px auto; background: var(--card-bg); padding: 24px; border-radius: 16px; border: 1px solid var(--card-border); }
-    h1 { font-size: 1.4rem; margin-top: 0; margin-bottom: 20px; background: linear-gradient(135deg, #60a5fa 0%, #a855f7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-
-    .form-group { margin-bottom: 18px; }
-    label { display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 6px; color: #cbd5e1; }
-    input, select, textarea { width: 100%; padding: 12px 14px; border: 1px solid var(--card-border); border-radius: 10px; font-size: 1rem; outline: none; background: rgba(15, 23, 42, 0.7); color: #fff; transition: all 0.2s; }
-    select optgroup { background: #0f172a; color: #60a5fa; font-weight: 700; }
-    select option { background: #1e293b; color: #fff; font-weight: 400; }
-    input:focus, select:focus, textarea:focus { border-color: #60a5fa; box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.25); }
     
-    /* Box de Sugerencia de Precio */
-    .calc-box { display: none; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(96, 165, 250, 0.3); border-radius: 10px; padding: 12px 14px; margin-top: 8px; font-size: 0.85rem; color: #cbd5e1; }
-    .btn-apply-price { background: #2563eb; color: #fff; border: none; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 0.8rem; cursor: pointer; margin-left: 6px; }
+    .navbar { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(8px); border-bottom: 1px solid var(--card-border); padding: 12px 20px; position: sticky; top: 0; z-index: 100; }
+    .navbar-inner { max-width: 800px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+    .logo { font-size: 1.25rem; font-weight: 800; color: #60a5fa; text-decoration: none; }
 
-    .btn-submit { width: 100%; background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%); color: #fff; border: none; padding: 14px; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: opacity 0.2s; margin-top: 10px; }
-    .btn-submit:hover { opacity: 0.9; }
+    .main-container { max-width: 600px; margin: 24px auto; padding: 0 16px; }
+    h1 { font-size: 1.5rem; margin-bottom: 20px; background: linear-gradient(135deg, #60a5fa 0%, #a855f7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-    /* Bottom Nav Bar Fija */
+    .form-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 20px; }
+    .form-group { margin-bottom: 16px; }
+    label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.9rem; color: #cbd5e1; }
+    input, select, textarea { width: 100%; padding: 12px; background: #0f172a; border: 1px solid var(--card-border); border-radius: 10px; color: #fff; font-size: 0.95rem; outline: none; }
+    input:focus, select:focus, textarea:focus { border-color: var(--primary); }
+    textarea { resize: vertical; min-height: 80px; }
+
+    .btn-submit { width: 100%; background: #2563eb; color: #fff; border: none; padding: 14px; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 10px; transition: background 0.2s; }
+    .btn-submit:hover { background: #1d4ed8; }
+
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 1000; }
     .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); text-decoration: none; font-size: 0.75rem; font-weight: 600; gap: 2px; }
     .nav-item.active { color: #60a5fa; }
     .nav-item .icon { font-size: 1.2rem; }
-
-    #status { margin-top: 16px; text-align: center; font-weight: 600; font-size: 0.9rem; }
-    .success { color: #4ade80; }
-    .error { color: #f87171; }
   </style>
 </head>
 <body>
@@ -56,52 +45,58 @@
   <nav class="navbar">
     <div class="navbar-inner">
       <a href="index.html" class="logo">🤝 Compartí</a>
-      <div id="userSection" class="user-badge"></div>
     </div>
   </nav>
 
-  <div class="card">
-    <h1>🚀 Publicar una oferta</h1>
-    
-    <form id="offerForm">
-      <div class="form-group">
-        <label for="plan_id">Plan / Nivel a compartir</label>
-        <select id="plan_id" required>
-          <option value="">Cargando catálogo de servicios...</option>
-        </select>
-      </div>
+  <div class="main-container">
+    <h1>Publicar una Cuenta</h1>
 
-      <div class="form-group">
-        <label for="whatsapp_number">Tu número de WhatsApp (con código de país)</label>
-        <input type="text" id="whatsapp_number" placeholder="Ej: 5491112345678" required>
-      </div>
-
-      <div class="form-group">
-        <label for="price_per_slot">Precio por cupo ($ ARS / mes)</label>
-        <input type="number" id="price_per_slot" placeholder="Ej: 1500" required>
-        <div id="calcBox" class="calc-box">
-          💡 Precio justo sugerido: <strong id="suggestedPriceText">$0</strong> por cupo.
-          <button type="button" class="btn-apply-price" onclick="aplicarPrecioSugerido()">Usar precio</button>
+    <div class="form-card">
+      <form id="publishForm" onsubmit="guardarOferta(event)">
+        <div class="form-group">
+          <label for="serviceSelect">Plataforma:</label>
+          <select id="serviceSelect" onchange="cargarPlanes()" required>
+            <option value="">Cargando plataformas...</option>
+          </select>
         </div>
-      </div>
 
-      <div class="form-group">
-        <label for="available_slots">Cupos disponibles</label>
-        <input type="number" id="available_slots" min="1" value="1" required>
-      </div>
+        <div class="form-group">
+          <label for="planSelect">Plan Específico:</label>
+          <select id="planSelect" required disabled>
+            <option value="">Seleccioná una plataforma primero</option>
+          </select>
+        </div>
 
-      <div class="form-group">
-        <label for="description">Notas / Requisitos (Opcional)</label>
-        <textarea id="description" rows="3" placeholder="Ej: Es plan Premium 4K. Pago por transferencia del 1 al 5 de cada mes."></textarea>
-      </div>
+        <div class="form-group">
+          <label for="sellerUsername">👤 Tu Nombre de Usuario / Alias:</label>
+          <input type="text" id="sellerUsername" placeholder="Ej: luca_streaming" required>
+        </div>
 
-      <button type="submit" class="btn-submit">Publicar oferta</button>
-    </form>
+        <div class="form-group">
+          <label for="whatsappInput">💬 Tu WhatsApp (con código de país sin +):</label>
+          <input type="tel" id="whatsappInput" placeholder="Ej: 5491112345678" required>
+        </div>
 
-    <div id="status"></div>
+        <div class="form-group">
+          <label for="priceInput">💰 Precio por cupo mensual ($ ARS):</label>
+          <input type="number" id="priceInput" placeholder="Ej: 3000" min="1" required>
+        </div>
+
+        <div class="form-group">
+          <label for="slotsInput">📍 Cupos disponibles:</label>
+          <input type="number" id="slotsInput" placeholder="Ej: 2" min="1" max="10" required>
+        </div>
+
+        <div class="form-group">
+          <label for="descInput">📝 Descripción / Aclaraciones:</label>
+          <textarea id="descInput" placeholder="Ej: Perfil individual con PIN, pago por transferencia Mercado Pago del 1 al 5 de cada mes."></textarea>
+        </div>
+
+        <button type="submit" class="btn-submit" id="btnPublish">🚀 Publicar Oferta</button>
+      </form>
+    </div>
   </div>
 
-  <!-- Bottom Navigation Bar -->
   <div class="bottom-nav">
     <a href="index.html" class="nav-item">
       <span class="icon">🏠</span>
@@ -126,126 +121,86 @@
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh5Z2F0Z3Z6ZG5paXZ6d25kYXh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc0MDU1MTcsImV4cCI6MjEwMjk4MTUxN30.oSoJcTxCw69F0AXmVVw5LFeF0HjdCSwHd_yOH4HwbS8';
     const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    let usuarioActual = null;
-    let mapaPlanes = {};
-    let precioSugeridoCalculado = 0;
+    let planesGlobales = [];
 
-    async function verificarSesion() {
-      const { data: { session } } = await db.auth.getSession();
-      
-      if (!session) {
-        window.location.href = 'login.html';
+    async function cargarServicios() {
+      const serviceSelect = document.getElementById('serviceSelect');
+      const { data: services, error: errSrv } = await db.from('services').select('*').order('name', { ascending: true });
+      const { data: plans, error: errPlans } = await db.from('plans').select('*');
+
+      if (errSrv || errPlans) {
+        alert('Error al cargar servicios de la base de datos.');
         return;
       }
 
-      usuarioActual = session.user;
-      document.getElementById('userSection').innerHTML = `
-        👤 ${usuarioActual.email} 
-        <button onclick="cerrarSesion()" class="btn-logout">Salir</button>
-      `;
+      planesGlobales = plans || [];
+      serviceSelect.innerHTML = '<option value="">-- Seleccionar Plataforma --</option>';
+
+      services.forEach(srv => {
+        serviceSelect.innerHTML += `<option value="${srv.id}">${srv.icon || '📺'} ${srv.name}</option>`;
+      });
     }
 
-    async function cerrarSesion() {
-      await db.auth.signOut();
-      window.location.href = 'login.html';
-    }
+    function cargarPlanes() {
+      const serviceId = document.getElementById('serviceSelect').value;
+      const planSelect = document.getElementById('planSelect');
 
-    async function cargarPlanesAgrupados() {
-      const select = document.getElementById('plan_id');
-      
-      const { data: plans, error } = await db
-        .from('plans')
-        .select('id, name, price_reference, max_members, services(name, icon)')
-        .order('name', { ascending: true });
-
-      if (error || !plans) {
-        select.innerHTML = '<option value="">Error al cargar los planes</option>';
+      if (!serviceId) {
+        planSelect.innerHTML = '<option value="">Seleccioná una plataforma primero</option>';
+        planSelect.disabled = true;
         return;
       }
 
-      const grupos = {};
-      plans.forEach(plan => {
-        mapaPlanes[plan.id] = plan; // Guardamos datos del plan en memoria para calcular
-        const servicioNombre = plan.services ? `${plan.services.icon} ${plan.services.name}` : 'Otros';
-        if (!grupos[servicioNombre]) {
-          grupos[servicioNombre] = [];
-        }
-        grupos[servicioNombre].push(plan);
+      const planesFiltrados = planesGlobales.filter(p => p.service_id === serviceId);
+      planSelect.innerHTML = '<option value="">-- Seleccionar Plan --</option>';
+
+      planesFiltrados.forEach(p => {
+        planSelect.innerHTML += `<option value="${p.id}">${p.name}</option>`;
       });
 
-      select.innerHTML = '<option value="">Seleccioná qué servicio y plan tenés...</option>';
-
-      for (const [servicio, listaPlanes] of Object.entries(grupos)) {
-        const optgroup = document.createElement('optgroup');
-        optgroup.label = servicio;
-
-        listaPlanes.forEach(p => {
-          const option = document.createElement('option');
-          option.value = p.id;
-          option.textContent = p.name;
-          optgroup.appendChild(option);
-        });
-
-        select.appendChild(optgroup);
-      }
+      planSelect.disabled = false;
     }
 
-    function actualizarPrecioSugerido() {
-      const planId = document.getElementById('plan_id').value;
-      const calcBox = document.getElementById('calcBox');
-      const suggestedText = document.getElementById('suggestedPriceText');
-
-      if (planId && mapaPlanes[planId]) {
-        const plan = mapaPlanes[planId];
-        if (plan.price_reference && plan.max_members) {
-          precioSugeridoCalculado = Math.round(plan.price_reference / plan.max_members);
-          suggestedText.innerText = `$${precioSugeridoCalculado.toLocaleString('es-AR')}`;
-          calcBox.style.display = 'block';
-          return;
-        }
-      }
-      calcBox.style.display = 'none';
-    }
-
-    function aplicarPrecioSugerido() {
-      if (precioSugeridoCalculado > 0) {
-        document.getElementById('price_per_slot').value = precioSugeridoCalculado;
-      }
-    }
-
-    document.getElementById('plan_id').addEventListener('change', actualizarPrecioSugerido);
-
-    verificarSesion();
-    cargarPlanesAgrupados();
-
-    document.getElementById('offerForm').addEventListener('submit', async (e) => {
+    async function guardarOferta(e) {
       e.preventDefault();
-      const status = document.getElementById('status');
-      status.className = '';
-      status.innerText = 'Publicando...';
+      const btn = document.getElementById('btnPublish');
+      btn.innerText = 'Guardando...';
+      btn.disabled = true;
 
-      const offerData = {
-        plan_id: document.getElementById('plan_id').value,
-        user_id: usuarioActual ? usuarioActual.id : null,
-        whatsapp_number: document.getElementById('whatsapp_number').value.trim(),
-        price_per_slot: parseFloat(document.getElementById('price_per_slot').value),
-        available_slots: parseInt(document.getElementById('available_slots').value),
-        description: document.getElementById('description').value.trim()
-      };
+      const planId = document.getElementById('planSelect').value;
+      const username = document.getElementById('sellerUsername').value.trim();
+      let whatsapp = document.getElementById('whatsappInput').value.trim().replace(/\D/g, '');
+      const precio = document.getElementById('priceInput').value;
+      const cupos = document.getElementById('slotsInput').value;
+      const descripcion = document.getElementById('descInput').value.trim();
 
-      const { data, error } = await db.from('offers').insert([offerData]);
+      if (whatsapp.length === 10 && !whatsapp.startsWith('549')) {
+        whatsapp = '549' + whatsapp;
+      }
+
+      const { data, error } = await db.from('offers').insert([{
+        plan_id: planId,
+        price_per_slot: parseInt(precio),
+        available_slots: parseInt(cupos),
+        whatsapp_number: whatsapp,
+        seller_username: username,
+        description: descripcion,
+        seller_sales: 0,
+        seller_rating: 5.0,
+        is_new_user: true
+      }]);
 
       if (error) {
-        status.className = 'error';
-        status.innerText = 'Error al publicar: ' + error.message;
+        alert('Error al publicar: ' + error.message);
+        btn.innerText = '🚀 Publicar Oferta';
+        btn.disabled = false;
       } else {
-        status.className = 'success';
-        status.innerText = '¡Oferta publicada con éxito!';
-        document.getElementById('offerForm').reset();
-        document.getElementById('calcBox').style.display = 'none';
-        setTimeout(() => { window.location.href = 'explorar.html'; }, 1200);
+        alert('¡Oferta publicada exitosamente!');
+        window.location.href = 'explorar.html';
       }
-    });
+    }
+
+    cargarServicios();
   </script>
 </body>
 </html>
