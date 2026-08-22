@@ -5,32 +5,39 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Compartí — Dividí suscripciones y ahorrá dinero</title>
   <style>
-    :root { --primary: #2563eb; --bg: #f8fafc; --text: #0f172a; }
+    :root { 
+      --primary: #3b82f6; 
+      --primary-hover: #2563eb; 
+      --bg: #0f172a; 
+      --card-bg: #1e293b; 
+      --text: #f8fafc; 
+      --text-muted: #94a3b8;
+    }
     * { box-sizing: border-box; }
     body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; }
 
     /* Header */
-    .navbar { background: #fff; border-bottom: 1px solid #e2e8f0; padding: 16px 20px; position: sticky; top: 0; z-index: 100; }
+    .navbar { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(8px); border-bottom: 1px solid #334155; padding: 16px 20px; position: sticky; top: 0; z-index: 100; }
     .navbar-inner { max-width: 800px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
-    .logo { font-size: 1.3rem; font-weight: 800; color: #2563eb; text-decoration: none; }
+    .logo { font-size: 1.3rem; font-weight: 800; color: #60a5fa; text-decoration: none; }
 
     /* Hero Section */
-    .hero { max-width: 800px; margin: 40px auto; padding: 0 20px; text-align: center; }
-    .hero h1 { font-size: 2.2rem; font-weight: 800; line-height: 1.2; margin-bottom: 16px; color: #0f172a; }
-    .hero p { font-size: 1.1rem; color: #475569; margin-bottom: 28px; line-height: 1.5; }
+    .hero { max-width: 800px; margin: 50px auto 40px; padding: 0 20px; text-align: center; }
+    .hero h1 { font-size: 2.5rem; font-weight: 800; line-height: 1.2; margin-bottom: 16px; background: linear-gradient(135deg, #60a5fa 0%, #a855f7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero p { font-size: 1.15rem; color: var(--text-muted); margin-bottom: 32px; line-height: 1.5; }
 
-    .btn-group { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 40px; }
-    .btn { padding: 14px 24px; border-radius: 12px; font-size: 1rem; font-weight: 700; text-decoration: none; transition: transform 0.2s; }
+    .btn-group { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 40px; }
+    .btn { padding: 14px 28px; border-radius: 12px; font-size: 1rem; font-weight: 700; text-decoration: none; transition: all 0.2s; }
     .btn:active { transform: scale(0.98); }
-    .btn-primary { background: #2563eb; color: #fff; box-shadow: 0 4px 12px rgba(37,99,235,0.2); }
-    .btn-secondary { background: #fff; color: #2563eb; border: 1px solid #cbd5e1; }
+    .btn-primary { background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%); color: #fff; box-shadow: 0 4px 14px rgba(37,99,235,0.4); }
+    .btn-secondary { background: var(--card-bg); color: #f8fafc; border: 1px solid #334155; }
 
     /* Features Grid */
     .features { max-width: 800px; margin: 0 auto 60px; padding: 0 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
-    .feature-card { background: #fff; border-radius: 16px; padding: 20px; border: 1px solid #e2e8f0; text-align: left; }
-    .feature-icon { font-size: 1.8rem; margin-bottom: 10px; }
-    .feature-card h3 { margin: 0 0 6px; font-size: 1.1rem; }
-    .feature-card p { margin: 0; color: #64748b; font-size: 0.88rem; line-height: 1.4; }
+    .feature-card { background: var(--card-bg); border-radius: 16px; padding: 22px; border: 1px solid #334155; text-align: left; }
+    .feature-icon { font-size: 2rem; margin-bottom: 12px; }
+    .feature-card h3 { margin: 0 0 6px; font-size: 1.1rem; color: #f8fafc; }
+    .feature-card p { margin: 0; color: var(--text-muted); font-size: 0.9rem; line-height: 1.4; }
   </style>
 </head>
 <body>
@@ -43,7 +50,7 @@
 
   <section class="hero">
     <h1>Dividí el gasto de tus suscripciones digitales</h1>
-    <p>Conectá con otras personas para compartir cupos de tus cuentas familiares de Streaming, Gaming, IA y Productividad en Argentina.</p>
+    <p>Conectá con otras personas para compartir cupos de tus cuentas familiares de Streaming, Deportes, Anime, Gaming e Inteligencia Artificial.</p>
     
     <div class="btn-group">
       <a href="explorar.html" class="btn btn-primary">🔍 Explorar Ofertas</a>
@@ -64,8 +71,8 @@
     </div>
     <div class="feature-card">
       <div class="feature-icon">⚡</div>
-      <h3>Rápido y Fácil</h3>
-      <p>Publicá tu plan en menos de un minuto y empezá a reducir tus gastos hoy mismo.</p>
+      <h3>Catálogo Completo</h3>
+      <p>Encontrá desde NBA Pass y F1 TV hasta Netflix, Spotify, ChatGPT y Crunchyroll.</p>
     </div>
   </section>
 
