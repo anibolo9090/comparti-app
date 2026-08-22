@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mis Publicaciones — Compartí</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root { 
+      --primary: #3b82f6; 
+      --bg: #0f172a; 
+      --card-bg: #1e293b; 
+      --card-border: #334155; 
+      --text: #f8fafc; 
+      --text-muted: #94a3b8; 
+    }
+    * { box-sizing: border-box; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 80px; }
+
+    .navbar { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(8px); border-bottom: 1px solid var(--card-border); padding: 12px 20px; position: sticky; top: 0; z-index: 100; }
+    .navbar-inner { max-width: 600px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+    .logo { font-size: 1.25rem; font-weight: 800; color: #60a5fa; text-decoration: none; }
+    .user-email { font-size: 0.85rem; color: var(--text-muted); }
+
+    .main-container { max-width: 600px; margin: 24px auto; padding: 0 16px; }
+    h1 { font-size: 1.5rem; margin-top: 0; margin-bottom: 20px; background: linear-gradient(135deg, #60a5fa 0%, #a855f7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+    .offers-list { display: flex; flex-direction: column; gap: 16px; }
+    .card { background: var(--card-bg); border-radius: 16px; padding: 20px; border: 1px solid var(--card-border); }
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .plan-title { font-weight: 700; font-size: 1.1rem; color: #fff; }
+    .price-tag { font-size: 1.3rem; font-weight: 800; color: #60a5fa; margin: 6px 0; }
+    .details { font-size: 0.85rem; color: #cbd5e1; margin-bottom: 16px; line-height: 1.4; }
+
+    .actions { display: flex; gap: 10px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 14px; }
+    .btn-action { flex: 1; padding: 10px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; font-size: 0.85rem; }
+    .btn-delete { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+    .btn-delete:hover { background: rgba(239, 68, 68, 0.3); }
+
+    /* Bottom Navigation Bar Fija para Mobile */
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 1000; }
+    .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); text-decoration: none; font-size: 0.75rem; font-weight: 600; gap: 2px; }
+    .nav-item.active { color: #60a5fa; }
+    .nav-item .icon { font-size: 1.2rem; }
+
+    #status { text-align: center; color: var(--text-muted); margin-top: 40px; font-weight: 600; }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="logo">🤝 Compartí</a>
+      <span id="userEmail" class="user-email"></span>
+    </div>
+  </nav>
+
+  <div class="main-container">
+    <h1>📂 Mis Publicaciones</h1>
+
+    <div id="status">Cargando tus publicaciones...</div>
+    <div id="offersList" class="offers-list"></div>
+  </div>
+
+  <!-- Menú Inferior Fijo -->
+  <div class="bottom-nav">
+    <a href="index.html" class="nav-item">
+      <span class="icon">🏠</span>
+      <span>Inicio</span>
+    </a>
+    <a href="explorar.html" class="nav-item">
+      <span class="icon">🔍</span>
+      <span>Explorar</span>
+    </a>
+    <a href="publicar.html" class="nav-item">
+      <span class="icon">➕</span>
+      <span>Publicar</span>
+    </a>
+    <a href="mis-ofertas.html" class="nav-item active">
+      <span class="icon">📂</span>
+      <span>Mis Ofertas</span>
+    </a>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://xygatgvzdniivzwndaxy.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh5Z2F0Z3Z6ZG5paXZ6d25kYXh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc0MDU1MTcsImV4cCI6MjEwMjk4MTUxN30.oSoJcTxCw69F0AXmVVw5LFeF0HjdCSwHd_yOH4HwbS8';
+    const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let usuarioActual = null;
+
+    async function cargarMisOfertas() {
+      const statusEl = document.getElementById('status');
+      const listEl = document.getElementById('offersList');
+
+      const { data: { session } } = await db.auth.getSession();
+
+      if (!session) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      usuarioActual = session.user;
+      document.getElementById('userEmail').innerText = usuarioActual.email;
+
+      const { data: offers, error } = await db
+        .from('offers')
+        .select('*, plans(*, services(*))')
+        .eq('user_id', usuarioActual.id)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        statusEl.innerText = 'Error al cargar tus ofertas.';
+        return;
+      }
+
+      statusEl.style.display = 'none';
+
+      if (!offers || offers.length === 0) {
+        listEl.innerHTML = '<p style="text-align:center; color:#94a3b8; margin-top:30px;">Aún no tenés ninguna publicación activa.</p>';
+        return;
+      }
+
+      listEl.innerHTML = '';
+      offers.forEach(o => {
+        const card = document.createElement('div');
+        card.className = 'card';
+
+        const planName = o.plans ? o.plans.name : 'Servicio';
+        const serviceName = o.plans && o.plans.services ? o.plans.services.name : '';
+
+        card.innerHTML = `
+          <div class="card-header">
+            <div class="plan-title">${serviceName} — ${planName}</div>
+          </div>
+          <div class="price-tag">$${o.price_per_slot.toLocaleString('es-AR')} / mes</div>
+          <div class="details">
+            📍 Cupos libres: <strong>${o.available_slots}</strong><br>
+            💬 ${o.description || 'Sin notas adicionales'}
+          </div>
+          <div class="actions">
+            <button onclick="eliminarOferta('${o.id}')" class="btn-action btn-delete">🗑️ Eliminar publicación</button>
+          </div>
+        `;
+
+        listEl.appendChild(card);
+      });
+    }
+
+    async function eliminarOferta(id) {
+      if (!confirm('¿Estás seguro de que querés eliminar esta publicación?')) return;
+
+      const { error } = await db.from('offers').delete().eq('id', id);
+
+      if (error) {
+        alert('Error al eliminar: ' + error.message);
+      } else {
+        alert('Publicación eliminada correctamente.');
+        cargarMisOfertas();
+      }
+    }
+
+    cargarMisOfertas();
+  </script>
+</body>
+</html>
