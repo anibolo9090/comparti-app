@@ -22,18 +22,35 @@
 
     .main-container { max-width: 800px; margin: 24px auto; padding: 0 16px; }
     
-    .hero { text-align: center; margin-bottom: 30px; }
-    .hero h1 { font-size: 2rem; margin-bottom: 10px; background: linear-gradient(135deg, #60a5fa 0%, #a855f7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .hero p { color: var(--text-muted); font-size: 1rem; line-height: 1.5; max-width: 500px; margin: 0 auto 20px; }
+    .hero { text-align: center; margin-bottom: 24px; }
+    .hero h1 { font-size: 1.8rem; margin-bottom: 10px; background: linear-gradient(135deg, #60a5fa 0%, #a855f7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; max-width: 500px; margin: 0 auto 16px; }
     
     .btn-group { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-    .btn-hero { display: inline-block; background: #2563eb; color: #fff; text-decoration: none; padding: 12px 24px; border-radius: 12px; font-weight: 700; font-size: 1rem; }
-    .btn-secondary { display: inline-block; background: var(--card-bg); border: 1px solid var(--card-border); color: #cbd5e1; text-decoration: none; padding: 12px 20px; border-radius: 12px; font-weight: 600; font-size: 0.95rem; }
+    .btn-hero { display: inline-block; background: #2563eb; color: #fff; text-decoration: none; padding: 10px 20px; border-radius: 12px; font-weight: 700; font-size: 0.95rem; }
+    .btn-secondary { display: inline-block; background: var(--card-bg); border: 1px solid var(--card-border); color: #cbd5e1; text-decoration: none; padding: 10px 18px; border-radius: 12px; font-weight: 600; font-size: 0.9rem; }
 
-    /* Calculadora */
-    .calc-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 20px; margin: 24px 0; text-align: center; }
-    .calc-btn { background: #0f172a; border: 1px solid var(--card-border); color: #fff; padding: 8px 12px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; transition: all 0.2s; }
-    .calc-btn.selected { background: #2563eb; border-color: #2563eb; }
+    /* Calculadora Interactiva Avanzada */
+    .calc-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 20px; margin: 20px 0; }
+    .calc-title { font-size: 1.15rem; color: #60a5fa; margin-top: 0; text-align: center; margin-bottom: 4px; }
+    .calc-subtitle { font-size: 0.85rem; color: var(--text-muted); text-align: center; margin-bottom: 16px; }
+
+    .service-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; max-height: 320px; overflow-y: auto; padding-right: 4px; }
+    .service-item { display: flex; justify-content: space-between; align-items: center; background: #0f172a; border: 1px solid var(--card-border); padding: 12px 14px; border-radius: 12px; cursor: pointer; transition: all 0.2s; }
+    .service-item.selected { border-color: var(--primary); background: rgba(59, 130, 246, 0.08); }
+    
+    .service-info { display: flex; align-items: center; gap: 10px; }
+    .service-checkbox { width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer; }
+    .service-name { font-weight: 600; font-size: 0.95rem; }
+    .service-prices { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+
+    .service-cost-tag { text-align: right; }
+    .cost-comparti { font-weight: 700; color: #4ade80; font-size: 0.95rem; }
+    .cost-full { font-size: 0.75rem; color: #f87171; text-decoration: line-through; }
+
+    /* Resumen flotante de la calculadora */
+    .calc-summary { background: #0f172a; border: 1px solid var(--card-border); border-radius: 12px; padding: 16px; display: flex; justify-content: space-around; align-items: center; text-align: center; }
+    .summary-block div:first-child { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; }
 
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 1000; }
     .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); text-decoration: none; font-size: 0.75rem; font-weight: 600; gap: 2px; }
@@ -52,39 +69,37 @@
   <div class="main-container">
     <div class="hero">
       <h1>Ahorrá hasta un 75% en tus suscripciones</h1>
-      <p>Unite a grupos para compartir Netflix, Spotify, ChatGPT y decenas de servicios con personas de confianza.</p>
+      <p>Unite a grupos para compartir plataformas y servicios digitales de forma segura y transparente.</p>
       <div class="btn-group">
         <a href="explorar.html" class="btn-hero">🔍 Explorar Cuentas</a>
         <a href="faq.html" class="btn-secondary">🛡️ Seguridad y FAQ</a>
       </div>
     </div>
 
-    <!-- CALCULADORA DE AHORRO -->
+    <!-- CALCULADORA AVANZADA CON LISTA COMPLETA -->
     <div class="calc-box">
-      <h2 style="font-size: 1.2rem; color: #60a5fa; margin-top: 0;">🧮 Calculá cuánto podés ahorrar</h2>
-      <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 16px;">Seleccioná los servicios que usás o querés contratar:</p>
+      <h2 class="calc-title">🧮 Simulador Completo de Ahorro</h2>
+      <p class="calc-subtitle">Seleccioná los servicios que te interesan para calcular tu ahorro mensual:</p>
 
-      <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 16px;">
-        <button class="calc-btn" data-precio-full="21000" data-precio-comparti="4500" onclick="toggleCalcService(this)">🎬 Netflix (~$21k)</button>
-        <button class="calc-btn" data-precio-full="16000" data-precio-comparti="4000" onclick="toggleCalcService(this)">🏰 Disney+ (~$16k)</button>
-        <button class="calc-btn" data-precio-full="7500" data-precio-comparti="2000" onclick="toggleCalcService(this)">🎧 Spotify (~$7.5k)</button>
-        <button class="calc-btn" data-precio-full="32000" data-precio-comparti="8000" onclick="toggleCalcService(this)">🤖 ChatGPT (~$32k)</button>
+      <div class="service-list" id="serviceList">
+        <!-- Los ítems se cargan dinámicamente desde JavaScript -->
       </div>
 
-      <div style="background: #0f172a; border-radius: 12px; padding: 14px; display: flex; justify-content: space-around; align-items: center;">
-        <div>
-          <div style="font-size: 0.75rem; color: #94a3b8;">Precio Oficial</div>
-          <div id="totalFull" style="font-size: 1.1rem; font-weight: 700; color: #f87171; text-decoration: line-through;">$0</div>
+      <div class="calc-summary">
+        <div class="summary-block">
+          <div>Gasto Oficial</div>
+          <div id="sumFull" style="font-size: 1rem; font-weight: 700; color: #f87171; text-decoration: line-through;">$0</div>
         </div>
-        <div style="font-size: 1.5rem;">➡️</div>
-        <div>
-          <div style="font-size: 0.75rem; color: #94a3b8;">En Compartí</div>
-          <div id="totalComparti" style="font-size: 1.3rem; font-weight: 800; color: #4ade80;">$0</div>
+        <div style="font-size: 1.2rem; color: var(--text-muted);">➡️</div>
+        <div class="summary-block">
+          <div>Gastás en Compartí</div>
+          <div id="sumComparti" style="font-size: 1.1rem; font-weight: 800; color: #4ade80;">$0</div>
         </div>
-      </div>
-      
-      <div id="ahorroMensaje" style="font-size: 0.85rem; color: #60a5fa; margin-top: 10px; font-weight: 600; display: none;">
-        🎉 ¡Ahorrás <span id="montoAhorro">$0</span> al mes!
+        <div style="font-size: 1.2rem; color: var(--text-muted);">=</div>
+        <div class="summary-block">
+          <div>Ahorro Total</div>
+          <div id="sumAhorro" style="font-size: 1.1rem; font-weight: 800; color: #60a5fa;">$0</div>
+        </div>
       </div>
     </div>
   </div>
@@ -109,35 +124,77 @@
   </div>
 
   <script>
-    let totalFull = 0;
-    let totalComparti = 0;
+    // Lista completa de servicios con precios oficiales actualizados y estimación en Compartí
+    const serviciosData = [
+      { id: 'netflix', name: '🎬 Netflix (Estándar)', full: 21000, comparti: 4500 },
+      { id: 'disney', name: '🏰 Disney+ (Premium)', full: 18400, comparti: 4000 },
+      { id: 'spotify', name: '🎧 Spotify (Familiar)', full: 7500, comparti: 2000 },
+      { id: 'chatgpt', name: '🤖 ChatGPT Plus', full: 32000, comparti: 8000 },
+      { id: 'max', name: '💜 Max (Platino/Estándar)', full: 14000, comparti: 3500 },
+      { id: 'prime', name: '📦 Amazon Prime Video', full: 6500, comparti: 2000 },
+      { id: 'youtube', name: '▶️ YouTube Premium (Fam.)', full: 9500, comparti: 2500 },
+      { id: 'crunchyroll', name: '🍥 Crunchyroll (Mega Fan)', full: 6000, comparti: 1500 }
+    ];
 
-    function toggleCalcService(btn) {
-      const pFull = parseInt(btn.dataset.precioFull);
-      const pComparti = parseInt(btn.dataset.precioComparti);
+    const serviceListEl = document.getElementById('serviceList');
 
-      if (btn.classList.contains('selected')) {
-        btn.classList.remove('selected');
-        totalFull -= pFull;
-        totalComparti -= pComparti;
-      } else {
-        btn.classList.add('selected');
-        totalFull += pFull;
-        totalComparti += pComparti;
-      }
+    function renderServices() {
+      serviceListEl.innerHTML = '';
+      serviciosData.forEach(s => {
+        const item = document.createElement('div');
+        item.className = 'service-item';
+        item.id = `card-${s.id}`;
+        item.onclick = (e) => {
+          // Evitar doble evento si clickean directo el checkbox
+          if (e.target.tagName !== 'INPUT') {
+            const chk = document.getElementById(`chk-${s.id}`);
+            chk.checked = !chk.checked;
+          }
+          actualizarCalculadora();
+        };
 
-      document.getElementById('totalFull').innerText = '$' + totalFull.toLocaleString('es-AR');
-      document.getElementById('totalComparti').innerText = '$' + totalComparti.toLocaleString('es-AR');
-
-      const ahorro = totalFull - totalComparti;
-      const msgEl = document.getElementById('ahorroMensaje');
-      if (ahorro > 0) {
-        msgEl.style.display = 'block';
-        document.getElementById('montoAhorro').innerText = '$' + ahorro.toLocaleString('es-AR');
-      } else {
-        msgEl.style.display = 'none';
-      }
+        item.innerHTML = `
+          <div class="service-info">
+            <input type="checkbox" class="service-checkbox" id="chk-${s.id}" onchange="actualizarCalculadora()">
+            <div>
+              <div class="service-name">${s.name}</div>
+              <div class="service-prices">Oficial: $${s.full.toLocaleString('es-AR')}</div>
+            </div>
+          </div>
+          <div class="service-cost-tag">
+            <div class="cost-comparti">~$${s.comparti.toLocaleString('es-AR')}</div>
+            <div class="cost-full">$${s.full.toLocaleString('es-AR')}</div>
+          </div>
+        `;
+        serviceListEl.appendChild(item);
+      });
     }
+
+    function actualizarCalculadora() {
+      let tFull = 0;
+      let tComparti = 0;
+
+      serviciosData.forEach(s => {
+        const chk = document.getElementById(`chk-${s.id}`);
+        const card = document.getElementById(`card-${s.id}`);
+        if (chk.checked) {
+          tFull += s.full;
+          tComparti += s.comparti;
+          card.classList.add('selected');
+        } else {
+          card.classList.remove('selected');
+        }
+      });
+
+      const ahorro = tFull - tComparti;
+
+      document.getElementById('sumFull').innerText = '$' + tFull.toLocaleString('es-AR');
+      document.getElementById('sumComparti').innerText = '$' + tComparti.toLocaleString('es-AR');
+      document.getElementById('sumAhorro').innerText = '$' + ahorro.toLocaleString('es-AR');
+    }
+
+    // Inicializar lista al cargar
+    renderServices();
   </script>
 </body>
 </html>
