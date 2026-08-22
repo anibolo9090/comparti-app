@@ -16,7 +16,6 @@
     .badge-permitida { background: #dcfce7; color: #166534; }
     .badge-condicionada { background: #fef9c3; color: #854d0e; }
     .service-title { font-size: 1.25rem; font-weight: bold; margin: 0 0 4px; }
-    .plan-name { color: #64748b; font-size: 0.9rem; margin-bottom: 12px; }
     .price { font-size: 1.5rem; font-weight: bold; color: #0f172a; }
     .details { color: #475569; font-size: 0.85rem; margin: 12px 0; }
     .btn-action { display: block; text-align: center; background: #2563eb; color: #fff; padding: 10px; border-radius: 6px; text-decoration: none; font-weight: 600; }
@@ -25,61 +24,61 @@
 </head>
 <body>
   <div class="header">
-    <h1>Explorar Ofertas</h1>
+    <h1>Ofertas Disponibles</h1>
     <a href="index.html" class="btn-back">← Volver</a>
   </div>
 
-  <div id="status">Cargando base de datos...</div>
-  <div class="grid" id="services-grid"></div>
+  <div id="status">Cargando ofertas activas...</div>
+  <div class="grid" id="offers-grid"></div>
 
   <script>
     const SUPABASE_URL = 'https://xygatgvzdniivzwndaxy.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh5Z2F0Z3Z6ZG5paXZ6d25kYXh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc0MDU1MTcsImV4cCI6MjEwMjk4MTUxN30.oSoJcTxCw69F0AXmVVw5LFeF0HjdCSwHd_yOH4HwbS8';
     const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    async function cargarPlanes() {
+    async function cargarOfertas() {
       const statusEl = document.getElementById('status');
-      const gridEl = document.getElementById('services-grid');
+      const gridEl = document.getElementById('offers-grid');
 
-      try {
-        const { data: plans, error } = await db.from('plans').select('*');
+      const { data: offers, error } = await db
+        .from('offers')
+        .select('*, plans(name, compatibility_status)');
 
-        if (error) {
-          statusEl.innerText = 'Error: ' + error.message;
-          return;
-        }
-
-        if (!plans || plans.length === 0) {
-          statusEl.innerText = 'No hay planes registrados aún.';
-          return;
-        }
-
-        statusEl.style.display = 'none';
-
-        plans.forEach(plan => {
-          const card = document.createElement('div');
-          card.className = 'card';
-          
-          const statusText = plan.compatibility_status === 'permitida' ? '🟢 Permitida' : '🟡 Condicionada';
-
-          card.innerHTML = `
-            <span class="badge badge-${plan.compatibility_status}">${statusText}</span>
-            <h2 class="service-title">${plan.name}</h2>
-            <div class="price">$${plan.price_reference} <small style="font-size:0.8rem;color:#64748b;">/ ref</small></div>
-            <div class="details">
-              👥 Máx. integrantes: ${plan.max_members}<br>
-              💡 ${plan.sharing_rules || 'Sin reglas'}
-            </div>
-            <a href="#" class="btn-action">Ver oferta</a>
-          `;
-          gridEl.appendChild(card);
-        });
-      } catch (err) {
-        statusEl.innerText = 'Excepción al cargar datos.';
+      if (error) {
+        statusEl.innerText = 'Error al cargar ofertas.';
+        return;
       }
+
+      if (!offers || offers.length === 0) {
+        statusEl.innerText = 'No hay ofertas publicadas aún.';
+        return;
+      }
+
+      statusEl.style.display = 'none';
+
+      offers.forEach(offer => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        
+        const planName = offer.plans ? offer.plans.name : 'Servicio general';
+        const status = offer.plans ? offer.plans.compatibility_status : 'permitida';
+        const statusText = status === 'permitida' ? '🟢 Permitida' : '🟡 Condicionada';
+
+        card.innerHTML = `
+          <span class="badge badge-${status}">${statusText}</span>
+          <h2 class="service-title">${planName}</h2>
+          <div class="price">$${offer.price_per_slot} <small style="font-size:0.8rem;color:#64748b;">/ mes</small></div>
+          <div class="details">
+            📍 Cupos disponibles: <strong>${offer.available_slots}</strong><br>
+            💬 ${offer.description || 'Sin notas del vendedor'}
+          </div>
+          <a href="#" class="btn-action">Solicitar cupo</a>
+        `;
+        gridEl.appendChild(card);
+      });
     }
 
-    cargarPlanes();
+    cargarOfertas();
   </script>
 </body>
 </html>
