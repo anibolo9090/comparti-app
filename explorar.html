@@ -64,16 +64,20 @@
         const status = offer.plans ? offer.plans.compatibility_status : 'permitida';
         const statusText = status === 'permitida' ? '🟢 Permitida' : '🟡 Condicionada';
 
-        card.innerHTML = `
-          <span class="badge badge-${status}">${statusText}</span>
-          <h2 class="service-title">${planName}</h2>
-          <div class="price">$${offer.price_per_slot} <small style="font-size:0.8rem;color:#64748b;">/ mes</small></div>
-          <div class="details">
-            📍 Cupos disponibles: <strong>${offer.available_slots}</strong><br>
-            💬 ${offer.description || 'Sin notas del vendedor'}
-          </div>
-          <a href="#" class="btn-action">Solicitar cupo</a>
-        `;
+        const mensajeWS = encodeURIComponent(`¡Hola! Vi tu oferta de ${planName} ($${offer.price_per_slot}/mes) en Compartí y me interesa ocupar un cupo.`);
+const urlWhatsApp = `https://wa.me/5491112345678?text=${mensajeWS}`;
+
+card.innerHTML = `
+  <span class="badge badge-${status}">${statusText}</span>
+  <h2 class="service-title">${planName}</h2>
+  <div class="price">$${offer.price_per_slot} <small style="font-size:0.8rem;color:#64748b;">/ mes</small></div>
+  <div class="details">
+    📍 Cupos disponibles: <strong>${offer.available_slots}</strong><br>
+    💬 ${offer.description || 'Sin notas del vendedor'}
+  </div>
+  <a href="${urlWhatsApp}" target="_blank" class="btn-action">Solicitar cupo</a>
+`;
+
         gridEl.appendChild(card);
       });
     }
