@@ -6,54 +6,76 @@
   <title>Publicar Oferta — Compartí</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    body { font-family: system-ui, -apple-system, sans-serif; background: #f8fafc; color: #0f172a; margin: 0; padding: 20px; }
-    .container { max-width: 500px; margin: 20px auto; background: #fff; padding: 24px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
-    h1 { font-size: 1.5rem; margin-top: 0; }
-    .btn-back { color: #2563eb; text-decoration: none; font-weight: 600; display: inline-block; margin-bottom: 20px; }
-    .form-group { margin-bottom: 16px; }
-    label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.9rem; }
-    input, select, textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 1rem; }
-    button { width: 100%; background: #2563eb; color: #fff; border: none; padding: 12px; border-radius: 6px; font-weight: bold; font-size: 1rem; cursor: pointer; }
-    #msg { margin-top: 16px; font-weight: bold; text-align: center; }
+    :root { --primary: #2563eb; --bg: #f8fafc; --text: #0f172a; }
+    * { box-sizing: border-box; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 40px; }
+
+    /* Header fijo */
+    .navbar { background: #fff; border-bottom: 1px solid #e2e8f0; padding: 12px 20px; position: sticky; top: 0; z-index: 100; }
+    .navbar-inner { max-width: 600px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+    .logo { font-size: 1.25rem; font-weight: 800; color: #2563eb; text-decoration: none; display: flex; align-items: center; gap: 6px; }
+    .btn-nav { color: #64748b; text-decoration: none; font-size: 0.9rem; font-weight: 600; }
+
+    .card { max-width: 600px; margin: 24px auto; background: #fff; padding: 24px; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+    h1 { font-size: 1.4rem; margin-top: 0; margin-bottom: 20px; color: #0f172a; }
+
+    .form-group { margin-bottom: 18px; }
+    label { display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 6px; color: #334155; }
+    input, select, textarea { width: 100%; padding: 12px 14px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 1rem; outline: none; background: #fff; transition: all 0.2s; }
+    input:focus, select:focus, textarea:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }
+    
+    .btn-submit { width: 100%; background: #2563eb; color: #fff; border: none; padding: 14px; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+    .btn-submit:hover { background: #1d4ed8; }
+
+    #status { margin-top: 16px; text-align: center; font-weight: 600; font-size: 0.9rem; }
+    .success { color: #166534; }
+    .error { color: #991b1b; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <a href="index.html" class="btn-back">← Volver</a>
-    <h1>Publicar una oferta</h1>
+
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="logo">🤝 Compartí</a>
+      <a href="explorar.html" class="btn-nav">🔍 Explorar</a>
+    </div>
+  </nav>
+
+  <div class="card">
+    <h1>🚀 Publicar una oferta</h1>
     
     <form id="offerForm">
       <div class="form-group">
-        <label>Plan a compartir</label>
+        <label for="plan_id">Plan a compartir</label>
         <select id="plan_id" required>
-          <option value="">Cargando planes...</option>
+          <option value="">Cargando planes disponibles...</option>
         </select>
       </div>
 
       <div class="form-group">
-        <label>Tu número de WhatsApp (con código de país)</label>
-        <input type="tel" id="whatsapp_number" placeholder="Ej: 5491112345678" required>
+        <label for="whatsapp_number">Tu número de WhatsApp (con código de país)</label>
+        <input type="text" id="whatsapp_number" placeholder="Ej: 5491112345678" required>
       </div>
 
       <div class="form-group">
-        <label>Precio por cupo ($ ARS / mes)</label>
+        <label for="price_per_slot">Precio por cupo ($ ARS / mes)</label>
         <input type="number" id="price_per_slot" placeholder="Ej: 1500" required>
       </div>
 
       <div class="form-group">
-        <label>Lugares / Cupos disponibles</label>
-        <input type="number" id="available_slots" min="1" max="5" value="1" required>
+        <label for="available_slots">Cupos disponibles</label>
+        <input type="number" id="available_slots" min="1" value="1" required>
       </div>
 
       <div class="form-group">
-        <label>Notas / Requisitos (Opcional)</label>
+        <label for="description">Notas / Requisitos (Opcional)</label>
         <textarea id="description" rows="3" placeholder="Ej: Pago por transferencia del 1 al 5 de cada mes."></textarea>
       </div>
 
-      <button type="submit">Publicar oferta</button>
+      <button type="submit" class="btn-submit">Publicar oferta</button>
     </form>
 
-    <div id="msg"></div>
+    <div id="status"></div>
   </div>
 
   <script>
@@ -61,48 +83,52 @@
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh5Z2F0Z3Z6ZG5paXZ6d25kYXh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc0MDU1MTcsImV4cCI6MjEwMjk4MTUxN30.oSoJcTxCw69F0AXmVVw5LFeF0HjdCSwHd_yOH4HwbS8';
     const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    async function cargarPlanesSelect() {
+    async function cargarPlanes() {
       const select = document.getElementById('plan_id');
-      const { data: plans } = await db.from('plans').select('id, name');
-      if (plans) {
-        select.innerHTML = '<option value="">Seleccioná un plan...</option>';
-        plans.forEach(plan => {
-          const opt = document.createElement('option');
-          opt.value = plan.id;
-          opt.innerText = plan.name;
-          select.appendChild(opt);
-        });
+      const { data: plans, error } = await db.from('plans').select('id, name');
+
+      if (error || !plans) {
+        select.innerHTML = '<option value="">Error al cargar los planes</option>';
+        return;
       }
+
+      select.innerHTML = '<option value="">Seleccioná un plan...</option>';
+      plans.forEach(plan => {
+        const option = document.createElement('option');
+        option.value = plan.id;
+        option.textContent = plan.name;
+        select.appendChild(option);
+      });
     }
+
+    cargarPlanes();
 
     document.getElementById('offerForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const msg = document.getElementById('msg');
-      msg.style.color = '#0f172a';
-      msg.innerText = 'Guardando oferta...';
+      const status = document.getElementById('status');
+      status.className = '';
+      status.innerText = 'Publicando...';
 
       const offerData = {
         plan_id: document.getElementById('plan_id').value,
-        whatsapp_number: document.getElementById('whatsapp_number').value.replace(/[^0-9]/g, ''),
-        price_per_slot: Number(document.getElementById('price_per_slot').value),
-        available_slots: Number(document.getElementById('available_slots').value),
-        description: document.getElementById('description').value,
-        user_id: '00000000-0000-0000-0000-000000000000'
+        whatsapp_number: document.getElementById('whatsapp_number').value.trim(),
+        price_per_slot: parseFloat(document.getElementById('price_per_slot').value),
+        available_slots: parseInt(document.getElementById('available_slots').value),
+        description: document.getElementById('description').value.trim()
       };
 
-      const { error } = await db.from('offers').insert([offerData]);
+      const { data, error } = await db.from('offers').insert([offerData]);
 
       if (error) {
-        msg.style.color = '#dc2626';
-        msg.innerText = 'Error al publicar: ' + error.message;
+        status.className = 'error';
+        status.innerText = 'Error al publicar: ' + error.message;
       } else {
-        msg.style.color = '#166534';
-        msg.innerText = '¡Oferta publicada con éxito! 🎉';
+        status.className = 'success';
+        status.innerText = '¡Oferta publicada con éxito!';
         document.getElementById('offerForm').reset();
+        setTimeout(() => { window.location.href = 'explorar.html'; }, 1200);
       }
     });
-
-    cargarPlanesSelect();
   </script>
 </body>
 </html>
