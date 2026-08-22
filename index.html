@@ -20,37 +20,37 @@
     .navbar-inner { max-width: 800px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
     .logo { font-size: 1.25rem; font-weight: 800; color: #60a5fa; text-decoration: none; }
 
-    .main-container { max-width: 800px; margin: 24px auto; padding: 0 16px; }
+    .main-container { max-width: 800px; margin: 20px auto; padding: 0 16px; }
     
-    .hero { text-align: center; margin-bottom: 24px; }
-    .hero h1 { font-size: 1.8rem; margin-bottom: 10px; background: linear-gradient(135deg, #60a5fa 0%, #a855f7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .hero p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; max-width: 500px; margin: 0 auto 16px; }
+    .hero { text-align: center; margin-bottom: 20px; }
+    .hero h1 { font-size: 1.6rem; margin-bottom: 8px; background: linear-gradient(135deg, #60a5fa 0%, #a855f7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.4; max-width: 480px; margin: 0 auto 14px; }
     
-    .btn-group { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-    .btn-hero { display: inline-block; background: #2563eb; color: #fff; text-decoration: none; padding: 10px 20px; border-radius: 12px; font-weight: 700; font-size: 0.95rem; }
-    .btn-secondary { display: inline-block; background: var(--card-bg); border: 1px solid var(--card-border); color: #cbd5e1; text-decoration: none; padding: 10px 18px; border-radius: 12px; font-weight: 600; font-size: 0.9rem; }
+    .btn-group { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+    .btn-hero { display: inline-block; background: #2563eb; color: #fff; text-decoration: none; padding: 10px 18px; border-radius: 10px; font-weight: 700; font-size: 0.9rem; }
+    .btn-secondary { display: inline-block; background: var(--card-bg); border: 1px solid var(--card-border); color: #cbd5e1; text-decoration: none; padding: 10px 16px; border-radius: 10px; font-weight: 600; font-size: 0.85rem; }
 
-    /* Calculadora Interactiva Avanzada */
-    .calc-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 20px; margin: 20px 0; }
-    .calc-title { font-size: 1.15rem; color: #60a5fa; margin-top: 0; text-align: center; margin-bottom: 4px; }
-    .calc-subtitle { font-size: 0.85rem; color: var(--text-muted); text-align: center; margin-bottom: 16px; }
+    /* Calculadora Compacta */
+    .calc-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 16px; margin: 16px 0; }
+    .calc-title { font-size: 1.05rem; color: #60a5fa; margin-top: 0; text-align: center; margin-bottom: 2px; }
+    .calc-subtitle { font-size: 0.8rem; color: var(--text-muted); text-align: center; margin-bottom: 12px; }
 
-    .service-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; max-height: 320px; overflow-y: auto; padding-right: 4px; }
-    .service-item { display: flex; justify-content: space-between; align-items: center; background: #0f172a; border: 1px solid var(--card-border); padding: 12px 14px; border-radius: 12px; cursor: pointer; transition: all 0.2s; }
+    .service-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; max-height: 200px; overflow-y: auto; padding-right: 4px; }
+    .service-item { display: flex; justify-content: space-between; align-items: center; background: #0f172a; border: 1px solid var(--card-border); padding: 8px 12px; border-radius: 10px; cursor: pointer; transition: all 0.2s; }
     .service-item.selected { border-color: var(--primary); background: rgba(59, 130, 246, 0.08); }
     
-    .service-info { display: flex; align-items: center; gap: 10px; }
-    .service-checkbox { width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer; }
-    .service-name { font-weight: 600; font-size: 0.95rem; }
-    .service-prices { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+    .service-info { display: flex; align-items: center; gap: 8px; }
+    .service-checkbox { width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer; }
+    .service-name { font-weight: 600; font-size: 0.85rem; }
+    .service-prices { font-size: 0.7rem; color: var(--text-muted); }
 
     .service-cost-tag { text-align: right; }
-    .cost-comparti { font-weight: 700; color: #4ade80; font-size: 0.95rem; }
-    .cost-full { font-size: 0.75rem; color: #f87171; text-decoration: line-through; }
+    .cost-comparti { font-weight: 700; color: #4ade80; font-size: 0.85rem; }
+    .cost-full { font-size: 0.7rem; color: #f87171; text-decoration: line-through; }
 
-    /* Resumen flotante de la calculadora */
-    .calc-summary { background: #0f172a; border: 1px solid var(--card-border); border-radius: 12px; padding: 16px; display: flex; justify-content: space-around; align-items: center; text-align: center; }
-    .summary-block div:first-child { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; }
+    /* Resumen compacto */
+    .calc-summary { background: #0f172a; border: 1px solid var(--card-border); border-radius: 10px; padding: 12px; display: flex; justify-content: space-around; align-items: center; text-align: center; }
+    .summary-block div:first-child { font-size: 0.7rem; color: var(--text-muted); margin-bottom: 2px; }
 
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 1000; }
     .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); text-decoration: none; font-size: 0.75rem; font-weight: 600; gap: 2px; }
@@ -68,37 +68,37 @@
 
   <div class="main-container">
     <div class="hero">
-      <h1>Ahorrá hasta un 75% en tus suscripciones</h1>
-      <p>Unite a grupos para compartir plataformas y servicios digitales de forma segura y transparente.</p>
+      <h1>Ahorrá hasta un 75% en suscripciones</h1>
+      <p>Unite a grupos para compartir plataformas y servicios de forma segura.</p>
       <div class="btn-group">
         <a href="explorar.html" class="btn-hero">🔍 Explorar Cuentas</a>
-        <a href="faq.html" class="btn-secondary">🛡️ Seguridad y FAQ</a>
+        <a href="faq.html" class="btn-secondary">🛡️ FAQ y Seguridad</a>
       </div>
     </div>
 
-    <!-- CALCULADORA AVANZADA CON LISTA COMPLETA -->
+    <!-- CALCULADORA COMPACTA -->
     <div class="calc-box">
-      <h2 class="calc-title">🧮 Simulador Completo de Ahorro</h2>
-      <p class="calc-subtitle">Seleccioná los servicios que te interesan para calcular tu ahorro mensual:</p>
+      <h2 class="calc-title">🧮 Calculadora de Ahorro</h2>
+      <p class="calc-subtitle">Tildá los servicios que usás:</p>
 
       <div class="service-list" id="serviceList">
-        <!-- Los ítems se cargan dinámicamente desde JavaScript -->
+        <!-- Generado por JS -->
       </div>
 
       <div class="calc-summary">
         <div class="summary-block">
-          <div>Gasto Oficial</div>
-          <div id="sumFull" style="font-size: 1rem; font-weight: 700; color: #f87171; text-decoration: line-through;">$0</div>
+          <div>Oficial</div>
+          <div id="sumFull" style="font-size: 0.9rem; font-weight: 700; color: #f87171; text-decoration: line-through;">$0</div>
         </div>
-        <div style="font-size: 1.2rem; color: var(--text-muted);">➡️</div>
+        <div style="font-size: 1rem; color: var(--text-muted);">➡️</div>
         <div class="summary-block">
-          <div>Gastás en Compartí</div>
-          <div id="sumComparti" style="font-size: 1.1rem; font-weight: 800; color: #4ade80;">$0</div>
+          <div>En Compartí</div>
+          <div id="sumComparti" style="font-size: 0.95rem; font-weight: 800; color: #4ade80;">$0</div>
         </div>
-        <div style="font-size: 1.2rem; color: var(--text-muted);">=</div>
+        <div style="font-size: 1rem; color: var(--text-muted);">=</div>
         <div class="summary-block">
-          <div>Ahorro Total</div>
-          <div id="sumAhorro" style="font-size: 1.1rem; font-weight: 800; color: #60a5fa;">$0</div>
+          <div>Ahorro</div>
+          <div id="sumAhorro" style="font-size: 0.95rem; font-weight: 800; color: #60a5fa;">$0</div>
         </div>
       </div>
     </div>
@@ -124,16 +124,15 @@
   </div>
 
   <script>
-    // Lista completa de servicios con precios oficiales actualizados y estimación en Compartí
     const serviciosData = [
       { id: 'netflix', name: '🎬 Netflix (Estándar)', full: 21000, comparti: 4500 },
       { id: 'disney', name: '🏰 Disney+ (Premium)', full: 18400, comparti: 4000 },
       { id: 'spotify', name: '🎧 Spotify (Familiar)', full: 7500, comparti: 2000 },
       { id: 'chatgpt', name: '🤖 ChatGPT Plus', full: 32000, comparti: 8000 },
-      { id: 'max', name: '💜 Max (Platino/Estándar)', full: 14000, comparti: 3500 },
-      { id: 'prime', name: '📦 Amazon Prime Video', full: 6500, comparti: 2000 },
-      { id: 'youtube', name: '▶️ YouTube Premium (Fam.)', full: 9500, comparti: 2500 },
-      { id: 'crunchyroll', name: '🍥 Crunchyroll (Mega Fan)', full: 6000, comparti: 1500 }
+      { id: 'max', name: '💜 Max (Platino)', full: 14000, comparti: 3500 },
+      { id: 'prime', name: '📦 Amazon Prime', full: 6500, comparti: 2000 },
+      { id: 'youtube', name: '▶️ YouTube Premium', full: 9500, comparti: 2500 },
+      { id: 'crunchyroll', name: '🍥 Crunchyroll', full: 6000, comparti: 1500 }
     ];
 
     const serviceListEl = document.getElementById('serviceList');
@@ -145,7 +144,6 @@
         item.className = 'service-item';
         item.id = `card-${s.id}`;
         item.onclick = (e) => {
-          // Evitar doble evento si clickean directo el checkbox
           if (e.target.tagName !== 'INPUT') {
             const chk = document.getElementById(`chk-${s.id}`);
             chk.checked = !chk.checked;
@@ -158,7 +156,6 @@
             <input type="checkbox" class="service-checkbox" id="chk-${s.id}" onchange="actualizarCalculadora()">
             <div>
               <div class="service-name">${s.name}</div>
-              <div class="service-prices">Oficial: $${s.full.toLocaleString('es-AR')}</div>
             </div>
           </div>
           <div class="service-cost-tag">
@@ -193,7 +190,6 @@
       document.getElementById('sumAhorro').innerText = '$' + ahorro.toLocaleString('es-AR');
     }
 
-    // Inicializar lista al cargar
     renderServices();
   </script>
 </body>
