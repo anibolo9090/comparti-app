@@ -22,15 +22,19 @@
     .logo { font-size: 1.25rem; font-weight: 800; color: #60a5fa; text-decoration: none; }
 
     .main-container { max-width: 800px; margin: 24px auto; padding: 0 16px; }
-    .header-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+    .header-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; flex-wrap: wrap; gap: 10px; }
     h1 { font-size: 1.5rem; margin: 0; background: linear-gradient(135deg, #60a5fa 0%, #a855f7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     
     .btn-back { background: var(--card-bg); color: var(--text-muted); border: 1px solid var(--card-border); padding: 8px 14px; border-radius: 10px; font-weight: 600; cursor: pointer; display: none; }
     .btn-back:hover { color: #fff; }
 
-    .search-box { position: relative; margin-bottom: 24px; }
+    .search-box { position: relative; margin-bottom: 16px; }
     .search-input { width: 100%; padding: 14px 16px; border: 1px solid var(--card-border); border-radius: 12px; font-size: 1rem; background: var(--card-bg); color: var(--text); outline: none; }
     .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25); }
+
+    /* Barra de Filtros y Ordenamiento */
+    .filter-bar { display: none; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+    .filter-select { background: var(--card-bg); border: 1px solid var(--card-border); color: #fff; padding: 10px 14px; border-radius: 10px; font-size: 0.85rem; outline: none; flex: 1; min-width: 140px; }
 
     .services-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 14px; }
     .service-card { background: var(--card-bg); border-radius: 14px; padding: 14px; border: 1px solid var(--card-border); text-align: center; cursor: pointer; transition: all 0.2s; }
@@ -75,6 +79,19 @@
       <input type="text" id="searchInput" class="search-input" placeholder="🔍 Buscar servicio (Netflix, Spotify, NBA)...">
     </div>
 
+    <!-- Barra de Filtro y Ordenamiento -->
+    <div class="filter-bar" id="filterBar">
+      <select id="sortSelect" class="filter-select" onchange="aplicarFiltrosYOrden()">
+        <option value="price-asc">💰 Menor precio primero</option>
+        <option value="price-desc">💎 Mayor precio primero</option>
+        <option value="recent">✨ Más recientes</option>
+      </select>
+
+      <select id="planFilterSelect" class="filter-select" onchange="aplicarFiltrosYOrden()">
+        <option value="all">📦 Todos los planes</option>
+      </select>
+    </div>
+
     <div id="status">Cargando catálogo de servicios...</div>
 
     <div class="services-grid" id="servicesGrid"></div>
@@ -108,6 +125,7 @@
 
     let serviciosConOfertas = [];
     let todasLasOfertas = [];
+    let ofertasPlataformaActual = [];
 
     async function inicializar() {
       const statusEl = document.getElementById('status');
@@ -156,18 +174,58 @@
       document.getElementById('servicesGrid').style.display = 'none';
       document.getElementById('offersGrid').style.display = 'grid';
       document.getElementById('btnBack').style.display = 'block';
+      document.getElementById('filterBar').style.display = 'flex';
       document.getElementById('titleText').innerText = `${servicio.icon} Ofertas de ${servicio.name}`;
 
-      const ofertasFiltradas = todasLasOfertas.filter(o => o.plans && o.plans.service_id === servicio.id);
-      renderizarOfertas(ofertasFiltradas);
+      ofertasPlataformaActual = todasLasOfertas.filter(o => o.plans && o.plans.service_id === servicio.id);
+
+      // Poblar el filtro de planes dinámicamente
+      const planSelect = document.getElementById('planFilterSelect');
+      planSelect.innerHTML = '<option value="all">📦 Todos los planes</option>';
+      
+      const planesUnicos = {};
+      ofertasPlataformaActual.forEach(o => {
+        if (o.plans) {
+          planesUnicos[o.plans.id] = o.plans.name;
+        }
+      });
+
+      for (const [id, nombre] of Object.entries(planesUnicos)) {
+        planSelect.innerHTML += `<option value="${id}">${nombre}</option>`;
+      }
+
+      aplicarFiltrosYOrden();
     }
 
     function volverACatalogo() {
       document.getElementById('servicesGrid').style.display = 'grid';
       document.getElementById('offersGrid').style.display = 'none';
       document.getElementById('btnBack').style.display = 'none';
+      document.getElementById('filterBar').style.display = 'none';
       document.getElementById('titleText').innerText = 'Elegí una Plataforma';
       document.getElementById('status').style.display = 'none';
+    }
+
+    function aplicarFiltrosYOrden() {
+      let resultado = [...ofertasPlataformaActual];
+
+      // 1. Filtrar por plan si seleccionó uno
+      const planSeleccionado = document.getElementById('planFilterSelect').value;
+      if (planSeleccionado !== 'all') {
+        resultado = resultado.filter(o => o.plan_id === planSeleccionado);
+      }
+
+      // 2. Ordenar
+      const criterioOrden = document.getElementById('sortSelect').value;
+      if (criterioOrden === 'price-asc') {
+        resultado.sort((a, b) => a.price_per_slot - b.price_per_slot);
+      } else if (criterioOrden === 'price-desc') {
+        resultado.sort((a, b) => b.price_per_slot - a.price_per_slot);
+      } else if (criterioOrden === 'recent') {
+        resultado.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      }
+
+      renderizarOfertas(resultado);
     }
 
     function renderizarOfertas(lista) {
@@ -177,7 +235,7 @@
 
       if (lista.length === 0) {
         statusEl.style.display = 'block';
-        statusEl.innerText = 'Aún no hay ofertas publicadas para esta plataforma.';
+        statusEl.innerText = 'No se encontraron ofertas con los criterios seleccionados.';
         return;
       } else {
         statusEl.style.display = 'none';
