@@ -3,41 +3,40 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Compartí — Dividí suscripciones y ahorrá dinero</title>
+  <title>Compartí — Ahorrá compartiendo tus cuentas</title>
   <style>
     :root { 
       --primary: #3b82f6; 
-      --primary-hover: #2563eb; 
       --bg: #0f172a; 
       --card-bg: #1e293b; 
+      --card-border: #334155; 
       --text: #f8fafc; 
-      --text-muted: #94a3b8;
+      --text-muted: #94a3b8; 
     }
     * { box-sizing: border-box; }
-    body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; }
-
-    /* Header */
-    .navbar { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(8px); border-bottom: 1px solid #334155; padding: 16px 20px; position: sticky; top: 0; z-index: 100; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
+    
+    .navbar { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(8px); border-bottom: 1px solid var(--card-border); padding: 12px 20px; position: sticky; top: 0; z-index: 100; }
     .navbar-inner { max-width: 800px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
-    .logo { font-size: 1.3rem; font-weight: 800; color: #60a5fa; text-decoration: none; }
+    .logo { font-size: 1.25rem; font-weight: 800; color: #60a5fa; text-decoration: none; }
 
-    /* Hero Section */
-    .hero { max-width: 800px; margin: 50px auto 40px; padding: 0 20px; text-align: center; }
-    .hero h1 { font-size: 2.5rem; font-weight: 800; line-height: 1.2; margin-bottom: 16px; background: linear-gradient(135deg, #60a5fa 0%, #a855f7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .hero p { font-size: 1.15rem; color: var(--text-muted); margin-bottom: 32px; line-height: 1.5; }
+    .main-container { max-width: 800px; margin: 24px auto; padding: 0 16px; }
+    
+    .hero { text-align: center; margin-bottom: 30px; }
+    .hero h1 { font-size: 2rem; margin-bottom: 10px; background: linear-gradient(135deg, #60a5fa 0%, #a855f7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero p { color: var(--text-muted); font-size: 1rem; line-height: 1.5; max-width: 500px; margin: 0 auto 20px; }
+    
+    .btn-hero { display: inline-block; background: #2563eb; color: #fff; text-decoration: none; padding: 12px 24px; border-radius: 12px; font-weight: 700; font-size: 1rem; }
 
-    .btn-group { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 40px; }
-    .btn { padding: 14px 28px; border-radius: 12px; font-size: 1rem; font-weight: 700; text-decoration: none; transition: all 0.2s; }
-    .btn:active { transform: scale(0.98); }
-    .btn-primary { background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%); color: #fff; box-shadow: 0 4px 14px rgba(37,99,235,0.4); }
-    .btn-secondary { background: var(--card-bg); color: #f8fafc; border: 1px solid #334155; }
+    /* Calculadora */
+    .calc-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 20px; margin: 24px 0; text-align: center; }
+    .calc-btn { background: #0f172a; border: 1px solid var(--card-border); color: #fff; padding: 8px 12px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; transition: all 0.2s; }
+    .calc-btn.selected { background: #2563eb; border-color: #2563eb; }
 
-    /* Features Grid */
-    .features { max-width: 800px; margin: 0 auto 60px; padding: 0 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
-    .feature-card { background: var(--card-bg); border-radius: 16px; padding: 22px; border: 1px solid #334155; text-align: left; }
-    .feature-icon { font-size: 2rem; margin-bottom: 12px; }
-    .feature-card h3 { margin: 0 0 6px; font-size: 1.1rem; color: #f8fafc; }
-    .feature-card p { margin: 0; color: var(--text-muted); font-size: 0.9rem; line-height: 1.4; }
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 1000; }
+    .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); text-decoration: none; font-size: 0.75rem; font-weight: 600; gap: 2px; }
+    .nav-item.active { color: #60a5fa; }
+    .nav-item .icon { font-size: 1.2rem; }
   </style>
 </head>
 <body>
@@ -48,33 +47,92 @@
     </div>
   </nav>
 
-  <section class="hero">
-    <h1>Dividí el gasto de tus suscripciones digitales</h1>
-    <p>Conectá con otras personas para compartir cupos de tus cuentas familiares de Streaming, Deportes, Anime, Gaming e Inteligencia Artificial.</p>
-    
-    <div class="btn-group">
-      <a href="explorar.html" class="btn btn-primary">🔍 Explorar Ofertas</a>
-      <a href="publicar.html" class="btn btn-secondary">🚀 Publicar mi Cupo</a>
+  <div class="main-container">
+    <div class="hero">
+      <h1>Ahorrá hasta un 75% en tus suscripciones</h1>
+      <p>Unite a grupos para compartir Netflix, Spotify, ChatGPT y decenas de servicios con personas de confianza.</p>
+      <a href="explorar.html" class="btn-hero">🔍 Explorar Cuentas</a>
     </div>
-  </section>
 
-  <section class="features">
-    <div class="feature-card">
-      <div class="feature-icon">💰</div>
-      <h3>Ahorrá hasta un 75%</h3>
-      <p>Pagá solo por el cupo que usás en lugar de la tarifa completa del servicio.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">💬</div>
-      <h3>Contacto Directo</h3>
-      <p>Coordiná directamente por WhatsApp con el dueño o interesado de la oferta.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">⚡</div>
-      <h3>Catálogo Completo</h3>
-      <p>Encontrá desde NBA Pass y F1 TV hasta Netflix, Spotify, ChatGPT y Crunchyroll.</p>
-    </div>
-  </section>
+    <!-- CALCULADORA DE AHORRO -->
+    <div class="calc-box">
+      <h2 style="font-size: 1.2rem; color: #60a5fa; margin-top: 0;">🧮 Calculá cuánto podés ahorrar</h2>
+      <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 16px;">Seleccioná los servicios que usás o querés contratar:</p>
 
+      <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 16px;">
+        <button class="calc-btn" data-precio-full="12000" data-precio-comparti="3000" onclick="toggleCalcService(this)">🎬 Netflix ($12k)</button>
+        <button class="calc-btn" data-precio-full="11000" data-precio-comparti="2750" onclick="toggleCalcService(this)">🏰 Disney+ ($11k)</button>
+        <button class="calc-btn" data-precio-full="4500" data-precio-comparti="750" onclick="toggleCalcService(this)">🎧 Spotify ($4.5k)</button>
+        <button class="calc-btn" data-precio-full="27000" data-precio-comparti="5400" onclick="toggleCalcService(this)">🤖 ChatGPT ($27k)</button>
+      </div>
+
+      <div style="background: #0f172a; border-radius: 12px; padding: 14px; display: flex; justify-content: space-around; align-items: center;">
+        <div>
+          <div style="font-size: 0.75rem; color: #94a3b8;">Precio Oficial</div>
+          <div id="totalFull" style="font-size: 1.1rem; font-weight: 700; color: #f87171; text-decoration: line-through;">$0</div>
+        </div>
+        <div style="font-size: 1.5rem;">➡️</div>
+        <div>
+          <div style="font-size: 0.75rem; color: #94a3b8;">En Compartí</div>
+          <div id="totalComparti" style="font-size: 1.3rem; font-weight: 800; color: #4ade80;">$0</div>
+        </div>
+      </div>
+      
+      <div id="ahorroMensaje" style="font-size: 0.85rem; color: #60a5fa; margin-top: 10px; font-weight: 600; display: none;">
+        🎉 ¡Ahorrás <span id="montoAhorro">$0</span> al mes!
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <a href="index.html" class="nav-item active">
+      <span class="icon">🏠</span>
+      <span>Inicio</span>
+    </a>
+    <a href="explorar.html" class="nav-item">
+      <span class="icon">🔍</span>
+      <span>Explorar</span>
+    </a>
+    <a href="publicar.html" class="nav-item">
+      <span class="icon">➕</span>
+      <span>Publicar</span>
+    </a>
+    <a href="mis-ofertas.html" class="nav-item">
+      <span class="icon">📂</span>
+      <span>Mis Ofertas</span>
+    </a>
+  </div>
+
+  <script>
+    let totalFull = 0;
+    let totalComparti = 0;
+
+    function toggleCalcService(btn) {
+      const pFull = parseInt(btn.dataset.precioFull);
+      const pComparti = parseInt(btn.dataset.precioComparti);
+
+      if (btn.classList.contains('selected')) {
+        btn.classList.remove('selected');
+        totalFull -= pFull;
+        totalComparti -= pComparti;
+      } else {
+        btn.classList.add('selected');
+        totalFull += pFull;
+        totalComparti += pComparti;
+      }
+
+      document.getElementById('totalFull').innerText = '$' + totalFull.toLocaleString('es-AR');
+      document.getElementById('totalComparti').innerText = '$' + totalComparti.toLocaleString('es-AR');
+
+      const ahorro = totalFull - totalComparti;
+      const msgEl = document.getElementById('ahorroMensaje');
+      if (ahorro > 0) {
+        msgEl.style.display = 'block';
+        document.getElementById('montoAhorro').innerText = '$' + ahorro.toLocaleString('es-AR');
+      } else {
+        msgEl.style.display = 'none';
+      }
+    }
+  </script>
 </body>
 </html>
