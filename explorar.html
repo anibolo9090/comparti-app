@@ -15,13 +15,12 @@
     .badge { display: inline-block; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; margin-bottom: 10px; }
     .badge-permitida { background: #dcfce7; color: #166534; }
     .badge-condicionada { background: #fef9c3; color: #854d0e; }
-    .badge-no_disponible { background: #fee2e2; color: #991b1b; }
     .service-title { font-size: 1.25rem; font-weight: bold; margin: 0 0 4px; }
     .plan-name { color: #64748b; font-size: 0.9rem; margin-bottom: 12px; }
     .price { font-size: 1.5rem; font-weight: bold; color: #0f172a; }
     .details { color: #475569; font-size: 0.85rem; margin: 12px 0; }
     .btn-action { display: block; text-align: center; background: #2563eb; color: #fff; padding: 10px; border-radius: 6px; text-decoration: none; font-weight: 600; }
-    #loading { text-align: center; color: #64748b; font-weight: 600; margin-top: 40px; }
+    #status { text-align: center; color: #64748b; font-weight: 600; margin-top: 20px; }
   </style>
 </head>
 <body>
@@ -30,7 +29,7 @@
     <a href="index.html" class="btn-back">← Volver</a>
   </div>
 
-  <div id="loading">Cargando ofertas desde Supabase...</div>
+  <div id="status">Cargando base de datos...</div>
   <div class="grid" id="services-grid"></div>
 
   <script>
@@ -39,42 +38,45 @@
     const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     async function cargarPlanes() {
-      const { data: plans, error } = await db
-        .from('plans')
-        .select('*, services(name, category)');
-
-      const loadingEl = document.getElementById('loading');
+      const statusEl = document.getElementById('status');
       const gridEl = document.getElementById('services-grid');
 
-      if (error) {
-        loadingEl.innerText = 'Error al cargar los datos de Supabase.';
-        console.error(error);
-        return;
+      try {
+        const { data: plans, error } = await db.from('plans').select('*');
+
+        if (error) {
+          statusEl.innerText = 'Error: ' + error.message;
+          return;
+        }
+
+        if (!plans || plans.length === 0) {
+          statusEl.innerText = 'No hay planes registrados aún.';
+          return;
+        }
+
+        statusEl.style.display = 'none';
+
+        plans.forEach(plan => {
+          const card = document.createElement('div');
+          card.className = 'card';
+          
+          const statusText = plan.compatibility_status === 'permitida' ? '🟢 Permitida' : '🟡 Condicionada';
+
+          card.innerHTML = `
+            <span class="badge badge-${plan.compatibility_status}">${statusText}</span>
+            <h2 class="service-title">${plan.name}</h2>
+            <div class="price">$${plan.price_reference} <small style="font-size:0.8rem;color:#64748b;">/ ref</small></div>
+            <div class="details">
+              👥 Máx. integrantes: ${plan.max_members}<br>
+              💡 ${plan.sharing_rules || 'Sin reglas'}
+            </div>
+            <a href="#" class="btn-action">Ver oferta</a>
+          `;
+          gridEl.appendChild(card);
+        });
+      } catch (err) {
+        statusEl.innerText = 'Excepción al cargar datos.';
       }
-
-      loadingEl.style.display = 'none';
-
-      plans.forEach(plan => {
-        const card = document.createElement('div');
-        card.className = 'card';
-        
-        const badgeClass = `badge-${plan.compatibility_status}`;
-        const statusText = plan.compatibility_status === 'permitida' ? '🟢 Permitida' : 
-                          plan.compatibility_status === 'condicionada' ? '🟡 Condicionada' : '🔴 No recomendada';
-
-        card.innerHTML = `
-          <span class="badge ${badgeClass}">${statusText}</span>
-          <h2 class="service-title">${plan.services.name}</h2>
-          <div class="plan-name">${plan.name}</div>
-          <div class="price">$${plan.price_reference.toLocaleString('es-AR')} <small style="font-size: 0.8rem; color: #64748b;">/ ref</small></div>
-          <div class="details">
-            👥 Máx. integrantes: ${plan.max_members}<br>
-            💡 ${plan.sharing_rules || 'Sin reglas especificadas'}
-          </div>
-          <a href="#" class="btn-action">Ver ofertas</a>
-        `;
-        gridEl.appendChild(card);
-      });
     }
 
     cargarPlanes();
