@@ -3,52 +3,71 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Compartí — Compartí gastos. Pagá menos.</title>
+  <title>Compartí — Dividí suscripciones y ahorrá dinero</title>
   <style>
-    body {
-      font-family: system-ui, -apple-system, sans-serif;
-      background-color: #f8fafc;
-      color: #0f172a;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      margin: 0;
-      padding: 20px;
-      box-sizing: border-box;
-      text-align: center;
-    }
-    .card {
-      max-width: 500px;
-      background: #ffffff;
-      padding: 40px 24px;
-      border-radius: 16px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    }
-    h1 { font-size: 2.5rem; margin-bottom: 8px; color: #1e40af; }
-    p.tagline { font-size: 1.25rem; font-weight: 600; color: #334155; margin-bottom: 12px; }
-    p.desc { color: #64748b; font-size: 0.95rem; margin-bottom: 28px; }
-    .btn-group { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-    .btn {
-      padding: 12px 20px;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 0.9rem;
-    }
-    .btn-primary { background-color: #2563eb; color: #ffffff; }
-    .btn-secondary { border: 1px solid #cbd5e1; color: #0f172a; background-color: #ffffff; }
+    :root { --primary: #2563eb; --bg: #f8fafc; --text: #0f172a; }
+    * { box-sizing: border-box; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; }
+
+    /* Header */
+    .navbar { background: #fff; border-bottom: 1px solid #e2e8f0; padding: 16px 20px; position: sticky; top: 0; z-index: 100; }
+    .navbar-inner { max-width: 800px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+    .logo { font-size: 1.3rem; font-weight: 800; color: #2563eb; text-decoration: none; }
+
+    /* Hero Section */
+    .hero { max-width: 800px; margin: 40px auto; padding: 0 20px; text-align: center; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; line-height: 1.2; margin-bottom: 16px; color: #0f172a; }
+    .hero p { font-size: 1.1rem; color: #475569; margin-bottom: 28px; line-height: 1.5; }
+
+    .btn-group { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 40px; }
+    .btn { padding: 14px 24px; border-radius: 12px; font-size: 1rem; font-weight: 700; text-decoration: none; transition: transform 0.2s; }
+    .btn:active { transform: scale(0.98); }
+    .btn-primary { background: #2563eb; color: #fff; box-shadow: 0 4px 12px rgba(37,99,235,0.2); }
+    .btn-secondary { background: #fff; color: #2563eb; border: 1px solid #cbd5e1; }
+
+    /* Features Grid */
+    .features { max-width: 800px; margin: 0 auto 60px; padding: 0 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .feature-card { background: #fff; border-radius: 16px; padding: 20px; border: 1px solid #e2e8f0; text-align: left; }
+    .feature-icon { font-size: 1.8rem; margin-bottom: 10px; }
+    .feature-card h3 { margin: 0 0 6px; font-size: 1.1rem; }
+    .feature-card p { margin: 0; color: #64748b; font-size: 0.88rem; line-height: 1.4; }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Compartí</h1>
-    <p class="tagline">Compartí gastos. Pagá menos.</p>
-    <p class="desc">Encontrá suscripciones y gastos compartibles de forma transparente.</p>
-    <div class="btn-group">
-      <a href="explorar.html" class="btn btn-primary">Explorar ofertas</a>
-      <a href="publicar.html" class="btn btn-secondary">Publicar una oferta</a>
+
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="logo">🤝 Compartí</a>
     </div>
-  </div>
+  </nav>
+
+  <section class="hero">
+    <h1>Dividí el gasto de tus suscripciones digitales</h1>
+    <p>Conectá con otras personas para compartir cupos de tus cuentas familiares de Streaming, Gaming, IA y Productividad en Argentina.</p>
+    
+    <div class="btn-group">
+      <a href="explorar.html" class="btn btn-primary">🔍 Explorar Ofertas</a>
+      <a href="publicar.html" class="btn btn-secondary">🚀 Publicar mi Cupo</a>
+    </div>
+  </section>
+
+  <section class="features">
+    <div class="feature-card">
+      <div class="feature-icon">💰</div>
+      <h3>Ahorrá hasta un 75%</h3>
+      <p>Pagá solo por el cupo que usás en lugar de la tarifa completa del servicio.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">💬</div>
+      <h3>Contacto Directo</h3>
+      <p>Coordiná directamente por WhatsApp con el dueño o interesado de la oferta.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⚡</div>
+      <h3>Rápido y Fácil</h3>
+      <p>Publicá tu plan en menos de un minuto y empezá a reducir tus gastos hoy mismo.</p>
+    </div>
+  </section>
+
 </body>
 </html>
