@@ -15,7 +15,7 @@
       --text-muted: #94a3b8; 
     }
     * { box-sizing: border-box; }
-    body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 80px; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
     
     .navbar { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(8px); border-bottom: 1px solid var(--card-border); padding: 12px 20px; position: sticky; top: 0; z-index: 100; }
     .navbar-inner { max-width: 800px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
@@ -28,20 +28,26 @@
     .btn-back { background: var(--card-bg); color: var(--text-muted); border: 1px solid var(--card-border); padding: 8px 14px; border-radius: 10px; font-weight: 600; cursor: pointer; display: none; }
     .btn-back:hover { color: #fff; }
 
-    .search-box { position: relative; margin-bottom: 16px; }
+    .search-box { position: relative; margin-bottom: 14px; }
     .search-input { width: 100%; padding: 14px 16px; border: 1px solid var(--card-border); border-radius: 12px; font-size: 1rem; background: var(--card-bg); color: var(--text); outline: none; }
     .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25); }
 
-    /* Barra de Filtros y Ordenamiento */
+    /* Categorías / Chips */
+    .categories-bar { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 16px; scrollbar-width: none; }
+    .categories-bar::-webkit-scrollbar { display: none; }
+    .chip { background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-muted); padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
+    .chip.active, .chip:hover { background: #2563eb; color: #fff; border-color: #2563eb; }
+
+    /* Barra de Ordenamiento y Filtros */
     .filter-bar { display: none; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
     .filter-select { background: var(--card-bg); border: 1px solid var(--card-border); color: #fff; padding: 10px 14px; border-radius: 10px; font-size: 0.85rem; outline: none; flex: 1; min-width: 140px; }
 
-    .services-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 14px; }
+    .services-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
     .service-card { background: var(--card-bg); border-radius: 14px; padding: 14px; border: 1px solid var(--card-border); text-align: center; cursor: pointer; transition: all 0.2s; }
     .service-card:hover { transform: translateY(-3px); border-color: #60a5fa; }
-    .service-card .icon { font-size: 1.6rem; margin-bottom: 6px; }
-    .service-card h3 { margin: 0 0 4px; font-size: 0.95rem; }
-    .service-card .offers-count { font-size: 0.75rem; color: #60a5fa; font-weight: 600; background: rgba(96, 165, 250, 0.1); padding: 3px 8px; border-radius: 10px; display: inline-block; }
+    .service-card .icon { font-size: 1.8rem; margin-bottom: 6px; }
+    .service-card h3 { margin: 0 0 4px; font-size: 0.9rem; word-break: break-word; }
+    .service-card .offers-count { font-size: 0.72rem; color: #60a5fa; font-weight: 600; background: rgba(96, 165, 250, 0.1); padding: 2px 6px; border-radius: 8px; display: inline-block; }
 
     .offers-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; display: none; }
     .card { background: var(--card-bg); border-radius: 16px; padding: 20px; border: 1px solid var(--card-border); display: flex; flex-direction: column; justify-content: space-between; }
@@ -52,7 +58,6 @@
     .details-box { background: rgba(15, 23, 42, 0.6); padding: 12px; border-radius: 10px; font-size: 0.85rem; color: #cbd5e1; margin: 12px 0 16px; line-height: 1.4; border: 1px solid rgba(255,255,255,0.05); }
     .btn-ws { display: flex; align-items: center; justify-content: center; gap: 8px; background: #25D366; color: #fff; text-decoration: none; font-weight: 700; padding: 12px; border-radius: 10px; }
 
-    /* Bottom Nav Bar Fija */
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 1000; }
     .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); text-decoration: none; font-size: 0.75rem; font-weight: 600; gap: 2px; }
     .nav-item.active { color: #60a5fa; }
@@ -71,15 +76,26 @@
 
   <div class="main-container">
     <div class="header-bar">
-      <h1 id="titleText">Elegí una Plataforma</h1>
-      <button id="btnBack" class="btn-back" onclick="volverACatalogo()">← Ver todas las plataformas</button>
+      <h1 id="titleText">Explorar Catálogo</h1>
+      <button id="btnBack" class="btn-back" onclick="volverACatalogo()">← Ver todo</button>
     </div>
 
     <div class="search-box">
-      <input type="text" id="searchInput" class="search-input" placeholder="🔍 Buscar servicio (Netflix, Spotify, NBA)...">
+      <input type="text" id="searchInput" class="search-input" placeholder="🔍 Buscar (Netflix, Spotify, ChatGPT, F1)...">
     </div>
 
-    <!-- Barra de Filtro y Ordenamiento -->
+    <!-- Categorías -->
+    <div class="categories-bar" id="categoriesBar">
+      <button class="chip active" onclick="filtrarCategoria('Todas', this)">Todas</button>
+      <button class="chip" onclick="filtrarCategoria('Streaming', this)">🎬 Streaming</button>
+      <button class="chip" onclick="filtrarCategoria('Música', this)">🎧 Música</button>
+      <button class="chip" onclick="filtrarCategoria('Deportes', this)">⚽ Deportes</button>
+      <button class="chip" onclick="filtrarCategoria('Productividad', this)">🤖 IA / Tools</button>
+      <button class="chip" onclick="filtrarCategoria('Gaming', this)">🎮 Gaming</button>
+      <button class="chip" onclick="filtrarCategoria('Seguridad', this)">🛡️ VPN / Seguridad</button>
+    </div>
+
+    <!-- Ordenamiento y Filtro de Planes -->
     <div class="filter-bar" id="filterBar">
       <select id="sortSelect" class="filter-select" onchange="aplicarFiltrosYOrden()">
         <option value="price-asc">💰 Menor precio primero</option>
@@ -92,13 +108,12 @@
       </select>
     </div>
 
-    <div id="status">Cargando catálogo de servicios...</div>
+    <div id="status">Cargando catálogo completo...</div>
 
     <div class="services-grid" id="servicesGrid"></div>
     <div class="offers-grid" id="offersGrid"></div>
   </div>
 
-  <!-- Bottom Navigation Bar -->
   <div class="bottom-nav">
     <a href="index.html" class="nav-item">
       <span class="icon">🏠</span>
@@ -126,11 +141,12 @@
     let serviciosConOfertas = [];
     let todasLasOfertas = [];
     let ofertasPlataformaActual = [];
+    let categoriaSeleccionada = 'Todas';
 
     async function inicializar() {
       const statusEl = document.getElementById('status');
 
-      const { data: services, error: errServ } = await db.from('services').select('*');
+      const { data: services, error: errServ } = await db.from('services').select('*').order('name', { ascending: true });
       const { data: offers, error: errOff } = await db.from('offers').select('*, plans(*, services(*))');
 
       if (errServ || errOff) {
@@ -149,14 +165,32 @@
       });
 
       statusEl.style.display = 'none';
-      renderizarCatalogo(serviciosConOfertas);
+      renderizarCatalogo();
     }
 
-    function renderizarCatalogo(listaServicios) {
+    function filtrarCategoria(categoria, btn) {
+      categoriaSeleccionada = categoria;
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      renderizarCatalogo();
+    }
+
+    function renderizarCatalogo() {
       const grid = document.getElementById('servicesGrid');
+      const busqueda = document.getElementById('searchInput').value.toLowerCase().trim();
       grid.innerHTML = '';
 
-      listaServicios.forEach(srv => {
+      let filtrados = serviciosConOfertas;
+
+      if (categoriaSeleccionada !== 'Todas') {
+        filtrados = filtrados.filter(s => s.category === categoriaSeleccionada);
+      }
+
+      if (busqueda) {
+        filtrados = filtrados.filter(s => s.name.toLowerCase().includes(busqueda));
+      }
+
+      filtrados.forEach(srv => {
         const card = document.createElement('div');
         card.className = 'service-card';
         card.onclick = () => verOfertasDePlataforma(srv);
@@ -172,6 +206,7 @@
 
     function verOfertasDePlataforma(servicio) {
       document.getElementById('servicesGrid').style.display = 'none';
+      document.getElementById('categoriesBar').style.display = 'none';
       document.getElementById('offersGrid').style.display = 'grid';
       document.getElementById('btnBack').style.display = 'block';
       document.getElementById('filterBar').style.display = 'flex';
@@ -179,7 +214,6 @@
 
       ofertasPlataformaActual = todasLasOfertas.filter(o => o.plans && o.plans.service_id === servicio.id);
 
-      // Poblar el filtro de planes dinámicamente
       const planSelect = document.getElementById('planFilterSelect');
       planSelect.innerHTML = '<option value="all">📦 Todos los planes</option>';
       
@@ -199,23 +233,22 @@
 
     function volverACatalogo() {
       document.getElementById('servicesGrid').style.display = 'grid';
+      document.getElementById('categoriesBar').style.display = 'flex';
       document.getElementById('offersGrid').style.display = 'none';
       document.getElementById('btnBack').style.display = 'none';
       document.getElementById('filterBar').style.display = 'none';
-      document.getElementById('titleText').innerText = 'Elegí una Plataforma';
+      document.getElementById('titleText').innerText = 'Explorar Catálogo';
       document.getElementById('status').style.display = 'none';
     }
 
     function aplicarFiltrosYOrden() {
       let resultado = [...ofertasPlataformaActual];
 
-      // 1. Filtrar por plan si seleccionó uno
       const planSeleccionado = document.getElementById('planFilterSelect').value;
       if (planSeleccionado !== 'all') {
         resultado = resultado.filter(o => o.plan_id === planSeleccionado);
       }
 
-      // 2. Ordenar
       const criterioOrden = document.getElementById('sortSelect').value;
       if (criterioOrden === 'price-asc') {
         resultado.sort((a, b) => a.price_per_slot - b.price_per_slot);
@@ -235,7 +268,7 @@
 
       if (lista.length === 0) {
         statusEl.style.display = 'block';
-        statusEl.innerText = 'No se encontraron ofertas con los criterios seleccionados.';
+        statusEl.innerText = 'No hay ofertas publicadas para esta selección aún.';
         return;
       } else {
         statusEl.style.display = 'none';
@@ -274,14 +307,7 @@
       });
     }
 
-    document.getElementById('searchInput').addEventListener('input', (e) => {
-      const busqueda = e.target.value.toLowerCase().trim();
-      
-      if (document.getElementById('servicesGrid').style.display !== 'none') {
-        const filtrados = serviciosConOfertas.filter(s => s.name.toLowerCase().includes(busqueda));
-        renderizarCatalogo(filtrados);
-      }
-    });
+    document.getElementById('searchInput').addEventListener('input', renderizarCatalogo);
 
     inicializar();
   </script>
