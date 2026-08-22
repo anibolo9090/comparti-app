@@ -15,7 +15,7 @@
       --text-muted: #94a3b8; 
     }
     * { box-sizing: border-box; }
-    body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 40px; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
 
     .navbar { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(8px); border-bottom: 1px solid var(--card-border); padding: 12px 20px; position: sticky; top: 0; z-index: 100; }
     .navbar-inner { max-width: 600px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
@@ -33,8 +33,18 @@
     select option { background: #1e293b; color: #fff; font-weight: 400; }
     input:focus, select:focus, textarea:focus { border-color: #60a5fa; box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.25); }
     
-    .btn-submit { width: 100%; background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%); color: #fff; border: none; padding: 14px; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: opacity 0.2s; }
+    /* Box de Sugerencia de Precio */
+    .calc-box { display: none; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(96, 165, 250, 0.3); border-radius: 10px; padding: 12px 14px; margin-top: 8px; font-size: 0.85rem; color: #cbd5e1; }
+    .btn-apply-price { background: #2563eb; color: #fff; border: none; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 0.8rem; cursor: pointer; margin-left: 6px; }
+
+    .btn-submit { width: 100%; background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%); color: #fff; border: none; padding: 14px; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: opacity 0.2s; margin-top: 10px; }
     .btn-submit:hover { opacity: 0.9; }
+
+    /* Bottom Nav Bar Fija */
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 1000; }
+    .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); text-decoration: none; font-size: 0.75rem; font-weight: 600; gap: 2px; }
+    .nav-item.active { color: #60a5fa; }
+    .nav-item .icon { font-size: 1.2rem; }
 
     #status { margin-top: 16px; text-align: center; font-weight: 600; font-size: 0.9rem; }
     .success { color: #4ade80; }
@@ -69,6 +79,10 @@
       <div class="form-group">
         <label for="price_per_slot">Precio por cupo ($ ARS / mes)</label>
         <input type="number" id="price_per_slot" placeholder="Ej: 1500" required>
+        <div id="calcBox" class="calc-box">
+          💡 Precio justo sugerido: <strong id="suggestedPriceText">$0</strong> por cupo.
+          <button type="button" class="btn-apply-price" onclick="aplicarPrecioSugerido()">Usar precio</button>
+        </div>
       </div>
 
       <div class="form-group">
@@ -87,18 +101,39 @@
     <div id="status"></div>
   </div>
 
+  <!-- Bottom Navigation Bar -->
+  <div class="bottom-nav">
+    <a href="index.html" class="nav-item">
+      <span class="icon">🏠</span>
+      <span>Inicio</span>
+    </a>
+    <a href="explorar.html" class="nav-item">
+      <span class="icon">🔍</span>
+      <span>Explorar</span>
+    </a>
+    <a href="publicar.html" class="nav-item active">
+      <span class="icon">➕</span>
+      <span>Publicar</span>
+    </a>
+    <a href="mis-ofertas.html" class="nav-item">
+      <span class="icon">📂</span>
+      <span>Mis Ofertas</span>
+    </a>
+  </div>
+
   <script>
     const SUPABASE_URL = 'https://xygatgvzdniivzwndaxy.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh5Z2F0Z3Z6ZG5paXZ6d25kYXh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc0MDU1MTcsImV4cCI6MjEwMjk4MTUxN30.oSoJcTxCw69F0AXmVVw5LFeF0HjdCSwHd_yOH4HwbS8';
     const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let usuarioActual = null;
+    let mapaPlanes = {};
+    let precioSugeridoCalculado = 0;
 
     async function verificarSesion() {
       const { data: { session } } = await db.auth.getSession();
       
       if (!session) {
-        // Redirigir al login si no inició sesión
         window.location.href = 'login.html';
         return;
       }
@@ -120,7 +155,7 @@
       
       const { data: plans, error } = await db
         .from('plans')
-        .select('id, name, services(name, icon)')
+        .select('id, name, price_reference, max_members, services(name, icon)')
         .order('name', { ascending: true });
 
       if (error || !plans) {
@@ -130,6 +165,7 @@
 
       const grupos = {};
       plans.forEach(plan => {
+        mapaPlanes[plan.id] = plan; // Guardamos datos del plan en memoria para calcular
         const servicioNombre = plan.services ? `${plan.services.icon} ${plan.services.name}` : 'Otros';
         if (!grupos[servicioNombre]) {
           grupos[servicioNombre] = [];
@@ -153,6 +189,31 @@
         select.appendChild(optgroup);
       }
     }
+
+    function actualizarPrecioSugerido() {
+      const planId = document.getElementById('plan_id').value;
+      const calcBox = document.getElementById('calcBox');
+      const suggestedText = document.getElementById('suggestedPriceText');
+
+      if (planId && mapaPlanes[planId]) {
+        const plan = mapaPlanes[planId];
+        if (plan.price_reference && plan.max_members) {
+          precioSugeridoCalculado = Math.round(plan.price_reference / plan.max_members);
+          suggestedText.innerText = `$${precioSugeridoCalculado.toLocaleString('es-AR')}`;
+          calcBox.style.display = 'block';
+          return;
+        }
+      }
+      calcBox.style.display = 'none';
+    }
+
+    function aplicarPrecioSugerido() {
+      if (precioSugeridoCalculado > 0) {
+        document.getElementById('price_per_slot').value = precioSugeridoCalculado;
+      }
+    }
+
+    document.getElementById('plan_id').addEventListener('change', actualizarPrecioSugerido);
 
     verificarSesion();
     cargarPlanesAgrupados();
@@ -181,6 +242,7 @@
         status.className = 'success';
         status.innerText = '¡Oferta publicada con éxito!';
         document.getElementById('offerForm').reset();
+        document.getElementById('calcBox').style.display = 'none';
         setTimeout(() => { window.location.href = 'explorar.html'; }, 1200);
       }
     });
