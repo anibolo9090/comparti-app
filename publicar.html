@@ -20,7 +20,8 @@
     .navbar { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(8px); border-bottom: 1px solid var(--card-border); padding: 12px 20px; position: sticky; top: 0; z-index: 100; }
     .navbar-inner { max-width: 600px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
     .logo { font-size: 1.25rem; font-weight: 800; color: #60a5fa; text-decoration: none; display: flex; align-items: center; gap: 6px; }
-    .btn-nav { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; font-weight: 600; }
+    .user-badge { font-size: 0.85rem; color: #94a3b8; display: flex; align-items: center; gap: 10px; }
+    .btn-logout { background: transparent; border: none; color: #f87171; font-size: 0.85rem; cursor: pointer; text-decoration: underline; font-weight: 600; }
 
     .card { max-width: 600px; margin: 24px auto; background: var(--card-bg); padding: 24px; border-radius: 16px; border: 1px solid var(--card-border); }
     h1 { font-size: 1.4rem; margin-top: 0; margin-bottom: 20px; background: linear-gradient(135deg, #60a5fa 0%, #a855f7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -45,7 +46,7 @@
   <nav class="navbar">
     <div class="navbar-inner">
       <a href="index.html" class="logo">🤝 Compartí</a>
-      <a href="explorar.html" class="btn-nav">🔍 Explorar</a>
+      <div id="userSection" class="user-badge"></div>
     </div>
   </nav>
 
@@ -91,6 +92,29 @@
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh5Z2F0Z3Z6ZG5paXZ6d25kYXh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc0MDU1MTcsImV4cCI6MjEwMjk4MTUxN30.oSoJcTxCw69F0AXmVVw5LFeF0HjdCSwHd_yOH4HwbS8';
     const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+    let usuarioActual = null;
+
+    async function verificarSesion() {
+      const { data: { session } } = await db.auth.getSession();
+      
+      if (!session) {
+        // Redirigir al login si no inició sesión
+        window.location.href = 'login.html';
+        return;
+      }
+
+      usuarioActual = session.user;
+      document.getElementById('userSection').innerHTML = `
+        👤 ${usuarioActual.email} 
+        <button onclick="cerrarSesion()" class="btn-logout">Salir</button>
+      `;
+    }
+
+    async function cerrarSesion() {
+      await db.auth.signOut();
+      window.location.href = 'login.html';
+    }
+
     async function cargarPlanesAgrupados() {
       const select = document.getElementById('plan_id');
       
@@ -104,7 +128,6 @@
         return;
       }
 
-      // Agrupar planes por nombre de servicio
       const grupos = {};
       plans.forEach(plan => {
         const servicioNombre = plan.services ? `${plan.services.icon} ${plan.services.name}` : 'Otros';
@@ -131,6 +154,7 @@
       }
     }
 
+    verificarSesion();
     cargarPlanesAgrupados();
 
     document.getElementById('offerForm').addEventListener('submit', async (e) => {
@@ -141,6 +165,7 @@
 
       const offerData = {
         plan_id: document.getElementById('plan_id').value,
+        user_id: usuarioActual ? usuarioActual.id : null,
         whatsapp_number: document.getElementById('whatsapp_number').value.trim(),
         price_per_slot: parseFloat(document.getElementById('price_per_slot').value),
         available_slots: parseInt(document.getElementById('available_slots').value),
