@@ -24,7 +24,7 @@
 
     .main-container { max-width: 800px; margin: 24px auto; padding: 0 16px; }
     .header-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
-    h1 { font-size: 1.6rem; margin: 0; background: linear-gradient(135deg, #60a5fa 0%, #a855f7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    h1 { font-size: 1.5rem; margin: 0; background: linear-gradient(135deg, #60a5fa 0%, #a855f7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     
     .btn-back { background: var(--card-bg); color: var(--text-muted); border: 1px solid var(--card-border); padding: 8px 14px; border-radius: 10px; font-weight: 600; cursor: pointer; display: none; }
     .btn-back:hover { color: #fff; }
@@ -33,13 +33,13 @@
     .search-input { width: 100%; padding: 14px 16px; border: 1px solid var(--card-border); border-radius: 12px; font-size: 1rem; background: var(--card-bg); color: var(--text); outline: none; }
     .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25); }
 
-    /* Grilla de Plataformas / Servicios */
-    .services-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; }
-    .service-card { background: var(--card-bg); border-radius: 16px; padding: 20px; border: 1px solid var(--card-border); text-align: center; cursor: pointer; transition: all 0.2s; }
+    /* Grilla de Plataformas / Servicios con íconos más pequeños */
+    .services-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 14px; }
+    .service-card { background: var(--card-bg); border-radius: 14px; padding: 14px; border: 1px solid var(--card-border); text-align: center; cursor: pointer; transition: all 0.2s; }
     .service-card:hover { transform: translateY(-3px); border-color: #60a5fa; }
-    .service-card .icon { font-size: 2.8rem; margin-bottom: 10px; }
-    .service-card h3 { margin: 0 0 6px; font-size: 1.05rem; }
-    .service-card .offers-count { font-size: 0.8rem; color: #60a5fa; font-weight: 600; background: rgba(96, 165, 250, 0.1); padding: 4px 8px; border-radius: 12px; display: inline-block; }
+    .service-card .icon { font-size: 1.6rem; margin-bottom: 6px; }
+    .service-card h3 { margin: 0 0 4px; font-size: 0.95rem; }
+    .service-card .offers-count { font-size: 0.75rem; color: #60a5fa; font-weight: 600; background: rgba(96, 165, 250, 0.1); padding: 3px 8px; border-radius: 10px; display: inline-block; }
 
     /* Grilla de Ofertas Individuales */
     .offers-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; display: none; }
@@ -93,7 +93,6 @@
     async function inicializar() {
       const statusEl = document.getElementById('status');
 
-      // Traer servicios, planes y ofertas asociadas
       const { data: services, error: errServ } = await db.from('services').select('*');
       const { data: offers, error: errOff } = await db.from('offers').select('*, plans(*, services(*))');
 
@@ -104,7 +103,6 @@
 
       todasLasOfertas = offers || [];
       
-      // Mapear cantidad de ofertas por servicio
       serviciosConOfertas = services.map(srv => {
         const ofertasDelServicio = todasLasOfertas.filter(o => o.plans && o.plans.service_id === srv.id);
         return {
@@ -199,11 +197,9 @@
       });
     }
 
-    // Buscador interactivo
     document.getElementById('searchInput').addEventListener('input', (e) => {
       const busqueda = e.target.value.toLowerCase().trim();
       
-      // Si está en la vista del catálogo, filtra las tarjetas de plataformas
       if (document.getElementById('servicesGrid').style.display !== 'none') {
         const filtrados = serviciosConOfertas.filter(s => s.name.toLowerCase().includes(busqueda));
         renderizarCatalogo(filtrados);
