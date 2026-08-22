@@ -31,6 +31,11 @@
       </div>
 
       <div class="form-group">
+        <label>Tu número de WhatsApp (con código de país)</label>
+        <input type="tel" id="whatsapp_number" placeholder="Ej: 5491112345678" required>
+      </div>
+
+      <div class="form-group">
         <label>Precio por cupo ($ ARS / mes)</label>
         <input type="number" id="price_per_slot" placeholder="Ej: 1500" required>
       </div>
@@ -56,26 +61,20 @@
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh5Z2F0Z3Z6ZG5paXZ6d25kYXh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc0MDU1MTcsImV4cCI6MjEwMjk4MTUxN30.oSoJcTxCw69F0AXmVVw5LFeF0HjdCSwHd_yOH4HwbS8';
     const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // Cargar los planes en el select
     async function cargarPlanesSelect() {
       const select = document.getElementById('plan_id');
-      const { data: plans, error } = await db.from('plans').select('id, name');
-      
-      if (error || !plans) {
-        select.innerHTML = '<option value="">Error al cargar planes</option>';
-        return;
+      const { data: plans } = await db.from('plans').select('id, name');
+      if (plans) {
+        select.innerHTML = '<option value="">Seleccioná un plan...</option>';
+        plans.forEach(plan => {
+          const opt = document.createElement('option');
+          opt.value = plan.id;
+          opt.innerText = plan.name;
+          select.appendChild(opt);
+        });
       }
-
-      select.innerHTML = '<option value="">Seleccioná un plan...</option>';
-      plans.forEach(plan => {
-        const opt = document.createElement('option');
-        opt.value = plan.id;
-        opt.innerText = plan.name;
-        select.appendChild(opt);
-      });
     }
 
-    // Guardar la oferta en Supabase
     document.getElementById('offerForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const msg = document.getElementById('msg');
@@ -84,10 +83,11 @@
 
       const offerData = {
         plan_id: document.getElementById('plan_id').value,
+        whatsapp_number: document.getElementById('whatsapp_number').value.replace(/[^0-9]/g, ''),
         price_per_slot: Number(document.getElementById('price_per_slot').value),
         available_slots: Number(document.getElementById('available_slots').value),
         description: document.getElementById('description').value,
-        user_id: '00000000-0000-0000-0000-000000000000' // Usuario demo hasta agregar Login
+        user_id: '00000000-0000-0000-0000-000000000000'
       };
 
       const { error } = await db.from('offers').insert([offerData]);
