@@ -38,7 +38,7 @@
     .chip { background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-muted); padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
     .chip.active, .chip:hover { background: #2563eb; color: #fff; border-color: #2563eb; }
 
-    /* Barra de Ordenamiento y Filtros */
+    /* Barra de Filtros */
     .filter-bar { display: none; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
     .filter-select { background: var(--card-bg); border: 1px solid var(--card-border); color: #fff; padding: 10px 14px; border-radius: 10px; font-size: 0.85rem; outline: none; flex: 1; min-width: 140px; }
 
@@ -50,12 +50,19 @@
     .service-card .offers-count { font-size: 0.72rem; color: #60a5fa; font-weight: 600; background: rgba(96, 165, 250, 0.1); padding: 2px 6px; border-radius: 8px; display: inline-block; }
 
     .offers-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; display: none; }
-    .card { background: var(--card-bg); border-radius: 16px; padding: 20px; border: 1px solid var(--card-border); display: flex; flex-direction: column; justify-content: space-between; }
-    .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+    .card { background: var(--card-bg); border-radius: 16px; padding: 20px; border: 1px solid var(--card-border); display: flex; flex-direction: column; justify-content: space-between; position: relative; }
+    .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
     .service-badge { font-weight: 700; font-size: 1.1rem; color: #fff; display: flex; align-items: center; gap: 8px; }
-    .price-tag { font-size: 1.7rem; font-weight: 800; color: #fff; margin: 8px 0; }
+    
+    /* Insignias y Reputación */
+    .seller-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 0.8rem; }
+    .rating-badge { background: rgba(234, 179, 8, 0.15); color: #facc15; padding: 3px 8px; border-radius: 12px; font-weight: 700; display: flex; align-items: center; gap: 4px; }
+    .sales-badge { color: var(--text-muted); font-weight: 600; }
+    .new-badge { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); padding: 2px 8px; border-radius: 12px; font-weight: 700; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 4px; }
+
+    .price-tag { font-size: 1.7rem; font-weight: 800; color: #fff; margin: 4px 0 8px; }
     .price-tag small { font-size: 0.85rem; font-weight: 500; color: var(--text-muted); }
-    .details-box { background: rgba(15, 23, 42, 0.6); padding: 12px; border-radius: 10px; font-size: 0.85rem; color: #cbd5e1; margin: 12px 0 16px; line-height: 1.4; border: 1px solid rgba(255,255,255,0.05); }
+    .details-box { background: rgba(15, 23, 42, 0.6); padding: 12px; border-radius: 10px; font-size: 0.85rem; color: #cbd5e1; margin: 8px 0 16px; line-height: 1.4; border: 1px solid rgba(255,255,255,0.05); }
     .btn-ws { display: flex; align-items: center; justify-content: center; gap: 8px; background: #25D366; color: #fff; text-decoration: none; font-weight: 700; padding: 12px; border-radius: 10px; }
 
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 1000; }
@@ -100,6 +107,8 @@
       <select id="sortSelect" class="filter-select" onchange="aplicarFiltrosYOrden()">
         <option value="price-asc">💰 Menor precio primero</option>
         <option value="price-desc">💎 Mayor precio primero</option>
+        <option value="rating">⭐ Mejor calificación</option>
+        <option value="sales">🔥 Más ventas</option>
         <option value="recent">✨ Más recientes</option>
       </select>
 
@@ -254,6 +263,10 @@
         resultado.sort((a, b) => a.price_per_slot - b.price_per_slot);
       } else if (criterioOrden === 'price-desc') {
         resultado.sort((a, b) => b.price_per_slot - a.price_per_slot);
+      } else if (criterioOrden === 'rating') {
+        resultado.sort((a, b) => (b.seller_rating || 0) - (a.seller_rating || 0));
+      } else if (criterioOrden === 'sales') {
+        resultado.sort((a, b) => (b.seller_sales || 0) - (a.seller_sales || 0));
       } else if (criterioOrden === 'recent') {
         resultado.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
       }
@@ -280,6 +293,10 @@
         
         const planName = offer.plans ? offer.plans.name : 'Plataforma';
         const phone = offer.whatsapp_number || '5491112345678';
+        const sales = offer.seller_sales || 0;
+        const rating = offer.seller_rating ? offer.seller_rating.toFixed(1) : '5.0';
+        const isNew = offer.is_new_user || sales === 0;
+
         const mensajeWS = encodeURIComponent(`¡Hola! Vi tu oferta de ${planName} ($${offer.price_per_slot}/mes) en Compartí y me interesa ocupar un cupo.`);
         const urlWhatsApp = `https://wa.me/${phone}?text=${mensajeWS}`;
 
@@ -287,6 +304,12 @@
           <div>
             <div class="card-header">
               <div class="service-badge">${planName}</div>
+              ${isNew ? '<span class="new-badge">🌱 Nuevo</span>' : ''}
+            </div>
+
+            <div class="seller-meta">
+              <span class="rating-badge">⭐ ${rating}</span>
+              <span class="sales-badge">🛒 ${sales} ${sales === 1 ? 'venta' : 'ventas'}</span>
             </div>
 
             <div class="price-tag">
