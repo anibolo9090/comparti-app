@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Preguntas Frecuentes — Compartí</title>
+  <style>
+    :root { 
+      --primary: #3b82f6; 
+      --bg: #0f172a; 
+      --card-bg: #1e293b; 
+      --card-border: #334155; 
+      --text: #f8fafc; 
+      --text-muted: #94a3b8; 
+    }
+    * { box-sizing: border-box; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
+    
+    .navbar { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(8px); border-bottom: 1px solid var(--card-border); padding: 12px 20px; position: sticky; top: 0; z-index: 100; }
+    .navbar-inner { max-width: 800px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+    .logo { font-size: 1.25rem; font-weight: 800; color: #60a5fa; text-decoration: none; }
+
+    .main-container { max-width: 800px; margin: 24px auto; padding: 0 16px; }
+    h1 { font-size: 1.5rem; margin-bottom: 20px; background: linear-gradient(135deg, #60a5fa 0%, #a855f7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+    .faq-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 18px; margin-bottom: 14px; }
+    .faq-title { font-size: 1.05rem; font-weight: 700; color: #60a5fa; margin-bottom: 8px; }
+    .faq-desc { font-size: 0.9rem; color: #cbd5e1; line-height: 1.5; }
+
+    .alert-box { background: rgba(234, 179, 8, 0.1); border: 1px solid rgba(234, 179, 8, 0.3); border-radius: 14px; padding: 16px; color: #facc15; font-size: 0.88rem; margin-bottom: 20px; line-height: 1.4; }
+
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 1000; }
+    .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); text-decoration: none; font-size: 0.75rem; font-weight: 600; gap: 2px; }
+    .nav-item.active { color: #60a5fa; }
+    .nav-item .icon { font-size: 1.2rem; }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="logo">🤝 Compartí</a>
+    </div>
+  </nav>
+
+  <div class="main-container">
+    <h1>Preguntas Frecuentes y Seguridad</h1>
+
+    <div class="alert-box">
+      🛡️ <strong>Consejo de seguridad:</strong> Recomendamos solicitar primero la prueba del perfil antes de realizar la transferencia o solicitar el pago mes a mes.
+    </div>
+
+    <div class="faq-card">
+      <div class="faq-title">❓ ¿Cómo funciona Compartí?</div>
+      <div class="faq-desc">Compartí conecta a dueños de cuentas con planes familiares/multidispositivo con personas que quieren un cupo individual por una fracción del precio oficial.</div>
+    </div>
+
+    <div class="faq-card">
+      <div class="faq-title">💳 ¿Cómo se realiza el pago?</div>
+      <div class="faq-desc">El pago se acuerda directamente entre comprador y vendedor vía WhatsApp (Mercado Pago, transferencia bancaria, etc.). Compartí no cobra comisiones por transacción.</div>
+    </div>
+
+    <div class="faq-card">
+      <div class="faq-title">🔒 ¿Qué hago si la contraseña cambia o el vendedor no responde?</div>
+      <div class="faq-desc">Podés presionar el botón <strong>🚨 Reportar publicación</strong> en la tarjeta de la oferta. Revisamos constantemente los reportes para dar de baja vendedores que incurran en malas prácticas.</div>
+    </div>
+
+    <div class="faq-card">
+      <div class="faq-title">📌 ¿Cómo creo mi propio PIN en el perfil?</div>
+      <div class="faq-desc">En servicios como Netflix o Disney+, el titular de la cuenta puede configurar un PIN de 4 dígitos en tu perfil individual para garantizar tu privacidad dentro del grupo.</div>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <a href="index.html" class="nav-item">
+      <span class="icon">🏠</span>
+      <span>Inicio</span>
+    </a>
+    <a href="explorar.html" class="nav-item">
+      <span class="icon">🔍</span>
+      <span>Explorar</span>
+    </a>
+    <a href="publicar.html" class="nav-item">
+      <span class="icon">➕</span>
+      <span>Publicar</span>
+    </a>
+    <a href="mis-ofertas.html" class="nav-item">
+      <span class="icon">📂</span>
+      <span>Mis Ofertas</span>
+    </a>
+  </div>
+
+</body>
+</html>
