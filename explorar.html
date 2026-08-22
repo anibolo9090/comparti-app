@@ -6,36 +6,67 @@
   <title>Explorar Ofertas — Compartí</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    body { font-family: system-ui, -apple-system, sans-serif; background: #f8fafc; color: #0f172a; margin: 0; padding: 20px; }
-    .header { display: flex; justify-content: space-between; align-items: center; max-width: 800px; margin: 0 auto 16px; }
-    .header h1 { font-size: 1.5rem; margin: 0; }
-    .btn-back { color: #2563eb; text-decoration: none; font-weight: 600; }
-    .search-box { max-width: 800px; margin: 0 auto 20px; }
-    .search-input { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; box-sizing: border-box; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; max-width: 800px; margin: 0 auto; }
-    .card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
-    .badge { display: inline-block; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; margin-bottom: 10px; }
-    .badge-permitida { background: #dcfce7; color: #166534; }
-    .badge-condicionada { background: #fef9c3; color: #854d0e; }
-    .service-title { font-size: 1.25rem; font-weight: bold; margin: 0 0 4px; }
-    .price { font-size: 1.5rem; font-weight: bold; color: #0f172a; }
-    .details { color: #475569; font-size: 0.85rem; margin: 12px 0; line-height: 1.4; }
-    .btn-action { display: block; text-align: center; background: #2563eb; color: #fff; padding: 10px; border-radius: 6px; text-decoration: none; font-weight: 600; }
-    #status { text-align: center; color: #64748b; font-weight: 600; margin-top: 20px; }
+    :root { --primary: #2563eb; --bg: #f8fafc; --text: #0f172a; }
+    * { box-sizing: border-box; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 40px; }
+    
+    /* Header fijo */
+    .navbar { background: #fff; border-bottom: 1px solid #e2e8f0; padding: 12px 20px; position: sticky; top: 0; z-index: 100; }
+    .navbar-inner { max-width: 800px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+    .logo { font-size: 1.25rem; font-weight: 800; color: #2563eb; text-decoration: none; display: flex; align-items: center; gap: 6px; }
+    .btn-nav { background: #eff6ff; color: #2563eb; padding: 6px 14px; border-radius: 20px; text-decoration: none; font-size: 0.85rem; font-weight: 600; }
+
+    .main-container { max-width: 800px; margin: 20px auto; padding: 0 16px; }
+    h1 { font-size: 1.5rem; margin-bottom: 16px; }
+
+    /* Buscador */
+    .search-box { position: relative; margin-bottom: 24px; }
+    .search-input { width: 100%; padding: 14px 16px; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 1rem; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.02); outline: none; transition: all 0.2s; }
+    .search-input:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }
+
+    /* Grid de Tarjetas */
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+    .card { background: #fff; border-radius: 16px; padding: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s; }
+    .card:active { transform: scale(0.99); }
+    
+    .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+    .service-badge { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: 1.1rem; }
+    
+    .status-pill { padding: 4px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; }
+    .status-permitida { background: #dcfce7; color: #166534; }
+    .status-condicionada { background: #fef9c3; color: #854d0e; }
+
+    .price-tag { font-size: 1.6rem; font-weight: 800; color: #0f172a; margin: 8px 0; }
+    .price-tag small { font-size: 0.85rem; font-weight: 500; color: #64748b; }
+
+    .details-box { background: #f1f5f9; padding: 10px 12px; border-radius: 8px; font-size: 0.85rem; color: #334155; margin: 12px 0 16px; line-height: 1.4; }
+
+    /* Botón de WhatsApp */
+    .btn-ws { display: flex; align-items: center; justify-content: center; gap: 8px; background: #25D366; color: #fff; text-decoration: none; font-weight: 700; padding: 12px; border-radius: 10px; transition: background 0.2s; }
+    .btn-ws:hover { background: #1eb957; }
+
+    #status { text-align: center; color: #64748b; font-weight: 600; margin-top: 40px; }
   </style>
 </head>
 <body>
-  <div class="header">
+
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="logo">🤝 Compartí</a>
+      <a href="publicar.html" class="btn-nav">+ Publicar</a>
+    </div>
+  </nav>
+
+  <div class="main-container">
     <h1>Ofertas Disponibles</h1>
-    <a href="index.html" class="btn-back">← Volver</a>
-  </div>
 
-  <div class="search-box">
-    <input type="text" id="searchInput" class="search-input" placeholder="🔍 Buscar por plataforma (ej: Spotify, Netflix, Disney)...">
-  </div>
+    <div class="search-box">
+      <input type="text" id="searchInput" class="search-input" placeholder="🔍 Buscar por plataforma (ej: Spotify, Netflix)...">
+    </div>
 
-  <div id="status">Cargando ofertas activas...</div>
-  <div class="grid" id="offers-grid"></div>
+    <div id="status">Cargando ofertas activas...</div>
+    <div class="grid" id="offers-grid"></div>
+  </div>
 
   <script>
     const SUPABASE_URL = 'https://xygatgvzdniivzwndaxy.supabase.co';
@@ -49,7 +80,7 @@
 
       const { data: offers, error } = await db
         .from('offers')
-        .select('*, plans(name, compatibility_status)');
+        .select('*, plans(name, compatibility_status, services(icon, color))');
 
       if (error) {
         statusEl.innerText = 'Error al cargar ofertas.';
@@ -73,7 +104,7 @@
 
       if (lista.length === 0) {
         statusEl.style.display = 'block';
-        statusEl.innerText = 'No se encontraron ofertas que coincidan con la búsqueda.';
+        statusEl.innerText = 'No se encontraron ofertas.';
         return;
       } else {
         statusEl.style.display = 'none';
@@ -84,6 +115,7 @@
         card.className = 'card';
         
         const planName = offer.plans ? offer.plans.name : 'Servicio general';
+        const icon = (offer.plans && offer.plans.services) ? offer.plans.services.icon : '📺';
         const status = offer.plans ? offer.plans.compatibility_status : 'permitida';
         const statusText = status === 'permitida' ? '🟢 Permitida' : '🟡 Condicionada';
         
@@ -92,20 +124,32 @@
         const urlWhatsApp = `https://wa.me/${phone}?text=${mensajeWS}`;
 
         card.innerHTML = `
-          <span class="badge badge-${status}">${statusText}</span>
-          <h2 class="service-title">${planName}</h2>
-          <div class="price">$${offer.price_per_slot.toLocaleString('es-AR')} <small style="font-size:0.8rem;color:#64748b;">/ mes</small></div>
-          <div class="details">
-            📍 Cupos disponibles: <strong>${offer.available_slots}</strong><br>
-            💬 ${offer.description || 'Sin notas del vendedor'}
+          <div>
+            <div class="card-header">
+              <div class="service-badge">
+                <span>${icon}</span> ${planName}
+              </div>
+              <span class="status-pill status-${status}">${statusText}</span>
+            </div>
+
+            <div class="price-tag">
+              $${offer.price_per_slot.toLocaleString('es-AR')} <small>/ mes</small>
+            </div>
+
+            <div class="details-box">
+              📍 Cupos libres: <strong>${offer.available_slots}</strong><br>
+              💬 ${offer.description || 'Sin detalles adicionales'}
+            </div>
           </div>
-          <a href="${urlWhatsApp}" target="_blank" class="btn-action">Solicitar cupo</a>
+
+          <a href="${urlWhatsApp}" target="_blank" class="btn-ws">
+            <span>💬</span> Contactar por WhatsApp
+          </a>
         `;
         gridEl.appendChild(card);
       });
     }
 
-    // Buscador en tiempo real
     document.getElementById('searchInput').addEventListener('input', (e) => {
       const busqueda = e.target.value.toLowerCase().trim();
       const filtradas = todastLasOfertas.filter(o => {
