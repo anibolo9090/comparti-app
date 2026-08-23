@@ -4,6 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Compartí — Ahorrá compartiendo tus cuentas</title>
+  
+  <!-- SDK oficial de Google Sign-In -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
   <style>
     :root { 
       --primary: #3b82f6; 
@@ -24,7 +28,7 @@
     .btn-login-nav:hover { background: #1d4ed8; }
 
     /* Menú usuario */
-    .user-menu { display: none; position: absolute; right: 0; top: 45px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; width: 190px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 300; overflow: hidden; }
+    .user-menu { display: none; position: absolute; right: 0; top: 45px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; width: 210px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 300; overflow: hidden; }
     .user-menu-item { padding: 10px 14px; font-size: 0.85rem; color: var(--text); display: block; text-decoration: none; border-bottom: 1px solid var(--card-border); cursor: pointer; }
     .user-menu-item:hover { background: rgba(59, 130, 246, 0.1); }
     .user-menu-item.logout { color: #f87171; border-bottom: none; }
@@ -44,7 +48,7 @@
     .calc-title { font-size: 1.05rem; color: #60a5fa; margin-top: 0; text-align: center; margin-bottom: 2px; }
     .calc-subtitle { font-size: 0.8rem; color: var(--text-muted); text-align: center; margin-bottom: 12px; }
 
-    .service-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; max-height: 220px; overflow-y: auto; padding-right: 4px; }
+    .service-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; max-height: 260px; overflow-y: auto; padding-right: 4px; }
     .service-item { display: flex; justify-content: space-between; align-items: center; background: #0f172a; border: 1px solid var(--card-border); padding: 8px 12px; border-radius: 10px; cursor: pointer; }
     .service-item.selected { border-color: var(--primary); background: rgba(59, 130, 246, 0.08); }
     
@@ -61,23 +65,20 @@
 
     /* Modal */
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.85); z-index: 2000; justify-content: center; align-items: center; padding: 16px; }
-    .modal-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; width: 100%; max-width: 380px; padding: 24px; position: relative; }
+    .modal-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; width: 100%; max-width: 380px; padding: 24px; position: relative; text-align: center; }
     .modal-close { position: absolute; top: 14px; right: 16px; background: none; border: none; color: var(--text-muted); font-size: 1.4rem; cursor: pointer; }
     
-    .btn-google { width: 100%; background: #ffffff; color: #3c4043; border: 1px solid var(--card-border); padding: 10px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; margin-bottom: 14px; }
-    .btn-google:hover { background: #f1f3f4; }
-    
-    .auth-divider { display: flex; align-items: center; text-align: center; margin: 14px 0; color: var(--text-muted); font-size: 0.75rem; }
+    .auth-divider { display: flex; align-items: center; text-align: center; margin: 16px 0; color: var(--text-muted); font-size: 0.75rem; }
     .auth-divider::before, .auth-divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--card-border); }
     .auth-divider span { padding: 0 10px; }
 
-    .google-account-option { background: #0f172a; border: 1px solid var(--card-border); border-radius: 10px; padding: 12px; margin-bottom: 8px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: border-color 0.2s; }
-    .google-account-option:hover { border-color: var(--primary); }
-
-    .form-group { margin-bottom: 12px; }
+    .form-group { margin-bottom: 12px; text-align: left; }
     .form-label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px; }
     .form-input { width: 100%; background: #0f172a; border: 1px solid var(--card-border); padding: 10px; border-radius: 8px; color: #fff; font-size: 0.9rem; }
     .btn-submit { width: 100%; background: var(--primary); color: #fff; border: none; padding: 10px; border-radius: 8px; font-weight: 700; cursor: pointer; margin-top: 8px; }
+
+    /* Contenedor del botón oficial de Google */
+    #googleBtnContainer { display: flex; justify-content: center; margin-top: 10px; }
 
     /* Navegación inferior */
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 1000; }
@@ -137,41 +138,30 @@
     </div>
   </div>
 
-  <!-- MODAL -->
+  <!-- MODAL DE LOGIN -->
   <div class="modal-overlay" id="authModal">
     <div class="modal-box">
       <button class="modal-close" onclick="cerrarModal()">&times;</button>
       
-      <!-- Contenedor dinámico del modal -->
-      <div id="modalContentContainer">
-        <h3 style="margin-top:0; color:#60a5fa; text-align:center;">Iniciar Sesión</h3>
-        
-        <!-- BOTÓN DE GOOGLE -->
-        <button type="button" class="btn-google" onclick="mostrarSelectorGoogle()">
-          <svg width="18" height="18" viewBox="0 0 24 24" style="margin-right: 8px; vertical-align: middle;">
-            <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.8 14.8 1 12 1 7.4 1 3.5 3.6 1.6 7.4l3.7 2.9C6.2 7.1 8.9 5 12 5z"/>
-            <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"/>
-            <path fill="#FBBC05" d="M5.3 14.7c-.2-.7-.4-1.5-.4-2.7s.2-2 .4-2.7L1.6 6.4C.6 8.4 0 10.6 0 13s.6 4.6 1.6 6.6l3.7-2.9z"/>
-            <path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3.1 0-5.8-2.1-6.7-5.3L1.6 15.6C3.5 19.4 7.4 23 12 23z"/>
-          </svg>
-          Continuar con Google
-        </button>
+      <h3 style="margin-top:0; color:#60a5fa;">Iniciar Sesión</h3>
+      <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom: 16px;">Accedé con tus cuentas reales de Google</p>
+      
+      <!-- BOTÓN OFICIAL DE GOOGLE -->
+      <div id="googleBtnContainer"></div>
 
-        <div class="auth-divider"><span>o con email</span></div>
+      <div class="auth-divider"><span>o con email alternativo</span></div>
 
-        <form onsubmit="realizarLogin(event)">
-          <div class="form-group">
-            <label class="form-label">Correo electrónico</label>
-            <input type="email" id="inputEmail" class="form-input" required placeholder="tu@email.com">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Contraseña</label>
-            <input type="password" class="form-input" required placeholder="••••••••">
-          </div>
-          <button type="submit" class="btn-submit">Entrar</button>
-        </form>
-      </div>
-
+      <form onsubmit="realizarLoginEmail(event)">
+        <div class="form-group">
+          <label class="form-label">Correo electrónico</label>
+          <input type="email" id="inputEmail" class="form-input" required placeholder="tu@email.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Contraseña</label>
+          <input type="password" class="form-input" required placeholder="••••••••">
+        </div>
+        <button type="submit" class="btn-submit">Entrar con Email</button>
+      </form>
     </div>
   </div>
 
@@ -183,21 +173,70 @@
   </div>
 
   <script>
-    // Datos de la calculadora
     const serviciosData = [
-      { id: 'netflix', name: 'Netflix', full: 21000, comparti: 4500 },
-      { id: 'disney', name: 'Disney+', full: 18400, comparti: 4000 },
-      { id: 'spotify', name: 'Spotify', full: 7500, comparti: 2000 },
-      { id: 'chatgpt', name: 'ChatGPT Plus', full: 32000, comparti: 8000 },
-      { id: 'max', name: 'Max', full: 14000, comparti: 3500 }
+      { id: 'netflix', name: '🎬 Netflix (Estándar)', full: 21000, comparti: 4500 },
+      { id: 'disney', name: '🏰 Disney+ (Premium)', full: 18400, comparti: 4000 },
+      { id: 'spotify', name: '🎧 Spotify (Familiar)', full: 7500, comparti: 2000 },
+      { id: 'chatgpt', name: '🤖 ChatGPT Plus', full: 32000, comparti: 8000 },
+      { id: 'max', name: '💜 Max (Platino)', full: 14000, comparti: 3500 },
+      { id: 'prime', name: '📦 Amazon Prime Video', full: 6500, comparti: 2000 },
+      { id: 'youtube', name: '▶️ YouTube Premium', full: 9500, comparti: 2500 },
+      { id: 'crunchyroll', name: '🍥 Crunchyroll', full: 6000, comparti: 1500 }
     ];
 
-    // Inicializar al cargar la página
     window.onload = function() {
       renderizarCalculadora();
       chequearSesionNavbar();
+      inicializarGoogleAuth();
     };
 
+    // --- CONFIGURACIÓN DE GOOGLE SIGN-IN REAL ---
+    function inicializarGoogleAuth() {
+      if (typeof google !== 'undefined') {
+        google.accounts.id.initialize({
+          client_id: '572281007707-5k25l8rvq23sj6lh7h1f0u4speips678.apps.googleusercontent.com',
+          callback: manejarRespuestaGoogle
+        });
+
+        google.accounts.id.renderButton(
+          document.getElementById('googleBtnContainer'),
+          { theme: 'outline', size: 'large', width: '300', text: 'continue_with', locale: 'es' }
+        );
+      }
+    }
+
+    // Decodificador del Token JWT que devuelve Google de forma segura
+    function parseJwt(token) {
+      try {
+        let base64Url = token.split('.')[1];
+        let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        let jsonPayload = decodeURIComponent(atob(base64).split('').map(c => {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload);
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function manejarRespuestaGoogle(response) {
+      const responsePayload = parseJwt(response.credential);
+      if (responsePayload) {
+        const email = responsePayload.email;
+        const nombre = responsePayload.name;
+
+        localStorage.setItem('usuarioLogueado', 'true');
+        localStorage.setItem('usuarioEmail', email);
+        
+        cerrarModal();
+        chequearSesionNavbar();
+        alert(`¡Hola ${nombre}! Has iniciado sesión con tu cuenta de Google (${email}).`);
+      } else {
+        alert('Error al procesar las credenciales de Google.');
+      }
+    }
+
+    // --- RESTO DE FUNCIONES ---
     function renderizarCalculadora() {
       const contenedor = document.getElementById('serviceList');
       if (!contenedor) return;
@@ -251,7 +290,6 @@
       document.getElementById('sumAhorro').innerText = '$' + (totalFull - totalComparti).toLocaleString();
     }
 
-    // Manejo de Sesión y Modales
     function chequearSesionNavbar() {
       const logueado = localStorage.getItem('usuarioLogueado');
       const email = localStorage.getItem('usuarioEmail');
@@ -271,24 +309,22 @@
         const menu = document.getElementById('userMenu');
         menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
       } else {
-        restaurarModal();
         document.getElementById('authModal').style.display = 'flex';
       }
     }
 
     function cerrarModal() {
       document.getElementById('authModal').style.display = 'none';
-      restaurarModal();
     }
 
-    function realizarLogin(e) {
+    function realizarLoginEmail(e) {
       e.preventDefault();
       const email = document.getElementById('inputEmail').value;
       localStorage.setItem('usuarioLogueado', 'true');
       localStorage.setItem('usuarioEmail', email);
       cerrarModal();
       chequearSesionNavbar();
-      alert('¡Sesión iniciada correctamente!');
+      alert('¡Sesión iniciada con email correctamente!');
     }
 
     function cerrarSesion() {
@@ -297,73 +333,6 @@
       document.getElementById('userMenu').style.display = 'none';
       chequearSesionNavbar();
       alert('Sesión cerrada.');
-    }
-
-    // Funciones del selector de Google
-    function mostrarSelectorGoogle() {
-      const container = document.getElementById('modalContentContainer');
-      container.innerHTML = `
-        <h3 style="margin-top:0; color: #60a5fa; text-align:center;">Elige una cuenta de Google</h3>
-        <p style="font-size:0.8rem; color:var(--text-muted); text-align:center; margin-bottom:16px;">para continuar en <strong>Compartí</strong></p>
-        
-        <div class="google-account-option" onclick="seleccionarCuentaGoogle('juan.perez@gmail.com', 'Juan Pérez')">
-          <div style="background:#3b82f6; color:#fff; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold;">JP</div>
-          <div>
-            <div style="font-size:0.9rem; font-weight:600;">Juan Pérez</div>
-            <div style="font-size:0.75rem; color:var(--text-muted);">juan.perez@gmail.com</div>
-          </div>
-        </div>
-
-        <div class="google-account-option" onclick="seleccionarCuentaGoogle('maria.dev@gmail.com', 'María Developer')">
-          <div style="background:#a855f7; color:#fff; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold;">MD</div>
-          <div>
-            <div style="font-size:0.9rem; font-weight:600;">María Developer</div>
-            <div style="font-size:0.75rem; color:var(--text-muted);">maria.dev@gmail.com</div>
-          </div>
-        </div>
-
-        <button type="button" onclick="restaurarModal()" style="background:none; border:none; color:var(--text-muted); width:100%; margin-top:14px; cursor:pointer; font-size:0.8rem;">← Volver</button>
-      `;
-    }
-
-    function seleccionarCuentaGoogle(email, nombre) {
-      localStorage.setItem('usuarioLogueado', 'true');
-      localStorage.setItem('usuarioEmail', email);
-      chequearSesionNavbar();
-      cerrarModal();
-      alert(`¡Bienvenido/a ${nombre}! Sesión iniciada con Google.`);
-    }
-
-    function restaurarModal() {
-      const container = document.getElementById('modalContentContainer');
-      if (!container) return;
-      container.innerHTML = `
-        <h3 style="margin-top:0; color:#60a5fa; text-align:center;">Iniciar Sesión</h3>
-        
-        <button type="button" class="btn-google" onclick="mostrarSelectorGoogle()">
-          <svg width="18" height="18" viewBox="0 0 24 24" style="margin-right: 8px; vertical-align: middle;">
-            <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.8 14.8 1 12 1 7.4 1 3.5 3.6 1.6 7.4l3.7 2.9C6.2 7.1 8.9 5 12 5z"/>
-            <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"/>
-            <path fill="#FBBC05" d="M5.3 14.7c-.2-.7-.4-1.5-.4-2.7s.2-2 .4-2.7L1.6 6.4C.6 8.4 0 10.6 0 13s.6 4.6 1.6 6.6l3.7-2.9z"/>
-            <path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3.1 0-5.8-2.1-6.7-5.3L1.6 15.6C3.5 19.4 7.4 23 12 23z"/>
-          </svg>
-          Continuar con Google
-        </button>
-
-        <div class="auth-divider"><span>o con email</span></div>
-
-        <form onsubmit="realizarLogin(event)">
-          <div class="form-group">
-            <label class="form-label">Correo electrónico</label>
-            <input type="email" id="inputEmail" class="form-input" required placeholder="tu@email.com">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Contraseña</label>
-            <input type="password" class="form-input" required placeholder="••••••••">
-          </div>
-          <button type="submit" class="btn-submit">Entrar</button>
-        </form>
-      `;
     }
   </script>
 </body>
