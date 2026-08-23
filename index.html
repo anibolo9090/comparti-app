@@ -28,10 +28,14 @@
     .btn-login-nav:hover { background: #1d4ed8; }
 
     /* Menú usuario */
-    .user-menu { display: none; position: absolute; right: 0; top: 45px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; width: 210px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 300; overflow: hidden; }
+    .user-menu { display: none; position: absolute; right: 0; top: 45px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; width: 220px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 300; overflow: hidden; }
     .user-menu-item { padding: 10px 14px; font-size: 0.85rem; color: var(--text); display: block; text-decoration: none; border-bottom: 1px solid var(--card-border); cursor: pointer; }
     .user-menu-item:hover { background: rgba(59, 130, 246, 0.1); }
     .user-menu-item.logout { color: #f87171; border-bottom: none; }
+
+    /* Insignia de verificado */
+    .badge-verified { background: #065f46; color: #34d399; font-size: 0.65rem; padding: 2px 6px; border-radius: 6px; font-weight: bold; display: inline-block; margin-left: 6px; vertical-align: middle; }
+    .badge-unverified { background: #7f1d1d; color: #fca5a5; font-size: 0.65rem; padding: 2px 6px; border-radius: 6px; font-weight: bold; display: inline-block; margin-left: 6px; vertical-align: middle; }
 
     .main-container { max-width: 800px; margin: 20px auto; padding: 0 16px; }
     
@@ -63,7 +67,7 @@
     .calc-summary { background: #0f172a; border: 1px solid var(--card-border); border-radius: 10px; padding: 12px; display: flex; justify-content: space-around; align-items: center; text-align: center; }
     .summary-block div:first-child { font-size: 0.7rem; color: var(--text-muted); margin-bottom: 2px; }
 
-    /* Modal */
+    /* Modales */
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.85); z-index: 2000; justify-content: center; align-items: center; padding: 16px; }
     .modal-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; width: 100%; max-width: 380px; padding: 24px; position: relative; text-align: center; }
     .modal-close { position: absolute; top: 14px; right: 16px; background: none; border: none; color: var(--text-muted); font-size: 1.4rem; cursor: pointer; }
@@ -77,7 +81,6 @@
     .form-input { width: 100%; background: #0f172a; border: 1px solid var(--card-border); padding: 10px; border-radius: 8px; color: #fff; font-size: 0.9rem; }
     .btn-submit { width: 100%; background: var(--primary); color: #fff; border: none; padding: 10px; border-radius: 8px; font-weight: 700; cursor: pointer; margin-top: 8px; }
 
-    /* Contenedor del botón oficial de Google */
     #googleBtnContainer { display: flex; justify-content: center; margin-top: 10px; }
 
     /* Navegación inferior */
@@ -97,6 +100,7 @@
         <div class="user-menu" id="userMenu">
           <div class="user-menu-item" style="color: #60a5fa; font-weight: bold;" id="userEmailDisplay">Cuenta</div>
           <a href="mis-ofertas.html" class="user-menu-item">📂 Mis Ofertas</a>
+          <div class="user-menu-item" onclick="abrirModalKyc()">🛡️ Verificación KYC <span id="kycStatusBadge"></span></div>
           <div class="user-menu-item logout" onclick="cerrarSesion()">Cerrar Sesión</div>
         </div>
       </div>
@@ -146,7 +150,6 @@
       <h3 style="margin-top:0; color:#60a5fa;">Iniciar Sesión</h3>
       <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom: 16px;">Accedé con tus cuentas reales de Google</p>
       
-      <!-- BOTÓN OFICIAL DE GOOGLE -->
       <div id="googleBtnContainer"></div>
 
       <div class="auth-divider"><span>o con email alternativo</span></div>
@@ -161,6 +164,34 @@
           <input type="password" class="form-input" required placeholder="••••••••">
         </div>
         <button type="submit" class="btn-submit">Entrar con Email</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL DE KYC / VERIFICACIÓN DE IDENTIDAD -->
+  <div class="modal-overlay" id="kycModal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="cerrarModalKyc()">&times;</button>
+      
+      <h3 style="margin-top:0; color:#60a5fa;">Verificación de Identidad (KYC)</h3>
+      <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom: 16px;">
+        Este proceso es opcional pero te otorga una insignia de confianza en tus publicaciones y grupos.
+      </p>
+
+      <form onsubmit="enviarKyc(event)">
+        <div class="form-group">
+          <label class="form-label">Nombre y Apellido completo</label>
+          <input type="text" id="kycNombre" class="form-input" required placeholder="Ej: Juan Pérez">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Número de DNI / Documento</label>
+          <input type="text" id="kycDocumento" class="form-input" required placeholder="Ej: 35123456">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Teléfono de contacto (WhatsApp)</label>
+          <input type="tel" id="kycTelefono" class="form-input" required placeholder="+54 9 11 ...">
+        </div>
+        <button type="submit" class="btn-submit">Solicitar Verificación</button>
       </form>
     </div>
   </div>
@@ -187,10 +218,10 @@
     window.onload = function() {
       renderizarCalculadora();
       chequearSesionNavbar();
+      actualizarBadgeKyc();
       inicializarGoogleAuth();
     };
 
-    // --- CONFIGURACIÓN DE GOOGLE SIGN-IN REAL ---
     function inicializarGoogleAuth() {
       if (typeof google !== 'undefined') {
         google.accounts.id.initialize({
@@ -205,7 +236,6 @@
       }
     }
 
-    // Decodificador del Token JWT que devuelve Google de forma segura
     function parseJwt(token) {
       try {
         let base64Url = token.split('.')[1];
@@ -230,13 +260,12 @@
         
         cerrarModal();
         chequearSesionNavbar();
-        alert(`¡Hola ${nombre}! Has iniciado sesión con tu cuenta de Google (${email}).`);
+        alert(`¡Hola ${nombre}! Has iniciado sesión con Google (${email}).`);
       } else {
         alert('Error al procesar las credenciales de Google.');
       }
     }
 
-    // --- RESTO DE FUNCIONES ---
     function renderizarCalculadora() {
       const contenedor = document.getElementById('serviceList');
       if (!contenedor) return;
@@ -330,9 +359,50 @@
     function cerrarSesion() {
       localStorage.removeItem('usuarioLogueado');
       localStorage.removeItem('usuarioEmail');
+      localStorage.removeItem('usuarioKyc');
       document.getElementById('userMenu').style.display = 'none';
       chequearSesionNavbar();
+      actualizarBadgeKyc();
       alert('Sesión cerrada.');
+    }
+
+    // --- FUNCIONES KYC ---
+    function abrirModalKyc() {
+      const logueado = localStorage.getItem('usuarioLogueado');
+      if (logueado !== 'true') {
+        alert('Debes iniciar sesión primero para verificar tu cuenta.');
+        document.getElementById('userMenu').style.display = 'none';
+        document.getElementById('authModal').style.display = 'flex';
+        return;
+      }
+      document.getElementById('userMenu').style.display = 'none';
+      document.getElementById('kycModal').style.display = 'flex';
+    }
+
+    function cerrarModalKyc() {
+      document.getElementById('kycModal').style.display = 'none';
+    }
+
+    function enviarKyc(e) {
+      e.preventDefault();
+      localStorage.setItem('usuarioKyc', 'verificado');
+      cerrarModalKyc();
+      actualizarBadgeKyc();
+      alert('¡Verificación KYC enviada con éxito! Tu perfil ahora cuenta con la insignia de verificado.');
+    }
+
+    function actualizarBadgeKyc() {
+      const kycStatus = localStorage.getItem('usuarioKyc');
+      const badge = document.getElementById('kycStatusBadge');
+      if (!badge) return;
+
+      if (kycStatus === 'verificado') {
+        badge.className = 'badge-verified';
+        badge.innerText = 'Verificado';
+      } else {
+        badge.className = 'badge-unverified';
+        badge.innerText = 'Sin verificar';
+      }
     }
   </script>
 </body>
