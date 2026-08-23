@@ -25,10 +25,11 @@
     .form-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
     .form-title { font-size: 1.2rem; color: #60a5fa; margin-top: 0; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
 
-    .form-group { margin-bottom: 16px; text-align: left; }
-    .form-label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 6px; font-weight: 600; }
-    .form-input, .form-select { width: 100%; background: #0f172a; border: 1px solid var(--card-border); padding: 12px; border-radius: 10px; color: #fff; font-size: 0.95rem; }
+    .form-group { margin-bottom: 14px; text-align: left; }
+    .form-label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 5px; font-weight: 600; }
+    .form-input, .form-select, .form-textarea { width: 100%; background: #0f172a; border: 1px solid var(--card-border); padding: 10px 12px; border-radius: 10px; color: #fff; font-size: 0.9rem; }
     .form-select { cursor: pointer; }
+    .form-textarea { resize: vertical; min-height: 70px; }
     
     .btn-submit { width: 100%; background: var(--primary); color: #fff; border: none; padding: 12px; border-radius: 10px; font-weight: 700; font-size: 1rem; cursor: pointer; margin-top: 10px; }
     .btn-submit:hover { background: #2563eb; }
@@ -48,12 +49,12 @@
 
   <div class="main-container">
     <div class="form-box">
-      <h2 class="form-title">➕ Publicar un nuevo cupo</h2>
+      <h2 class="form-title">➕ Publicar un nuevo grupo</h2>
       
       <form onsubmit="publicarCupo(event)">
         <div class="form-group">
           <label class="form-label">Seleccioná la plataforma</label>
-          <select id="pubServicio" class="form-select" onchange="actualizarPrecioSugerido()" required>
+          <select id="pubServicio" class="form-select" onchange="actualizarDatosPlataforma()" required>
             <option value="netflix">🎬 Netflix (Estándar)</option>
             <option value="disney">🏰 Disney+ (Premium)</option>
             <option value="spotify">🎧 Spotify (Familiar)</option>
@@ -62,6 +63,10 @@
             <option value="prime">📦 Amazon Prime Video</option>
             <option value="youtube">▶️ YouTube Premium</option>
             <option value="crunchyroll">🍥 Crunchyroll</option>
+            <option value="paramount">⛰️ Paramount+</option>
+            <option value="apple">🍎 Apple TV+</option>
+            <option value="canva">🎨 Canva Pro</option>
+            <option value="microsoft">🪟 Microsoft 365 (Familiar)</option>
           </select>
         </div>
 
@@ -73,6 +78,21 @@
         <div class="form-group">
           <label class="form-label">Precio mensual por persona (ARS)</label>
           <input type="number" id="pubPrecio" class="form-input" required placeholder="Ej: 4500">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Correo o Usuario de la cuenta a compartir</label>
+          <input type="text" id="pubEmailCuenta" class="form-input" required placeholder="correo@ejemplo.com o usuario">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Contraseña de acceso</label>
+          <input type="text" id="pubPassCuenta" class="form-input" required placeholder="Contraseña del servicio">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Notas adicionales o reglas del grupo (Opcional)</label>
+          <textarea id="pubNotas" class="form-textarea" placeholder="Ej: Perfil 3 libre, pago por MercadoPago antes del 10..."></textarea>
         </div>
 
         <button type="submit" class="btn-submit">Publicar Oferta</button>
@@ -89,21 +109,25 @@
 
   <script>
     const serviciosData = {
-      netflix: { name: 'Netflix', comparti: 4500 },
-      disney: { name: 'Disney+', comparti: 4000 },
-      spotify: { name: 'Spotify', comparti: 2000 },
+      netflix: { name: 'Netflix (Estándar)', comparti: 4500 },
+      disney: { name: 'Disney+ (Premium)', comparti: 4000 },
+      spotify: { name: 'Spotify (Familiar)', comparti: 2000 },
       chatgpt: { name: 'ChatGPT Plus', comparti: 8000 },
-      max: { name: 'Max', comparti: 3500 },
-      prime: { name: 'Amazon Prime', comparti: 2000 },
+      max: { name: 'Max (Platino)', comparti: 3500 },
+      prime: { name: 'Amazon Prime Video', comparti: 2000 },
       youtube: { name: 'YouTube Premium', comparti: 2500 },
-      crunchyroll: { name: 'Crunchyroll', comparti: 1500 }
+      crunchyroll: { name: 'Crunchyroll', comparti: 1500 },
+      paramount: { name: 'Paramount+', comparti: 1800 },
+      apple: { name: 'Apple TV+', comparti: 2200 },
+      canva: { name: 'Canva Pro', comparti: 1500 },
+      microsoft: { name: 'Microsoft 365', comparti: 2000 }
     };
 
     window.onload = function() {
-      actualizarPrecioSugerido();
+      actualizarDatosPlataforma();
     };
 
-    function actualizarPrecioSugerido() {
+    function actualizarDatosPlataforma() {
       const select = document.getElementById('pubServicio').value;
       const inputPrecio = document.getElementById('pubPrecio');
       if (serviciosData[select]) {
@@ -124,16 +148,21 @@
       const servicioKey = document.getElementById('pubServicio').value;
       const cupos = document.getElementById('pubCupos').value;
       const precio = document.getElementById('pubPrecio').value;
+      const emailCuenta = document.getElementById('pubEmailCuenta').value;
+      const passCuenta = document.getElementById('pubPassCuenta').value;
+      const notas = document.getElementById('pubNotas').value;
 
       const nuevaOferta = {
         id: Date.now(),
         servicio: serviciosData[servicioKey].name,
         cupos: cupos,
         precio: precio,
-        usuario: localStorage.getItem('usuarioEmail') || 'Anónimo'
+        emailCuenta: emailCuenta,
+        passCuenta: passCuenta,
+        notas: notas,
+        usuarioCreador: localStorage.getItem('usuarioEmail') || 'Anónimo'
       };
 
-      // Guardar en el almacenamiento local del navegador para que aparezca en "Mis Ofertas"
       let misOfertas = JSON.parse(localStorage.getItem('misOfertasGuardadas')) || [];
       misOfertas.push(nuevaOferta);
       localStorage.setItem('misOfertasGuardadas', JSON.stringify(misOfertas));
