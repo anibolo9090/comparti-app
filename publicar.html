@@ -60,21 +60,25 @@
             <option value="netflix">🎬 Netflix</option>
             <option value="disney">🏰 Disney+</option>
             <option value="spotify">🎧 Spotify</option>
-            <option value="chatgpt">🤖 ChatGPT</option>
+            <option value="chatgpt">🤖 ChatGPT Plus</option>
             <option value="max">💜 Max</option>
             <option value="prime">📦 Amazon Prime Video</option>
             <option value="youtube">▶️ YouTube Premium</option>
             <option value="crunchyroll">🍥 Crunchyroll</option>
+            <option value="nba">🏀 NBA League Pass</option>
             <option value="paramount">⛰️ Paramount+</option>
+            <option value="vix">🔴 ViX Premium</option>
             <option value="apple">🍎 Apple TV+</option>
+            <option value="canva">🎨 Canva Pro</option>
+            <option value="microsoft">🪟 Microsoft 365</option>
           </select>
         </div>
 
-        <!-- Selección del tipo de plan (Dinámico según la plataforma) -->
+        <!-- Selección del tipo de plan dinámico -->
         <div class="form-group">
           <label class="form-label">Tipo de Suscripción / Plan</label>
           <select id="pubPlan" class="form-select" onchange="actualizarPrecioPlan()" required>
-            <!-- Se llena dinámicamente con JavaScript -->
+            <!-- Dinámico -->
           </select>
         </div>
 
@@ -100,7 +104,7 @@
 
         <div class="form-group">
           <label class="form-label">Notas adicionales o reglas del grupo (Opcional)</label>
-          <textarea id="pubNotas" class="form-textarea" placeholder="Ej: Perfil 3 libre, pago por MercadoPago antes del 10..."></textarea>
+          <textarea id="pubNotas" class="form-textarea" placeholder="Ej: Perfil 3 libre, pago por transferencia antes del 10..."></textarea>
         </div>
 
         <button type="submit" class="btn-submit">Publicar Oferta</button>
@@ -116,7 +120,6 @@
   </div>
 
   <script>
-    // Base de datos de plataformas con sus respectivos tipos de planes y precios por persona
     const planesData = {
       netflix: [
         { name: 'Estándar (2 pantallas)', precio: 4500 },
@@ -146,11 +149,23 @@
       crunchyroll: [
         { name: 'Mega Fan (4 dispositivos)', precio: 1500 }
       ],
+      nba: [
+        { name: 'NBA League Pass (Anual/Mensual)', precio: 7500 }
+      ],
       paramount: [
         { name: 'Paramount+ Estándar', precio: 1800 }
       ],
+      vix: [
+        { name: 'ViX Premium', precio: 2000 }
+      ],
       apple: [
         { name: 'Apple TV+ (Familiar)', precio: 2200 }
+      ],
+      canva: [
+        { name: 'Canva Pro (Equipo)', precio: 1500 }
+      ],
+      microsoft: [
+        { name: 'Microsoft 365 (Familiar)', precio: 2000 }
       ]
     };
 
@@ -162,10 +177,8 @@
       const selectServicio = document.getElementById('pubServicio').value;
       const selectPlan = document.getElementById('pubPlan');
       
-      // Limpiar planes actuales
       selectPlan.innerHTML = '';
 
-      // Cargar los planes correspondientes a la plataforma seleccionada
       const planes = planesData[selectServicio] || [];
       planes.forEach(p => {
         const option = document.createElement('option');
@@ -184,8 +197,7 @@
       
       const selectedOption = selectPlan.options[selectPlan.selectedIndex];
       if (selectedOption) {
-        const precioSugerido = selectedOption.getAttribute('data-precio');
-        inputPrecio.value = precioSugerido;
+        inputPrecio.value = selectedOption.getAttribute('data-precio');
       }
     }
 
