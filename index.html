@@ -84,7 +84,7 @@
   <nav class="navbar">
     <div class="navbar-inner">
       <a href="index.html" class="logo">🤝 Compartí</a>
-      <button class="btn-login-nav" onclick="openModal('login')">Ingresar / Registrarse</button>
+      <button class="btn-login-nav" id="navAuthBtn" onclick="openModal('login')">Ingresar / Registrarse</button>
     </div>
   </nav>
 
@@ -189,6 +189,14 @@
   </div>
 
   <script>
+    // Comprobar estado de sesión al cargar la página
+    window.onload = function() {
+      renderServices();
+      if (localStorage.getItem('usuarioLogueado') === 'true') {
+        document.getElementById('navAuthBtn').innerText = '👤 Mi Cuenta';
+      }
+    };
+
     // Lógica de la Calculadora
     const serviciosData = [
       { id: 'netflix', name: '🎬 Netflix (Estándar)', full: 21000, comparti: 4500 },
@@ -256,8 +264,6 @@
       document.getElementById('sumAhorro').innerText = '$' + ahorro.toLocaleString('es-AR');
     }
 
-    renderServices();
-
     // Lógica del Modal de Autenticación
     const authModal = document.getElementById('authModal');
     const formLogin = document.getElementById('formLogin');
@@ -290,6 +296,9 @@
 
     function handleAuth(event, type) {
       event.preventDefault();
+      localStorage.setItem('usuarioLogueado', 'true');
+      document.getElementById('navAuthBtn').innerText = '👤 Mi Cuenta';
+      
       alert(type === 'login' ? '¡Sesión iniciada con éxito!' : '¡Cuenta creada con éxito!');
       closeModal();
     }
