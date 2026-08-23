@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Compartí — Mis Ofertas</title>
+  <title>Compartí — Mis Ofertas y Seguridad</title>
   <style>
     :root { 
       --primary: #3b82f6; 
@@ -24,11 +24,11 @@
     .main-container { max-width: 800px; margin: 20px auto; padding: 0 16px; }
     .section-title { font-size: 1.2rem; color: #60a5fa; margin-bottom: 14px; }
 
-    .my-offer-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+    .my-offer-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
     .my-offer-info h3 { margin: 0 0 4px 0; font-size: 1rem; color: #fff; }
     .my-offer-info p { margin: 0; font-size: 0.8rem; color: var(--text-muted); }
     
-    .status-badge { background: rgba(74, 222, 128, 0.15); color: #4ade80; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; display: inline-block; margin-top: 6px; }
+    .status-badge { background: rgba(234, 179, 8, 0.15); color: #facc15; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; display: inline-block; margin-top: 6px; }
 
     /* Estado si no está logueado */
     #authGuard { display: none; text-align: center; padding: 40px 20px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; margin-top: 20px; }
@@ -54,14 +54,24 @@
   <div class="main-container">
     
     <!-- CONTENIDO SI ESTÁ LOGUEADO -->
-    <div id="contentLogged">
-      <h2 class="section-title">📂 Mis Ofertas y Grupos</h2>
+    <div id="contentLogged" style="display: none;">
+      <h2 class="section-title">📂 Mis Ofertas y Grupos Protegidos</h2>
       
+      <!-- Banner informativo de seguridad -->
+      <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid var(--primary); border-radius: 12px; padding: 14px; margin-bottom: 16px; font-size: 0.85rem; line-height: 1.4;">
+        <span style="font-weight: 700; color: #60a5fa;">🛡️ Protección Activa:</span> Tus fondos están retenidos de forma segura. Se liberarán al vendedor en <strong>10 días</strong> si no hay reclamos. Tenés <strong>24 horas de prueba</strong> para reportar inconvenientes y las normas prohíben abandonar los grupos una vez iniciados.
+      </div>
+
       <div class="my-offer-card">
         <div class="my-offer-info">
           <h3>🎬 Disney+ (Premium)</h3>
           <p>Cupos compartidos: 3/4 • Precio: $4.000 c/u</p>
-          <span class="status-badge">Activo</span>
+          <div>
+            <span class="status-badge">🔒 Fondos Retenidos (Quedan 9 días)</span>
+          </div>
+        </div>
+        <div>
+          <button onclick="verDetalleSeguridad()" style="background: var(--card-bg); border: 1px solid var(--card-border); color: #fff; padding: 8px 14px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer;">Ver Estado</button>
         </div>
       </div>
     </div>
@@ -106,6 +116,10 @@
         document.getElementById('authGuard').style.display = 'block';
       }
     };
+
+    function verDetalleSeguridad() {
+      alert("🔒 Estado de la Transacción:\n\n• Período de prueba de 24hs: Activo / Exitoso.\n• Retención de fondos: Quedan 9 días para liberar el dinero al vendedor.\n• Política de grupo: No se puede abandonar el grupo antes del cierre del ciclo para proteger a los miembros.");
+    }
   </script>
 </body>
 </html>
