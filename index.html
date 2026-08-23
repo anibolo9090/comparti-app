@@ -104,7 +104,7 @@
       
       <div style="position: relative;">
         <button class="btn-login-nav" id="navAuthBtn" onclick="handleNavbarClick()">Ingresar / Registrarse</button>
-        <!-- Menú desplegable de cuenta -->
+        <!-- Menú desplegable de usuario -->
         <div class="user-menu" id="userMenu">
           <div class="user-menu-item" style="font-weight: 700; color: #60a5fa;" id="userEmailDisplay">mi_usuario@gmail.com</div>
           <a href="mis-ofertas.html" class="user-menu-item">📂 Mis Ofertas</a>
@@ -120,7 +120,7 @@
       <p>Unite a grupos para compartir plataformas y servicios de forma segura.</p>
       <div class="btn-group">
         <a href="explorar.html" class="btn-hero">🔍 Explorar Cuentas</a>
-        <a href="faq.html" class="btn-secondary">🛡️ FAQ y Seguridad</a>
+        <a href="mis-ofertas.html" class="btn-secondary">🛡️ Mis Grupos</a>
       </div>
     </div>
 
@@ -154,9 +154,10 @@
 
   <!-- MODAL DE AUTENTICACIÓN -->
   <div class="modal-overlay" id="authModal">
-    <div class="modal-box" id="modalBoxContent">
+    <div class="modal-box">
       <button class="modal-close" onclick="closeModal()">&times;</button>
       
+      <!-- Contenedor interno que cambia dinámicamente sin romper la estructura -->
       <div id="authFormsContainer">
         <div class="modal-tabs">
           <div class="modal-tab active" id="tabLogin" onclick="switchTab('login')">Iniciar Sesión</div>
@@ -197,7 +198,7 @@
           </div>
           <div class="form-group">
             <label class="form-label">Correo Electrónico</label>
-            <input type="email" class="form-input" required placeholder="tu@email.com">
+            <input type="email" id="registerEmail" class="form-input" required placeholder="tu@email.com">
           </div>
           <div class="form-group">
             <label class="form-label">Contraseña</label>
@@ -206,6 +207,7 @@
           <button type="submit" class="btn-submit">Crear Cuenta</button>
         </form>
       </div>
+
     </div>
   </div>
 
@@ -250,7 +252,6 @@
     function handleNavbarClick() {
       const logueado = localStorage.getItem('usuarioLogueado');
       if (logueado === 'true') {
-        // Mostrar u ocultar menú desplegable de usuario
         const menu = document.getElementById('userMenu');
         menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
       } else {
@@ -317,12 +318,12 @@
       serviciosData.forEach(s => {
         const chk = document.getElementById(`chk-${s.id}`);
         const card = document.getElementById(`card-${s.id}`);
-        if (chk.checked) {
+        if (chk && chk.checked) {
           tFull += s.full;
           tComparti += s.comparti;
-          card.classList.add('selected');
+          if(card) card.classList.add('selected');
         } else {
-          card.classList.remove('selected');
+          if(card) card.classList.remove('selected');
         }
       });
 
@@ -333,24 +334,29 @@
       document.getElementById('sumAhorro').innerText = '$' + ahorro.toLocaleString('es-AR');
     }
 
-    // Lógica del Modal de Autenticación
+    // Lógica del Modal y Autenticación
     const authModal = document.getElementById('authModal');
-    const formLogin = document.getElementById('formLogin');
-    const formRegister = document.getElementById('formRegister');
-    const tabLogin = document.getElementById('tabLogin');
-    const tabRegister = document.getElementById('tabRegister');
 
     function openModal(mode) {
       document.getElementById('userMenu').style.display = 'none';
+      restaurarContenidoModal();
       authModal.style.display = 'flex';
       switchTab(mode);
     }
 
     function closeModal() {
       authModal.style.display = 'none';
+      restaurarContenidoModal();
     }
 
     function switchTab(mode) {
+      const formLogin = document.getElementById('formLogin');
+      const formRegister = document.getElementById('formRegister');
+      const tabLogin = document.getElementById('tabLogin');
+      const tabRegister = document.getElementById('tabRegister');
+
+      if (!formLogin || !formRegister) return;
+
       if (mode === 'login') {
         tabLogin.classList.add('active');
         tabRegister.classList.remove('active');
@@ -366,7 +372,7 @@
 
     function handleAuth(event, type) {
       event.preventDefault();
-      const emailInput = type === 'login' ? document.getElementById('loginEmail').value : event.target.querySelector('input[type="email"]').value;
+      const emailInput = type === 'login' ? document.getElementById('loginEmail').value : document.getElementById('registerEmail').value;
       
       localStorage.setItem('usuarioLogueado', 'true');
       localStorage.setItem('usuarioEmail', emailInput);
@@ -376,7 +382,7 @@
       closeModal();
     }
 
-    // SIMULADOR DE SELECTOR DE CUENTAS DE GOOGLE
+    // SELECTOR DE CUENTAS GOOGLE SEGURO
     function mostrarSelectorGoogle() {
       const container = document.getElementById('authFormsContainer');
       container.innerHTML = `
@@ -391,5 +397,4 @@
           </div>
         </div>
 
-        <div class="google-account-option" onclick="seleccionarCuentaGoogle('maria.dev@gmail.com', 'María Developer')">
-          <div style="background:#a855f7; color:#fff; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-c
+        <div class="google-account-option" onclick="seleccionarCuentaGoogle('maria.dev@gmail.com', 'Ma
