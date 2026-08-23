@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Compartí — Publicar Oferta</title>
+  <title>Publicar Cupo — Compartí</title>
+
   <style>
     :root { 
       --primary: #3b82f6; 
@@ -16,29 +17,24 @@
     * { box-sizing: border-box; }
     body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
     
-    .navbar { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(8px); border-bottom: 1px solid var(--card-border); padding: 12px 20px; position: sticky; top: 0; z-index: 100; }
-    .navbar-inner { max-width: 800px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+    .navbar { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(8px); border-bottom: 1px solid var(--card-border); padding: 12px 20px; position: sticky; top: 0; z-index: 100; text-align: center; }
     .logo { font-size: 1.25rem; font-weight: 800; color: #60a5fa; text-decoration: none; }
 
-    .main-container { max-width: 600px; margin: 24px auto; padding: 0 16px; }
+    .main-container { max-width: 600px; margin: 20px auto; padding: 0 16px; }
     
-    .form-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 20px; }
-    .form-title { font-size: 1.2rem; color: #60a5fa; margin-top: 0; margin-bottom: 16px; }
-    
-    .form-group { margin-bottom: 14px; }
-    .form-label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 6px; }
-    .form-input, .form-select { width: 100%; background: #0f172a; border: 1px solid var(--card-border); padding: 10px 12px; border-radius: 8px; color: #fff; font-size: 0.9rem; }
-    .form-input:focus, .form-select:focus { outline: none; border-color: var(--primary); }
-    
-    .btn-submit { width: 100%; background: var(--primary); color: #fff; border: none; padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer; margin-top: 10px; font-size: 0.95rem; }
+    .form-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+    .form-title { font-size: 1.2rem; color: #60a5fa; margin-top: 0; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
 
-    /* Aviso si no está logueado */
-    #authGuard { display: none; text-align: center; padding: 40px 20px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; margin-top: 40px; }
-    #authGuard h2 { color: #f87171; margin-bottom: 10px; }
-    .btn-login-redirect { display: inline-block; background: var(--primary); color: #fff; text-decoration: none; padding: 10px 20px; border-radius: 8px; font-weight: 700; margin-top: 15px; }
+    .form-group { margin-bottom: 16px; text-align: left; }
+    .form-label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 6px; font-weight: 600; }
+    .form-input, .form-select { width: 100%; background: #0f172a; border: 1px solid var(--card-border); padding: 12px; border-radius: 10px; color: #fff; font-size: 0.95rem; }
+    .form-select { cursor: pointer; }
+    
+    .btn-submit { width: 100%; background: var(--primary); color: #fff; border: none; padding: 12px; border-radius: 10px; font-weight: 700; font-size: 1rem; cursor: pointer; margin-top: 10px; }
+    .btn-submit:hover { background: #2563eb; }
 
-    /* Navegación Inferior */
-    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 1000; }
+    /* Navegación inferior */
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 1000; }
     .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); text-decoration: none; font-size: 0.75rem; font-weight: 600; gap: 2px; }
     .nav-item.active { color: #60a5fa; }
     .nav-item .icon { font-size: 1.2rem; }
@@ -47,84 +43,102 @@
 <body>
 
   <nav class="navbar">
-    <div class="navbar-inner">
-      <a href="index.html" class="logo">🤝 Compartí</a>
-    </div>
+    <a href="index.html" class="logo">🤝 Compartí</a>
   </nav>
 
   <div class="main-container">
-    
-    <!-- CONTENIDO SI ESTÁ LOGUEADO -->
-    <div class="form-card" id="publishFormContainer" style="display: none;">
+    <div class="form-box">
       <h2 class="form-title">➕ Publicar un nuevo cupo</h2>
-      <form onsubmit="publicarOferta(event)">
+      
+      <form onsubmit="publicarCupo(event)">
         <div class="form-group">
           <label class="form-label">Seleccioná la plataforma</label>
-          <select class="form-select" id="pubPlataforma" required>
-            <option value="Netflix">🎬 Netflix</option>
-            <option value="Disney+">🏰 Disney+</option>
-            <option value="Spotify">🎧 Spotify</option>
-            <option value="ChatGPT">🤖 ChatGPT Plus</option>
-            <option value="Max">💜 Max</option>
-            <option value="Amazon Prime">📦 Amazon Prime</option>
+          <select id="pubServicio" class="form-select" onchange="actualizarPrecioSugerido()" required>
+            <option value="netflix">🎬 Netflix (Estándar)</option>
+            <option value="disney">🏰 Disney+ (Premium)</option>
+            <option value="spotify">🎧 Spotify (Familiar)</option>
+            <option value="chatgpt">🤖 ChatGPT Plus</option>
+            <option value="max">💜 Max (Platino)</option>
+            <option value="prime">📦 Amazon Prime Video</option>
+            <option value="youtube">▶️ YouTube Premium</option>
+            <option value="crunchyroll">🍥 Crunchyroll</option>
           </select>
         </div>
+
         <div class="form-group">
           <label class="form-label">Lugares / Cupos disponibles</label>
-          <input type="number" class="form-input" id="pubCupos" min="1" max="5" value="3" required>
+          <input type="number" id="pubCupos" class="form-input" min="1" max="6" value="3" required>
         </div>
+
         <div class="form-group">
           <label class="form-label">Precio mensual por persona (ARS)</label>
-          <input type="number" class="form-input" id="pubPrecio" placeholder="Ej: 4500" required>
+          <input type="number" id="pubPrecio" class="form-input" required placeholder="Ej: 4500">
         </div>
+
         <button type="submit" class="btn-submit">Publicar Oferta</button>
       </form>
     </div>
-
-    <!-- AVISO SI NO ESTÁ LOGUEADO -->
-    <div id="authGuard">
-      <h2>🔒 Acceso Restringido</h2>
-      <p style="color: var(--text-muted); font-size: 0.9rem;">Necesitas iniciar sesión o registrarte para poder publicar ofertas y gestionar tus grupos.</p>
-      <a href="index.html" class="btn-login-redirect">Ir al Inicio a Iniciar Sesión</a>
-    </div>
-
   </div>
 
   <div class="bottom-nav">
-    <a href="index.html" class="nav-item">
-      <span class="icon">🏠</span>
-      <span>Inicio</span>
-    </a>
-    <a href="explorar.html" class="nav-item">
-      <span class="icon">🔍</span>
-      <span>Explorar</span>
-    </a>
-    <a href="publicar.html" class="nav-item active">
-      <span class="icon">➕</span>
-      <span>Publicar</span>
-    </a>
-    <a href="mis-ofertas.html" class="nav-item">
-      <span class="icon">📂</span>
-      <span>Mis Ofertas</span>
-    </a>
+    <a href="index.html" class="nav-item"><span class="icon">🏠</span><span>Inicio</span></a>
+    <a href="explorar.html" class="nav-item"><span class="icon">🔍</span><span>Explorar</span></a>
+    <a href="publicar.html" class="nav-item active"><span class="icon">➕</span><span>Publicar</span></a>
+    <a href="mis-ofertas.html" class="nav-item"><span class="icon">📂</span><span>Mis Ofertas</span></a>
   </div>
 
   <script>
-    // Verificar si el usuario inició sesión
-    window.onload = function() {
-      const logueado = localStorage.getItem('usuarioLogueado');
-      if (logueado === 'true') {
-        document.getElementById('publishFormContainer').style.display = 'block';
-        document.getElementById('authGuard').style.display = 'none';
-      } else {
-        document.getElementById('publishFormContainer').style.display = 'none';
-        document.getElementById('authGuard').style.display = 'block';
-      }
+    const serviciosData = {
+      netflix: { name: 'Netflix', comparti: 4500 },
+      disney: { name: 'Disney+', comparti: 4000 },
+      spotify: { name: 'Spotify', comparti: 2000 },
+      chatgpt: { name: 'ChatGPT Plus', comparti: 8000 },
+      max: { name: 'Max', comparti: 3500 },
+      prime: { name: 'Amazon Prime', comparti: 2000 },
+      youtube: { name: 'YouTube Premium', comparti: 2500 },
+      crunchyroll: { name: 'Crunchyroll', comparti: 1500 }
     };
 
-    function publicarOferta(e) {
+    window.onload = function() {
+      actualizarPrecioSugerido();
+    };
+
+    function actualizarPrecioSugerido() {
+      const select = document.getElementById('pubServicio').value;
+      const inputPrecio = document.getElementById('pubPrecio');
+      if (serviciosData[select]) {
+        inputPrecio.value = serviciosData[select].comparti;
+      }
+    }
+
+    function publicarCupo(e) {
       e.preventDefault();
-      alert('¡Oferta publicada con éxito! Ya aparece en la sección Explorar y Mis Ofertas.');
+      
+      const logueado = localStorage.getItem('usuarioLogueado');
+      if (logueado !== 'true') {
+        alert('Debes iniciar sesión para publicar una oferta.');
+        window.location.href = 'index.html';
+        return;
+      }
+
+      const servicioKey = document.getElementById('pubServicio').value;
+      const cupos = document.getElementById('pubCupos').value;
+      const precio = document.getElementById('pubPrecio').value;
+
+      const nuevaOferta = {
+        id: Date.now(),
+        servicio: serviciosData[servicioKey].name,
+        cupos: cupos,
+        precio: precio,
+        usuario: localStorage.getItem('usuarioEmail') || 'Anónimo'
+      };
+
+      // Guardar en el almacenamiento local del navegador para que aparezca en "Mis Ofertas"
+      let misOfertas = JSON.parse(localStorage.getItem('misOfertasGuardadas')) || [];
+      misOfertas.push(nuevaOferta);
+      localStorage.setItem('misOfertasGuardadas', JSON.stringify(misOfertas));
+
+      alert('¡Oferta publicada con éxito!');
       window.location.href = 'mis-ofertas.html';
     }
   </script>
