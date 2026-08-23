@@ -20,11 +20,11 @@
     .navbar-inner { max-width: 800px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; position: relative; }
     .logo { font-size: 1.25rem; font-weight: 800; color: #60a5fa; text-decoration: none; }
     
-    .btn-login-nav { background: #2563eb; color: #fff; border: none; padding: 6px 14px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: background 0.2s; }
+    .btn-login-nav { background: #2563eb; color: #fff; border: none; padding: 6px 14px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer; }
     .btn-login-nav:hover { background: #1d4ed8; }
 
-    /* Menú desplegable de usuario */
-    .user-menu { display: none; position: absolute; right: 0; top: 45px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; width: 200px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 300; overflow: hidden; }
+    /* Menú usuario */
+    .user-menu { display: none; position: absolute; right: 0; top: 45px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; width: 190px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 300; overflow: hidden; }
     .user-menu-item { padding: 10px 14px; font-size: 0.85rem; color: var(--text); display: block; text-decoration: none; border-bottom: 1px solid var(--card-border); cursor: pointer; }
     .user-menu-item:hover { background: rgba(59, 130, 246, 0.1); }
     .user-menu-item.logout { color: #f87171; border-bottom: none; }
@@ -32,20 +32,20 @@
     .main-container { max-width: 800px; margin: 20px auto; padding: 0 16px; }
     
     .hero { text-align: center; margin-bottom: 20px; }
-    .hero h1 { font-size: 1.6rem; margin-bottom: 8px; background: linear-gradient(135deg, #60a5fa 0%, #a855f7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .hero p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.4; max-width: 480px; margin: 0 auto 14px; }
+    .hero h1 { font-size: 1.6rem; margin-bottom: 8px; color: #60a5fa; }
+    .hero p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 14px; }
     
-    .btn-group { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
-    .btn-hero { display: inline-block; background: #2563eb; color: #fff; text-decoration: none; padding: 10px 18px; border-radius: 10px; font-weight: 700; font-size: 0.9rem; }
-    .btn-secondary { display: inline-block; background: var(--card-bg); border: 1px solid var(--card-border); color: #cbd5e1; text-decoration: none; padding: 10px 16px; border-radius: 10px; font-weight: 600; font-size: 0.85rem; }
+    .btn-group { display: flex; gap: 8px; justify-content: center; }
+    .btn-hero { background: #2563eb; color: #fff; text-decoration: none; padding: 10px 18px; border-radius: 10px; font-weight: 700; font-size: 0.9rem; }
+    .btn-secondary { background: var(--card-bg); border: 1px solid var(--card-border); color: #cbd5e1; text-decoration: none; padding: 10px 16px; border-radius: 10px; font-weight: 600; font-size: 0.85rem; }
 
-    /* Calculadora Compacta */
+    /* Calculadora */
     .calc-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 16px; margin: 16px 0; }
     .calc-title { font-size: 1.05rem; color: #60a5fa; margin-top: 0; text-align: center; margin-bottom: 2px; }
     .calc-subtitle { font-size: 0.8rem; color: var(--text-muted); text-align: center; margin-bottom: 12px; }
 
-    .service-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; max-height: 200px; overflow-y: auto; padding-right: 4px; }
-    .service-item { display: flex; justify-content: space-between; align-items: center; background: #0f172a; border: 1px solid var(--card-border); padding: 8px 12px; border-radius: 10px; cursor: pointer; transition: all 0.2s; }
+    .service-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; max-height: 220px; overflow-y: auto; padding-right: 4px; }
+    .service-item { display: flex; justify-content: space-between; align-items: center; background: #0f172a; border: 1px solid var(--card-border); padding: 8px 12px; border-radius: 10px; cursor: pointer; }
     .service-item.selected { border-color: var(--primary); background: rgba(59, 130, 246, 0.08); }
     
     .service-info { display: flex; align-items: center; gap: 8px; }
@@ -56,59 +56,37 @@
     .cost-comparti { font-weight: 700; color: #4ade80; font-size: 0.85rem; }
     .cost-full { font-size: 0.7rem; color: #f87171; text-decoration: line-through; }
 
-    /* Resumen compacto */
     .calc-summary { background: #0f172a; border: 1px solid var(--card-border); border-radius: 10px; padding: 12px; display: flex; justify-content: space-around; align-items: center; text-align: center; }
     .summary-block div:first-child { font-size: 0.7rem; color: var(--text-muted); margin-bottom: 2px; }
 
-    /* MODAL DE LOGIN / REGISTRO */
-    .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(5px); z-index: 2000; justify-content: center; align-items: center; padding: 16px; }
-    .modal-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; width: 100%; max-width: 400px; padding: 24px; position: relative; animation: fadeIn 0.2s ease; }
-    .modal-close { position: absolute; top: 16px; right: 16px; background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; }
+    /* Modal */
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.85); z-index: 2000; justify-content: center; align-items: center; padding: 16px; }
+    .modal-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; width: 100%; max-width: 380px; padding: 24px; position: relative; }
+    .modal-close { position: absolute; top: 14px; right: 16px; background: none; border: none; color: var(--text-muted); font-size: 1.4rem; cursor: pointer; }
     
-    .modal-tabs { display: flex; border-bottom: 1px solid var(--card-border); margin-bottom: 20px; }
-    .modal-tab { flex: 1; text-align: center; padding: 10px; font-weight: 600; font-size: 0.9rem; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; }
-    .modal-tab.active { color: #60a5fa; border-color: #60a5fa; }
+    .form-group { margin-bottom: 12px; }
+    .form-label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px; }
+    .form-input { width: 100%; background: #0f172a; border: 1px solid var(--card-border); padding: 10px; border-radius: 8px; color: #fff; font-size: 0.9rem; }
+    .btn-submit { width: 100%; background: var(--primary); color: #fff; border: none; padding: 10px; border-radius: 8px; font-weight: 700; cursor: pointer; margin-top: 8px; }
 
-    /* Modal selector de cuentas Google simulado */
-    .google-account-option { background: #0f172a; border: 1px solid var(--card-border); border-radius: 10px; padding: 12px; margin-bottom: 8px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: border-color 0.2s; }
-    .google-account-option:hover { border-color: var(--primary); }
-
-    .btn-google { width: 100%; background: #ffffff; color: #3c4043; border: 1px solid var(--card-border); padding: 10px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; margin-bottom: 14px; }
-    .btn-google:hover { background: #f1f3f4; }
-    
-    .auth-divider { display: flex; align-items: center; text-align: center; margin: 14px 0; color: var(--text-muted); font-size: 0.75rem; }
-    .auth-divider::before, .auth-divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--card-border); }
-    .auth-divider span { padding: 0 10px; }
-
-    .form-group { margin-bottom: 14px; }
-    .form-label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px; }
-    .form-input { width: 100%; background: #0f172a; border: 1px solid var(--card-border); padding: 10px 12px; border-radius: 8px; color: #fff; font-size: 0.9rem; }
-    .form-input:focus { outline: none; border-color: var(--primary); }
-    .btn-submit { width: 100%; background: var(--primary); color: #fff; border: none; padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer; margin-top: 6px; font-size: 0.95rem; }
-
-    /* Navegación Inferior */
-    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 1000; }
+    /* Navegación inferior */
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 1000; }
     .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); text-decoration: none; font-size: 0.75rem; font-weight: 600; gap: 2px; }
     .nav-item.active { color: #60a5fa; }
     .nav-item .icon { font-size: 1.2rem; }
-
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
 <body>
 
-  <!-- BARRA DE NAVEGACIÓN SUPERIOR -->
   <nav class="navbar">
     <div class="navbar-inner">
       <a href="index.html" class="logo">🤝 Compartí</a>
-      
       <div style="position: relative;">
-        <button class="btn-login-nav" id="navAuthBtn" onclick="handleNavbarClick()">Ingresar / Registrarse</button>
-        <!-- Menú desplegable de usuario -->
+        <button class="btn-login-nav" id="navAuthBtn" onclick="toggleMenuSession()">Ingresar</button>
         <div class="user-menu" id="userMenu">
-          <div class="user-menu-item" style="font-weight: 700; color: #60a5fa;" id="userEmailDisplay">mi_usuario@gmail.com</div>
+          <div class="user-menu-item" style="color: #60a5fa; font-weight: bold;" id="userEmailDisplay">Cuenta</div>
           <a href="mis-ofertas.html" class="user-menu-item">📂 Mis Ofertas</a>
-          <div class="user-menu-item logout" onclick="cerrarSesion()">🚪 Cerrar Sesión</div>
+          <div class="user-menu-item logout" onclick="cerrarSesion()">Cerrar Sesión</div>
         </div>
       </div>
     </div>
@@ -116,285 +94,179 @@
 
   <div class="main-container">
     <div class="hero">
-      <h1>Ahorrá hasta un 75% en suscripciones</h1>
-      <p>Unite a grupos para compartir plataformas y servicios de forma segura.</p>
+      <h1>Ahorrá en suscripciones</h1>
+      <p>Compartí cuentas de forma segura y protegida.</p>
       <div class="btn-group">
-        <a href="explorar.html" class="btn-hero">🔍 Explorar Cuentas</a>
-        <a href="mis-ofertas.html" class="btn-secondary">🛡️ Mis Grupos</a>
+        <a href="explorar.html" class="btn-hero">Explorar</a>
+        <a href="mis-ofertas.html" class="btn-secondary">Mis Grupos</a>
       </div>
     </div>
 
-    <!-- CALCULADORA COMPACTA -->
+    <!-- CALCULADORA -->
     <div class="calc-box">
-      <h2 class="calc-title">🧮 Calculadora de Ahorro</h2>
-      <p class="calc-subtitle">Tildá los servicios que usás:</p>
-
-      <div class="service-list" id="serviceList">
-        <!-- Generado por JS -->
-      </div>
+      <h2 class="calc-title">Calculadora de Ahorro</h2>
+      <p class="calc-subtitle">Selecciona los servicios:</p>
+      <div class="service-list" id="serviceList"></div>
 
       <div class="calc-summary">
         <div class="summary-block">
           <div>Oficial</div>
-          <div id="sumFull" style="font-size: 0.9rem; font-weight: 700; color: #f87171; text-decoration: line-through;">$0</div>
+          <div id="sumFull" style="color: #f87171; text-decoration: line-through; font-weight: bold;">$0</div>
         </div>
-        <div style="font-size: 1rem; color: var(--text-muted);">➡️</div>
+        <div>➡️</div>
         <div class="summary-block">
           <div>En Compartí</div>
-          <div id="sumComparti" style="font-size: 0.95rem; font-weight: 800; color: #4ade80;">$0</div>
+          <div id="sumComparti" style="color: #4ade80; font-weight: bold;">$0</div>
         </div>
-        <div style="font-size: 1rem; color: var(--text-muted);">=</div>
+        <div>=</div>
         <div class="summary-block">
           <div>Ahorro</div>
-          <div id="sumAhorro" style="font-size: 0.95rem; font-weight: 800; color: #60a5fa;">$0</div>
+          <div id="sumAhorro" style="color: #60a5fa; font-weight: bold;">$0</div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- MODAL DE AUTENTICACIÓN -->
+  <!-- MODAL -->
   <div class="modal-overlay" id="authModal">
     <div class="modal-box">
-      <button class="modal-close" onclick="closeModal()">&times;</button>
-      
-      <!-- Contenedor interno que cambia dinámicamente sin romper la estructura -->
-      <div id="authFormsContainer">
-        <div class="modal-tabs">
-          <div class="modal-tab active" id="tabLogin" onclick="switchTab('login')">Iniciar Sesión</div>
-          <div class="modal-tab" id="tabRegister" onclick="switchTab('register')">Registrarse</div>
+      <button class="modal-close" onclick="cerrarModal()">&times;</button>
+      <h3 style="margin-top:0; color:#60a5fa; text-align:center;">Iniciar Sesión</h3>
+      <form onsubmit="realizarLogin(event)">
+        <div class="form-group">
+          <label class="form-label">Correo electrónico</label>
+          <input type="email" id="inputEmail" class="form-input" required placeholder="tu@email.com">
         </div>
-
-        <!-- BOTÓN DE GOOGLE -->
-        <button type="button" class="btn-google" onclick="mostrarSelectorGoogle()">
-          <svg width="18" height="18" viewBox="0 0 24 24" style="margin-right: 8px; vertical-align: middle;">
-            <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.8 14.8 1 12 1 7.4 1 3.5 3.6 1.6 7.4l3.7 2.9C6.2 7.1 8.9 5 12 5z"/>
-            <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"/>
-            <path fill="#FBBC05" d="M5.3 14.7c-.2-.7-.4-1.5-.4-2.7s.2-2 .4-2.7L1.6 6.4C.6 8.4 0 10.6 0 13s.6 4.6 1.6 6.6l3.7-2.9z"/>
-            <path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3.1 0-5.8-2.1-6.7-5.3L1.6 15.6C3.5 19.4 7.4 23 12 23z"/>
-          </svg>
-          Continuar con Google
-        </button>
-
-        <div class="auth-divider"><span>o con email</span></div>
-
-        <!-- Formulario de Inicio de Sesión -->
-        <form id="formLogin" onsubmit="handleAuth(event, 'login')">
-          <div class="form-group">
-            <label class="form-label">Correo Electrónico</label>
-            <input type="email" id="loginEmail" class="form-input" required placeholder="tu@email.com">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Contraseña</label>
-            <input type="password" class="form-input" required placeholder="••••••••">
-          </div>
-          <button type="submit" class="btn-submit">Entrar</button>
-        </form>
-
-        <!-- Formulario de Registro -->
-        <form id="formRegister" onsubmit="handleAuth(event, 'register')" style="display: none;">
-          <div class="form-group">
-            <label class="form-label">Nombre de Usuario</label>
-            <input type="text" class="form-input" required placeholder="Tu nombre o apodo">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Correo Electrónico</label>
-            <input type="email" id="registerEmail" class="form-input" required placeholder="tu@email.com">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Contraseña</label>
-            <input type="password" class="form-input" required placeholder="Crea una contraseña">
-          </div>
-          <button type="submit" class="btn-submit">Crear Cuenta</button>
-        </form>
-      </div>
-
+        <div class="form-group">
+          <label class="form-label">Contraseña</label>
+          <input type="password" class="form-input" required placeholder="••••••••">
+        </div>
+        <button type="submit" class="btn-submit">Entrar</button>
+      </form>
     </div>
   </div>
 
-  <!-- NAVEGACIÓN INFERIOR -->
   <div class="bottom-nav">
-    <a href="index.html" class="nav-item active">
-      <span class="icon">🏠</span>
-      <span>Inicio</span>
-    </a>
-    <a href="explorar.html" class="nav-item">
-      <span class="icon">🔍</span>
-      <span>Explorar</span>
-    </a>
-    <a href="publicar.html" class="nav-item">
-      <span class="icon">➕</span>
-      <span>Publicar</span>
-    </a>
-    <a href="mis-ofertas.html" class="nav-item">
-      <span class="icon">📂</span>
-      <span>Mis Ofertas</span>
-    </a>
+    <a href="index.html" class="nav-item active"><span class="icon">🏠</span><span>Inicio</span></a>
+    <a href="explorar.html" class="nav-item"><span class="icon">🔍</span><span>Explorar</span></a>
+    <a href="publicar.html" class="nav-item"><span class="icon">➕</span><span>Publicar</span></a>
+    <a href="mis-ofertas.html" class="nav-item"><span class="icon">📂</span><span>Mis Ofertas</span></a>
   </div>
 
   <script>
+    // Datos de la calculadora
+    const serviciosData = [
+      { id: 'netflix', name: 'Netflix', full: 21000, comparti: 4500 },
+      { id: 'disney', name: 'Disney+', full: 18400, comparti: 4000 },
+      { id: 'spotify', name: 'Spotify', full: 7500, comparti: 2000 },
+      { id: 'chatgpt', name: 'ChatGPT Plus', full: 32000, comparti: 8000 },
+      { id: 'max', name: 'Max', full: 14000, comparti: 3500 }
+    ];
+
+    // Inicializar al cargar la página
     window.onload = function() {
-      renderServices();
-      verificarEstadoSesion();
+      renderizarCalculadora();
+      chequearSesionNavbar();
     };
 
-    function verificarEstadoSesion() {
+    function renderizarCalculadora() {
+      const contenedor = document.getElementById('serviceList');
+      if (!contenedor) return;
+      contenedor.innerHTML = '';
+
+      serviciosData.forEach(s => {
+        const item = document.createElement('div');
+        item.className = 'service-item';
+        item.id = 'item-' + s.id;
+        item.onclick = function(e) {
+          if (e.target.tagName !== 'INPUT') {
+            const chk = document.getElementById('chk-' + s.id);
+            chk.checked = !chk.checked;
+          }
+          calcularTotales();
+        };
+
+        item.innerHTML = `
+          <div class="service-info">
+            <input type="checkbox" class="service-checkbox" id="chk-${s.id}" onchange="calcularTotales()">
+            <span class="service-name">${s.name}</span>
+          </div>
+          <div class="service-cost-tag">
+            <div class="cost-comparti">$${s.comparti.toLocaleString()}</div>
+            <div class="cost-full">$${s.full.toLocaleString()}</div>
+          </div>
+        `;
+        contenedor.appendChild(item);
+      });
+      calcularTotales();
+    }
+
+    function calcularTotales() {
+      let totalFull = 0;
+      let totalComparti = 0;
+
+      serviciosData.forEach(s => {
+        const chk = document.getElementById('chk-' + s.id);
+        const caja = document.getElementById('item-' + s.id);
+        if (chk && chk.checked) {
+          totalFull += s.full;
+          totalComparti += s.comparti;
+          if(caja) caja.classList.add('selected');
+        } else {
+          if(caja) caja.classList.remove('selected');
+        }
+      });
+
+      document.getElementById('sumFull').innerText = '$' + totalFull.toLocaleString();
+      document.getElementById('sumComparti').innerText = '$' + totalComparti.toLocaleString();
+      document.getElementById('sumAhorro').innerText = '$' + (totalFull - totalComparti).toLocaleString();
+    }
+
+    // Manejo de Sesión y Modales
+    function chequearSesionNavbar() {
       const logueado = localStorage.getItem('usuarioLogueado');
-      const emailUser = localStorage.getItem('usuarioEmail') || 'Mi Cuenta';
+      const email = localStorage.getItem('usuarioEmail');
+      const btnNav = document.getElementById('navAuthBtn');
       
       if (logueado === 'true') {
-        document.getElementById('navAuthBtn').innerText = '👤 Mi Cuenta';
-        document.getElementById('userEmailDisplay').innerText = emailUser;
+        btnNav.innerText = '👤 Mi Cuenta';
+        document.getElementById('userEmailDisplay').innerText = email || 'Usuario';
       } else {
-        document.getElementById('navAuthBtn').innerText = 'Ingresar / Registrarse';
+        btnNav.innerText = 'Ingresar';
       }
     }
 
-    function handleNavbarClick() {
+    function toggleMenuSession() {
       const logueado = localStorage.getItem('usuarioLogueado');
       if (logueado === 'true') {
         const menu = document.getElementById('userMenu');
         menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
       } else {
-        openModal('login');
+        document.getElementById('authModal').style.display = 'flex';
       }
+    }
+
+    function cerrarModal() {
+      document.getElementById('authModal').style.display = 'none';
+    }
+
+    function realizarLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('inputEmail').value;
+      localStorage.setItem('usuarioLogueado', 'true');
+      localStorage.setItem('usuarioEmail', email);
+      cerrarModal();
+      chequearSesionNavbar();
+      alert('¡Sesión iniciada correctamente!');
     }
 
     function cerrarSesion() {
       localStorage.removeItem('usuarioLogueado');
       localStorage.removeItem('usuarioEmail');
       document.getElementById('userMenu').style.display = 'none';
-      verificarEstadoSesion();
-      alert('Has cerrado sesión correctamente.');
+      chequearSesionNavbar();
+      alert('Sesión cerrada.');
     }
-
-    // Lógica de la Calculadora
-    const serviciosData = [
-      { id: 'netflix', name: '🎬 Netflix (Estándar)', full: 21000, comparti: 4500 },
-      { id: 'disney', name: '🏰 Disney+ (Premium)', full: 18400, comparti: 4000 },
-      { id: 'spotify', name: '🎧 Spotify (Familiar)', full: 7500, comparti: 2000 },
-      { id: 'chatgpt', name: '🤖 ChatGPT Plus', full: 32000, comparti: 8000 },
-      { id: 'max', name: '💜 Max (Platino)', full: 14000, comparti: 3500 },
-      { id: 'prime', name: '📦 Amazon Prime', full: 6500, comparti: 2000 },
-      { id: 'youtube', name: '▶️ YouTube Premium', full: 9500, comparti: 2500 },
-      { id: 'crunchyroll', name: '🍥 Crunchyroll', full: 6000, comparti: 1500 }
-    ];
-
-    const serviceListEl = document.getElementById('serviceList');
-
-    function renderServices() {
-      serviceListEl.innerHTML = '';
-      serviciosData.forEach(s => {
-        const item = document.createElement('div');
-        item.className = 'service-item';
-        item.id = `card-${s.id}`;
-        item.onclick = (e) => {
-          if (e.target.tagName !== 'INPUT') {
-            const chk = document.getElementById(`chk-${s.id}`);
-            chk.checked = !chk.checked;
-          }
-          actualizarCalculadora();
-        };
-
-        item.innerHTML = `
-          <div class="service-info">
-            <input type="checkbox" class="service-checkbox" id="chk-${s.id}" onchange="actualizarCalculadora()">
-            <div>
-              <div class="service-name">${s.name}</div>
-            </div>
-          </div>
-          <div class="service-cost-tag">
-            <div class="cost-comparti">~$${s.comparti.toLocaleString('es-AR')}</div>
-            <div class="cost-full">$${s.full.toLocaleString('es-AR')}</div>
-          </div>
-        `;
-        serviceListEl.appendChild(item);
-      });
-    }
-
-    function actualizarCalculadora() {
-      let tFull = 0;
-      let tComparti = 0;
-
-      serviciosData.forEach(s => {
-        const chk = document.getElementById(`chk-${s.id}`);
-        const card = document.getElementById(`card-${s.id}`);
-        if (chk && chk.checked) {
-          tFull += s.full;
-          tComparti += s.comparti;
-          if(card) card.classList.add('selected');
-        } else {
-          if(card) card.classList.remove('selected');
-        }
-      });
-
-      const ahorro = tFull - tComparti;
-
-      document.getElementById('sumFull').innerText = '$' + tFull.toLocaleString('es-AR');
-      document.getElementById('sumComparti').innerText = '$' + tComparti.toLocaleString('es-AR');
-      document.getElementById('sumAhorro').innerText = '$' + ahorro.toLocaleString('es-AR');
-    }
-
-    // Lógica del Modal y Autenticación
-    const authModal = document.getElementById('authModal');
-
-    function openModal(mode) {
-      document.getElementById('userMenu').style.display = 'none';
-      restaurarContenidoModal();
-      authModal.style.display = 'flex';
-      switchTab(mode);
-    }
-
-    function closeModal() {
-      authModal.style.display = 'none';
-      restaurarContenidoModal();
-    }
-
-    function switchTab(mode) {
-      const formLogin = document.getElementById('formLogin');
-      const formRegister = document.getElementById('formRegister');
-      const tabLogin = document.getElementById('tabLogin');
-      const tabRegister = document.getElementById('tabRegister');
-
-      if (!formLogin || !formRegister) return;
-
-      if (mode === 'login') {
-        tabLogin.classList.add('active');
-        tabRegister.classList.remove('active');
-        formLogin.style.display = 'block';
-        formRegister.style.display = 'none';
-      } else {
-        tabRegister.classList.add('active');
-        tabLogin.classList.remove('active');
-        formRegister.style.display = 'block';
-        formLogin.style.display = 'none';
-      }
-    }
-
-    function handleAuth(event, type) {
-      event.preventDefault();
-      const emailInput = type === 'login' ? document.getElementById('loginEmail').value : document.getElementById('registerEmail').value;
-      
-      localStorage.setItem('usuarioLogueado', 'true');
-      localStorage.setItem('usuarioEmail', emailInput);
-      
-      verificarEstadoSesion();
-      alert(type === 'login' ? '¡Sesión iniciada con éxito!' : '¡Cuenta creada con éxito!');
-      closeModal();
-    }
-
-    // SELECTOR DE CUENTAS GOOGLE SEGURO
-    function mostrarSelectorGoogle() {
-      const container = document.getElementById('authFormsContainer');
-      container.innerHTML = `
-        <h3 style="margin-top:0; color: #60a5fa; text-align:center;">Elige una cuenta de Google</h3>
-        <p style="font-size:0.8rem; color:var(--text-muted); text-align:center; margin-bottom:16px;">para continuar en <strong>Compartí</strong></p>
-        
-        <div class="google-account-option" onclick="seleccionarCuentaGoogle('juan.perez@gmail.com', 'Juan Pérez')">
-          <div style="background:#3b82f6; color:#fff; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold;">JP</div>
-          <div>
-            <div style="font-size:0.9rem; font-weight:600;">Juan Pérez</div>
-            <div style="font-size:0.75rem; color:var(--text-muted);">juan.perez@gmail.com</div>
-          </div>
-        </div>
-
-        <div class="google-account-option" onclick="seleccionarCuentaGoogle('maria.dev@gmail.com', 'Ma
+  </script>
+</body>
+</html>
