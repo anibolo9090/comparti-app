@@ -52,21 +52,29 @@
       <h2 class="form-title">➕ Publicar un nuevo grupo</h2>
       
       <form onsubmit="publicarCupo(event)">
+        
+        <!-- Selección de plataforma -->
         <div class="form-group">
           <label class="form-label">Seleccioná la plataforma</label>
-          <select id="pubServicio" class="form-select" onchange="actualizarDatosPlataforma()" required>
-            <option value="netflix">🎬 Netflix (Estándar)</option>
-            <option value="disney">🏰 Disney+ (Premium)</option>
-            <option value="spotify">🎧 Spotify (Familiar)</option>
-            <option value="chatgpt">🤖 ChatGPT Plus</option>
-            <option value="max">💜 Max (Platino)</option>
+          <select id="pubServicio" class="form-select" onchange="cambiarPlataforma()" required>
+            <option value="netflix">🎬 Netflix</option>
+            <option value="disney">🏰 Disney+</option>
+            <option value="spotify">🎧 Spotify</option>
+            <option value="chatgpt">🤖 ChatGPT</option>
+            <option value="max">💜 Max</option>
             <option value="prime">📦 Amazon Prime Video</option>
             <option value="youtube">▶️ YouTube Premium</option>
             <option value="crunchyroll">🍥 Crunchyroll</option>
             <option value="paramount">⛰️ Paramount+</option>
             <option value="apple">🍎 Apple TV+</option>
-            <option value="canva">🎨 Canva Pro</option>
-            <option value="microsoft">🪟 Microsoft 365 (Familiar)</option>
+          </select>
+        </div>
+
+        <!-- Selección del tipo de plan (Dinámico según la plataforma) -->
+        <div class="form-group">
+          <label class="form-label">Tipo de Suscripción / Plan</label>
+          <select id="pubPlan" class="form-select" onchange="actualizarPrecioPlan()" required>
+            <!-- Se llena dinámicamente con JavaScript -->
           </select>
         </div>
 
@@ -108,30 +116,76 @@
   </div>
 
   <script>
-    const serviciosData = {
-      netflix: { name: 'Netflix (Estándar)', comparti: 4500 },
-      disney: { name: 'Disney+ (Premium)', comparti: 4000 },
-      spotify: { name: 'Spotify (Familiar)', comparti: 2000 },
-      chatgpt: { name: 'ChatGPT Plus', comparti: 8000 },
-      max: { name: 'Max (Platino)', comparti: 3500 },
-      prime: { name: 'Amazon Prime Video', comparti: 2000 },
-      youtube: { name: 'YouTube Premium', comparti: 2500 },
-      crunchyroll: { name: 'Crunchyroll', comparti: 1500 },
-      paramount: { name: 'Paramount+', comparti: 1800 },
-      apple: { name: 'Apple TV+', comparti: 2200 },
-      canva: { name: 'Canva Pro', comparti: 1500 },
-      microsoft: { name: 'Microsoft 365', comparti: 2000 }
+    // Base de datos de plataformas con sus respectivos tipos de planes y precios por persona
+    const planesData = {
+      netflix: [
+        { name: 'Estándar (2 pantallas)', precio: 4500 },
+        { name: 'Premium (4 pantallas + Ultra HD)', precio: 6500 }
+      ],
+      disney: [
+        { name: 'Estándar', precio: 3000 },
+        { name: 'Premium', precio: 4000 }
+      ],
+      spotify: [
+        { name: 'Plan Familiar (Hasta 6 cuentas)', precio: 2000 },
+        { name: 'Plan Dúo (2 cuentas)', precio: 2500 }
+      ],
+      chatgpt: [
+        { name: 'ChatGPT Plus (Equipo compartido)', precio: 8000 }
+      ],
+      max: [
+        { name: 'Platino (4 dispositivos)', precio: 3500 },
+        { name: 'Básico con anuncios', precio: 2000 }
+      ],
+      prime: [
+        { name: 'Amazon Prime Video (Estándar)', precio: 2000 }
+      ],
+      youtube: [
+        { name: 'Familiar (Hasta 5 miembros)', precio: 2500 }
+      ],
+      crunchyroll: [
+        { name: 'Mega Fan (4 dispositivos)', precio: 1500 }
+      ],
+      paramount: [
+        { name: 'Paramount+ Estándar', precio: 1800 }
+      ],
+      apple: [
+        { name: 'Apple TV+ (Familiar)', precio: 2200 }
+      ]
     };
 
     window.onload = function() {
-      actualizarDatosPlataforma();
+      cambiarPlataforma();
     };
 
-    function actualizarDatosPlataforma() {
-      const select = document.getElementById('pubServicio').value;
+    function cambiarPlataforma() {
+      const selectServicio = document.getElementById('pubServicio').value;
+      const selectPlan = document.getElementById('pubPlan');
+      
+      // Limpiar planes actuales
+      selectPlan.innerHTML = '';
+
+      // Cargar los planes correspondientes a la plataforma seleccionada
+      const planes = planesData[selectServicio] || [];
+      planes.forEach(p => {
+        const option = document.createElement('option');
+        option.value = p.name;
+        option.text = p.name;
+        option.setAttribute('data-precio', p.precio);
+        selectPlan.appendChild(option);
+      });
+
+      actualizarPrecioPlan();
+    }
+
+    function actualizarPrecioPlan() {
+      const selectPlan = document.getElementById('pubPlan');
       const inputPrecio = document.getElementById('pubPrecio');
-      if (serviciosData[select]) {
-        inputPrecio.value = serviciosData[select].comparti;
+      
+      const selectedOption = selectPlan.options[selectPlan.selectedIndex];
+      if (selectedOption) {
+        const precioSugerido = selectedOption.getAttribute('data-precio');
+        inputPrecio.value = precioSugerido;
       }
     }
 
@@ -145,7 +199,10 @@
         return;
       }
 
-      const servicioKey = document.getElementById('pubServicio').value;
+      const selectServicio = document.getElementById('pubServicio');
+      const servicioNombre = selectServicio.options[selectServicio.selectedIndex].text;
+      const planNombre = document.getElementById('pubPlan').value;
+      
       const cupos = document.getElementById('pubCupos').value;
       const precio = document.getElementById('pubPrecio').value;
       const emailCuenta = document.getElementById('pubEmailCuenta').value;
@@ -154,7 +211,7 @@
 
       const nuevaOferta = {
         id: Date.now(),
-        servicio: serviciosData[servicioKey].name,
+        servicio: `${servicioNombre} - ${planNombre}`,
         cupos: cupos,
         precio: precio,
         emailCuenta: emailCuenta,
