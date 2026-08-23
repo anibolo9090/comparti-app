@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mis Ofertas — Compartí</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <title>Compartí — Mis Ofertas</title>
   <style>
     :root { 
       --primary: #3b82f6; 
@@ -20,34 +19,27 @@
     .navbar { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(8px); border-bottom: 1px solid var(--card-border); padding: 12px 20px; position: sticky; top: 0; z-index: 100; }
     .navbar-inner { max-width: 800px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
     .logo { font-size: 1.25rem; font-weight: 800; color: #60a5fa; text-decoration: none; }
+    .btn-login-nav { background: #2563eb; color: #fff; border: none; padding: 6px 14px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer; }
 
-    .main-container { max-width: 800px; margin: 24px auto; padding: 0 16px; }
-    h1 { font-size: 1.5rem; margin-bottom: 20px; background: linear-gradient(135deg, #60a5fa 0%, #a855f7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .main-container { max-width: 800px; margin: 20px auto; padding: 0 16px; }
+    .section-title { font-size: 1.2rem; color: #60a5fa; margin-bottom: 14px; }
 
-    .search-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 20px; margin-bottom: 24px; }
-    .search-group { display: flex; gap: 10px; margin-top: 10px; }
-    input { flex: 1; padding: 12px; background: #0f172a; border: 1px solid var(--card-border); border-radius: 10px; color: #fff; font-size: 0.95rem; outline: none; }
-    input:focus { border-color: var(--primary); }
+    .my-offer-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+    .my-offer-info h3 { margin: 0 0 4px 0; font-size: 1rem; color: #fff; }
+    .my-offer-info p { margin: 0; font-size: 0.8rem; color: var(--text-muted); }
     
-    .btn-search { background: #2563eb; color: #fff; border: none; padding: 0 20px; border-radius: 10px; font-weight: 700; cursor: pointer; }
-    .btn-search:hover { background: #1d4ed8; }
+    .status-badge { background: rgba(74, 222, 128, 0.15); color: #4ade80; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; display: inline-block; margin-top: 6px; }
 
-    .my-offers-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
-    .card { background: var(--card-bg); border-radius: 16px; padding: 20px; border: 1px solid var(--card-border); display: flex; flex-direction: column; justify-content: space-between; }
-    .plan-title { font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 6px; }
-    .price-text { font-size: 1.2rem; font-weight: 800; color: #60a5fa; margin-bottom: 12px; }
+    /* Estado si no está logueado */
+    #authGuard { display: none; text-align: center; padding: 40px 20px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; margin-top: 20px; }
+    #authGuard h2 { color: #f87171; margin-bottom: 10px; }
+    .btn-login-redirect { display: inline-block; background: var(--primary); color: #fff; text-decoration: none; padding: 10px 20px; border-radius: 8px; font-weight: 700; margin-top: 15px; }
 
-    .actions-bar { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
-    .btn-action { flex: 1; padding: 10px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; font-size: 0.85rem; text-align: center; }
-    .btn-slot { background: #334155; color: #fff; }
-    .btn-delete { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
-
+    /* Navegación Inferior */
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 1000; }
     .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); text-decoration: none; font-size: 0.75rem; font-weight: 600; gap: 2px; }
     .nav-item.active { color: #60a5fa; }
     .nav-item .icon { font-size: 1.2rem; }
-
-    #status { text-align: center; color: var(--text-muted); font-size: 0.9rem; margin-top: 20px; }
   </style>
 </head>
 <body>
@@ -55,22 +47,32 @@
   <nav class="navbar">
     <div class="navbar-inner">
       <a href="index.html" class="logo">🤝 Compartí</a>
+      <button class="btn-login-nav" id="navAuthBtn" onclick="window.location.href='index.html'">Ingresar</button>
     </div>
   </nav>
 
   <div class="main-container">
-    <h1>Administrar Mis Ofertas</h1>
-
-    <div class="search-card">
-      <label style="font-weight: 600; font-size: 0.9rem; color: #cbd5e1;">Ingresá tu Usuario o WhatsApp para ver tus ofertas:</label>
-      <div class="search-group">
-        <input type="text" id="userInput" placeholder="Ej: luca_streaming o 5491112345678">
-        <button class="btn-search" onclick="buscarMisOfertas()">Buscar</button>
+    
+    <!-- CONTENIDO SI ESTÁ LOGUEADO -->
+    <div id="contentLogged">
+      <h2 class="section-title">📂 Mis Ofertas y Grupos</h2>
+      
+      <div class="my-offer-card">
+        <div class="my-offer-info">
+          <h3>🎬 Disney+ (Premium)</h3>
+          <p>Cupos compartidos: 3/4 • Precio: $4.000 c/u</p>
+          <span class="status-badge">Activo</span>
+        </div>
       </div>
     </div>
 
-    <div id="status">Ingresá tus datos para gestionar tus publicaciones.</div>
-    <div class="my-offers-grid" id="myOffersGrid"></div>
+    <!-- AVISO SI NO ESTÁ LOGUEADO -->
+    <div id="authGuard">
+      <h2>🔒 Acceso Restringido</h2>
+      <p style="color: var(--text-muted); font-size: 0.9rem;">Necesitas iniciar sesión para ver tus ofertas publicadas y los grupos a los que te uniste.</p>
+      <a href="index.html" class="btn-login-redirect">Ir a Iniciar Sesión</a>
+    </div>
+
   </div>
 
   <div class="bottom-nav">
@@ -93,88 +95,17 @@
   </div>
 
   <script>
-    const SUPABASE_URL = 'https://xygatgvzdniivzwndaxy.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh5Z2F0Z3Z6ZG5paXZ6d25kYXh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc0MDU1MTcsImV4cCI6MjEwMjk4MTUxN30.oSoJcTxCw69F0AXmVVw5LFeF0HjdCSwHd_yOH4HwbS8';
-    const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-    async function buscarMisOfertas() {
-      const val = document.getElementById('userInput').value.trim();
-      const statusEl = document.getElementById('status');
-      const grid = document.getElementById('myOffersGrid');
-
-      if (!val) {
-        alert('Por favor ingresá un usuario o número de WhatsApp');
-        return;
-      }
-
-      statusEl.innerText = 'Buscando publicaciones...';
-      grid.innerHTML = '';
-
-      const { data, error } = await db.from('offers')
-        .select('*, plans(*, services(*))')
-        .or(`seller_username.eq.${val},whatsapp_number.eq.${val}`);
-
-      if (error) {
-        statusEl.innerText = 'Error al buscar datos.';
-        return;
-      }
-
-      if (!data || data.length === 0) {
-        statusEl.innerText = 'No se encontraron publicaciones asociadas a esos datos.';
-        return;
-      }
-
-      statusEl.innerText = '';
-
-      data.forEach(offer => {
-        const card = document.createElement('div');
-        card.className = 'card';
-        const planName = offer.plans ? offer.plans.name : 'Plataforma';
-
-        card.innerHTML = `
-          <div>
-            <div class="plan-title">${planName}</div>
-            <div class="price-text">$${offer.price_per_slot.toLocaleString('es-AR')} / mes</div>
-            <div style="font-size: 0.85rem; color: #cbd5e1; margin-bottom: 6px;">
-              📍 Cupos disponibles: <strong id="slot-count-${offer.id}">${offer.available_slots}</strong>
-            </div>
-            <div style="font-size: 0.8rem; color: #94a3b8;">
-              💬 ${offer.description || 'Sin descripción'}
-            </div>
-          </div>
-
-          <div class="actions-bar">
-            <button class="btn-action btn-slot" onclick="actualizarCupo('${offer.id}', ${offer.available_slots - 1})">➖ 1 Cupo</button>
-            <button class="btn-action btn-slot" onclick="actualizarCupo('${offer.id}', ${offer.available_slots + 1})">➕ 1 Cupo</button>
-            <button class="btn-action btn-delete" onclick="eliminarOferta('${offer.id}')">🗑️ Eliminar</button>
-          </div>
-        `;
-        grid.appendChild(card);
-      });
-    }
-
-    async function actualizarCupo(id, nuevoCupo) {
-      if (nuevoCupo < 0) return;
-
-      const { error } = await db.from('offers').update({ available_slots: nuevoCupo }).eq('id', id);
-      if (error) {
-        alert('Error al actualizar cupos: ' + error.message);
+    window.onload = function() {
+      const logueado = localStorage.getItem('usuarioLogueado');
+      if (logueado === 'true') {
+        document.getElementById('navAuthBtn').innerText = '👤 Mi Cuenta';
+        document.getElementById('contentLogged').style.display = 'block';
+        document.getElementById('authGuard').style.display = 'none';
       } else {
-        buscarMisOfertas();
+        document.getElementById('contentLogged').style.display = 'none';
+        document.getElementById('authGuard').style.display = 'block';
       }
-    }
-
-    async function eliminarOferta(id) {
-      if (!confirm('¿Estás seguro de eliminar esta oferta?')) return;
-
-      const { error } = await db.from('offers').delete().eq('id', id);
-      if (error) {
-        alert('Error al eliminar: ' + error.message);
-      } else {
-        alert('Oferta eliminada correctamente');
-        buscarMisOfertas();
-      }
-    }
+    };
   </script>
 </body>
 </html>
