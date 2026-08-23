@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Compartí — Explorar Ofertas</title>
+  <title>Compartí — Explorar y Unirse a Grupos</title>
   <style>
     :root { 
       --primary: #3b82f6; 
@@ -24,14 +24,14 @@
     .main-container { max-width: 800px; margin: 20px auto; padding: 0 16px; }
     .section-title { font-size: 1.2rem; color: #60a5fa; margin-bottom: 14px; }
 
-    /* Tarjetas de ofertas */
     .offers-grid { display: flex; flex-direction: column; gap: 12px; }
-    .offer-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 16px; display: flex; justify-content: space-between; align-items: center; }
+    .offer-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
     .offer-info h3 { margin: 0 0 4px 0; font-size: 1rem; color: #fff; }
     .offer-info p { margin: 0; font-size: 0.8rem; color: var(--text-muted); }
     .offer-price { text-align: right; }
-    .price-amount { font-size: 1.1rem; font-weight: 800; color: #4ade80; }
-    .btn-join { background: var(--primary); color: #fff; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer; margin-top: 6px; }
+    .price-amount { font-size: 1.1rem; font-weight: 800; color: #4ade80; margin-bottom: 4px; }
+    .btn-join { background: var(--primary); color: #fff; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: background 0.2s; }
+    .btn-join:hover { background: #2563eb; }
 
     /* Navegación Inferior */
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 1000; }
@@ -50,39 +50,39 @@
   </nav>
 
   <div class="main-container">
-    <h2 class="section-title">🔍 Ofertas Disponibles en la Comunidad</h2>
+    <h2 class="section-title">🔍 Grupos Disponibles para Unirte</h2>
     
     <div class="offers-grid">
       <div class="offer-card">
         <div class="offer-info">
           <h3>🎬 Netflix (Estándar)</h3>
-          <p>2 cupos disponibles • Creado por: JuanM</p>
+          <p>Administrador: <strong>JuanM</strong> • 2 cupos libres</p>
         </div>
         <div class="offer-price">
           <div class="price-amount">$4.500 /mes</div>
-          <button class="btn-join" onclick="unirseGrupo('Netflix')">Unirme</button>
+          <button class="btn-join" onclick="comprarYUnirse('Netflix', '4.500', 'JuanM')">Unirme y Comprar</button>
         </div>
       </div>
 
       <div class="offer-card">
         <div class="offer-info">
           <h3>🤖 ChatGPT Plus</h3>
-          <p>1 cupo disponible • Creado por: Sofi_Dev</p>
+          <p>Administrador: <strong>Sofi_Dev</strong> • 1 cupo libre</p>
         </div>
         <div class="offer-price">
           <div class="price-amount">$8.000 /mes</div>
-          <button class="btn-join" onclick="unirseGrupo('ChatGPT Plus')">Unirme</button>
+          <button class="btn-join" onclick="comprarYUnirse('ChatGPT Plus', '8.000', 'Sofi_Dev')">Unirme y Comprar</button>
         </div>
       </div>
 
       <div class="offer-card">
         <div class="offer-info">
           <h3>🎧 Spotify (Familiar)</h3>
-          <p>3 cupos disponibles • Creado por: Carlos99</p>
+          <p>Administrador: <strong>Carlos99</strong> • 3 cupos libres</p>
         </div>
         <div class="offer-price">
           <div class="price-amount">$2.000 /mes</div>
-          <button class="btn-join" onclick="unirseGrupo('Spotify')">Unirme</button>
+          <button class="btn-join" onclick="comprarYUnirse('Spotify', '2.000', 'Carlos99')">Unirme y Comprar</button>
         </div>
       </div>
     </div>
@@ -114,12 +114,27 @@
       }
     };
 
-    function unirseGrupo(servicio) {
-      if (localStorage.getItem('usuarioLogueado') === 'true') {
-        alert(`¡Te has unido exitosamente al grupo de ${servicio}! Revisa Mis Ofertas para ver los datos de contacto.`);
-      } else {
-        alert('Debes iniciar sesión para unirte a un grupo.');
+    function comprarYUnirse(servicio, precio, admin) {
+      if (localStorage.getItem('usuarioLogueado') !== 'true') {
+        alert('Debes iniciar sesión para unirte a un grupo y asegurar tus fondos.');
         window.location.href = 'index.html';
+        return;
+      }
+
+      const confirmar = confirm(`🛒 Resumen de Compra:\n\n• Servicio: ${servicio}\n• Administrador: ${admin}\n• Total: $${precio}\n\n🔒 Tus fondos quedarán retenidos de forma segura por 10 días.\n¿Confirmar suscripción al grupo?`);
+      
+      if (confirmar) {
+        // Guardar el grupo unido en localStorage para que aparezca en Mis Ofertas
+        let misGrupos = JSON.parse(localStorage.getItem('misGruposUnidos') || '[]');
+        
+        // Evitar duplicados exactos
+        if(!misGrupos.some(g => g.servicio === servicio)) {
+          misGrupos.push({ servicio, admin, precio, estado: 'Esperando Confirmación de Ingreso' });
+          localStorage.setItem('misGruposUnidos', JSON.stringify(misGrupos));
+        }
+
+        alert('¡Te uniste con éxito al grupo! Redirigiendo a Mis Ofertas para ver los datos de acceso.');
+        window.location.href = 'mis-ofertas.html';
       }
     }
   </script>
