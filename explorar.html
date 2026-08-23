@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Explorar Plataformas — Compartí</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <title>Compartí — Explorar Ofertas</title>
   <style>
     :root { 
       --primary: #3b82f6; 
@@ -20,57 +19,25 @@
     .navbar { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(8px); border-bottom: 1px solid var(--card-border); padding: 12px 20px; position: sticky; top: 0; z-index: 100; }
     .navbar-inner { max-width: 800px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
     .logo { font-size: 1.25rem; font-weight: 800; color: #60a5fa; text-decoration: none; }
+    .btn-login-nav { background: #2563eb; color: #fff; border: none; padding: 6px 14px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer; }
 
-    .main-container { max-width: 800px; margin: 24px auto; padding: 0 16px; }
-    .header-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; flex-wrap: wrap; gap: 10px; }
-    h1 { font-size: 1.5rem; margin: 0; background: linear-gradient(135deg, #60a5fa 0%, #a855f7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    
-    .btn-back { background: var(--card-bg); color: var(--text-muted); border: 1px solid var(--card-border); padding: 8px 14px; border-radius: 10px; font-weight: 600; cursor: pointer; display: none; }
-    .btn-back:hover { color: #fff; }
+    .main-container { max-width: 800px; margin: 20px auto; padding: 0 16px; }
+    .section-title { font-size: 1.2rem; color: #60a5fa; margin-bottom: 14px; }
 
-    .search-box { position: relative; margin-bottom: 14px; }
-    .search-input { width: 100%; padding: 14px 16px; border: 1px solid var(--card-border); border-radius: 12px; font-size: 1rem; background: var(--card-bg); color: var(--text); outline: none; }
-    .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25); }
+    /* Tarjetas de ofertas */
+    .offers-grid { display: flex; flex-direction: column; gap: 12px; }
+    .offer-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 16px; display: flex; justify-content: space-between; align-items: center; }
+    .offer-info h3 { margin: 0 0 4px 0; font-size: 1rem; color: #fff; }
+    .offer-info p { margin: 0; font-size: 0.8rem; color: var(--text-muted); }
+    .offer-price { text-align: right; }
+    .price-amount { font-size: 1.1rem; font-weight: 800; color: #4ade80; }
+    .btn-join { background: var(--primary); color: #fff; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer; margin-top: 6px; }
 
-    .categories-bar { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 16px; scrollbar-width: none; }
-    .categories-bar::-webkit-scrollbar { display: none; }
-    .chip { background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-muted); padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
-    .chip.active, .chip:hover { background: #2563eb; color: #fff; border-color: #2563eb; }
-
-    .filter-bar { display: none; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-    .filter-select { background: var(--card-bg); border: 1px solid var(--card-border); color: #fff; padding: 10px 14px; border-radius: 10px; font-size: 0.85rem; outline: none; flex: 1; min-width: 140px; }
-
-    .services-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
-    .service-card { background: var(--card-bg); border-radius: 14px; padding: 14px; border: 1px solid var(--card-border); text-align: center; cursor: pointer; transition: all 0.2s; }
-    .service-card:hover { transform: translateY(-3px); border-color: #60a5fa; }
-    .service-card .icon { font-size: 1.8rem; margin-bottom: 6px; }
-    .service-card h3 { margin: 0 0 4px; font-size: 0.9rem; word-break: break-word; }
-    .service-card .offers-count { font-size: 0.72rem; color: #60a5fa; font-weight: 600; background: rgba(96, 165, 250, 0.1); padding: 2px 6px; border-radius: 8px; display: inline-block; }
-
-    .offers-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; display: none; }
-    .card { background: var(--card-bg); border-radius: 16px; padding: 20px; border: 1px solid var(--card-border); display: flex; flex-direction: column; justify-content: space-between; position: relative; }
-    .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
-    .service-badge { font-weight: 700; font-size: 1.1rem; color: #fff; display: flex; align-items: center; gap: 8px; }
-    
-    .seller-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 0.8rem; flex-wrap: wrap; }
-    .seller-name { color: #60a5fa; font-weight: 700; background: rgba(96, 165, 250, 0.12); padding: 3px 8px; border-radius: 8px; display: inline-flex; align-items: center; gap: 4px; }
-    .rating-badge { background: rgba(234, 179, 8, 0.15); color: #facc15; padding: 3px 8px; border-radius: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; }
-    .sales-badge { color: var(--text-muted); font-weight: 600; }
-    .new-badge { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); padding: 2px 8px; border-radius: 12px; font-weight: 700; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 4px; }
-
-    .price-tag { font-size: 1.7rem; font-weight: 800; color: #fff; margin: 4px 0 8px; }
-    .price-tag small { font-size: 0.85rem; font-weight: 500; color: var(--text-muted); }
-    .details-box { background: rgba(15, 23, 42, 0.6); padding: 12px; border-radius: 10px; font-size: 0.85rem; color: #cbd5e1; margin: 8px 0 16px; line-height: 1.4; border: 1px solid rgba(255,255,255,0.05); }
-    .btn-ws { display: flex; align-items: center; justify-content: center; gap: 8px; background: #25D366; color: #fff; text-decoration: none; font-weight: 700; padding: 12px; border-radius: 10px; }
-    
-    .btn-report { background: none; border: none; color: #94a3b8; font-size: 0.75rem; cursor: pointer; margin-top: 10px; text-decoration: underline; text-align: center; width: 100%; }
-
+    /* Navegación Inferior */
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 1000; }
     .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); text-decoration: none; font-size: 0.75rem; font-weight: 600; gap: 2px; }
     .nav-item.active { color: #60a5fa; }
     .nav-item .icon { font-size: 1.2rem; }
-
-    #status { text-align: center; color: var(--text-muted); font-weight: 600; margin-top: 40px; }
   </style>
 </head>
 <body>
@@ -78,47 +45,47 @@
   <nav class="navbar">
     <div class="navbar-inner">
       <a href="index.html" class="logo">🤝 Compartí</a>
+      <button class="btn-login-nav" id="navAuthBtn" onclick="window.location.href='index.html'">Ingresar</button>
     </div>
   </nav>
 
   <div class="main-container">
-    <div class="header-bar">
-      <h1 id="titleText">Explorar Catálogo</h1>
-      <button id="btnBack" class="btn-back" onclick="volverACatalogo()">← Ver todo</button>
+    <h2 class="section-title">🔍 Ofertas Disponibles en la Comunidad</h2>
+    
+    <div class="offers-grid">
+      <div class="offer-card">
+        <div class="offer-info">
+          <h3>🎬 Netflix (Estándar)</h3>
+          <p>2 cupos disponibles • Creado por: JuanM</p>
+        </div>
+        <div class="offer-price">
+          <div class="price-amount">$4.500 /mes</div>
+          <button class="btn-join" onclick="unirseGrupo('Netflix')">Unirme</button>
+        </div>
+      </div>
+
+      <div class="offer-card">
+        <div class="offer-info">
+          <h3>🤖 ChatGPT Plus</h3>
+          <p>1 cupo disponible • Creado por: Sofi_Dev</p>
+        </div>
+        <div class="offer-price">
+          <div class="price-amount">$8.000 /mes</div>
+          <button class="btn-join" onclick="unirseGrupo('ChatGPT Plus')">Unirme</button>
+        </div>
+      </div>
+
+      <div class="offer-card">
+        <div class="offer-info">
+          <h3>🎧 Spotify (Familiar)</h3>
+          <p>3 cupos disponibles • Creado por: Carlos99</p>
+        </div>
+        <div class="offer-price">
+          <div class="price-amount">$2.000 /mes</div>
+          <button class="btn-join" onclick="unirseGrupo('Spotify')">Unirme</button>
+        </div>
+      </div>
     </div>
-
-    <div class="search-box">
-      <input type="text" id="searchInput" class="search-input" placeholder="🔍 Buscar (Netflix, Spotify, ChatGPT, F1)...">
-    </div>
-
-    <div class="categories-bar" id="categoriesBar">
-      <button class="chip active" onclick="filtrarCategoria('Todas', this)">Todas</button>
-      <button class="chip" onclick="filtrarCategoria('Streaming', this)">🎬 Streaming</button>
-      <button class="chip" onclick="filtrarCategoria('Música', this)">🎧 Música</button>
-      <button class="chip" onclick="filtrarCategoria('Deportes', this)">⚽ Deportes</button>
-      <button class="chip" onclick="filtrarCategoria('Productividad', this)">🤖 IA / Tools</button>
-      <button class="chip" onclick="filtrarCategoria('Gaming', this)">🎮 Gaming</button>
-      <button class="chip" onclick="filtrarCategoria('Seguridad', this)">🛡️ VPN / Seguridad</button>
-    </div>
-
-    <div class="filter-bar" id="filterBar">
-      <select id="sortSelect" class="filter-select" onchange="aplicarFiltrosYOrden()">
-        <option value="price-asc">💰 Menor precio primero</option>
-        <option value="price-desc">💎 Mayor precio primero</option>
-        <option value="rating">⭐ Mejor calificación</option>
-        <option value="sales">🔥 Más ventas</option>
-        <option value="recent">✨ Más recientes</option>
-      </select>
-
-      <select id="planFilterSelect" class="filter-select" onchange="aplicarFiltrosYOrden()">
-        <option value="all">📦 Todos los planes</option>
-      </select>
-    </div>
-
-    <div id="status">Cargando catálogo completo...</div>
-
-    <div class="services-grid" id="servicesGrid"></div>
-    <div class="offers-grid" id="offersGrid"></div>
   </div>
 
   <div class="bottom-nav">
@@ -141,209 +108,20 @@
   </div>
 
   <script>
-    const SUPABASE_URL = 'https://xygatgvzdniivzwndaxy.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh5Z2F0Z3Z6ZG5paXZ6d25kYXh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc0MDU1MTcsImV4cCI6MjEwMjk4MTUxN30.oSoJcTxCw69F0AXmVVw5LFeF0HjdCSwHd_yOH4HwbS8';
-    const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-    let serviciosConOfertas = [];
-    let todasLasOfertas = [];
-    let ofertasPlataformaActual = [];
-    let categoriaSeleccionada = 'Todas';
-
-    async function inicializar() {
-      const statusEl = document.getElementById('status');
-
-      const { data: services, error: errServ } = await db.from('services').select('*').order('name', { ascending: true });
-      const { data: offers, error: errOff } = await db.from('offers').select('*, plans(*, services(*))');
-
-      if (errServ || errOff) {
-        statusEl.innerText = 'Error al obtener datos.';
-        return;
+    window.onload = function() {
+      if (localStorage.getItem('usuarioLogueado') === 'true') {
+        document.getElementById('navAuthBtn').innerText = '👤 Mi Cuenta';
       }
+    };
 
-      todasLasOfertas = offers || [];
-      
-      serviciosConOfertas = services.map(srv => {
-        const ofertasDelServicio = todasLasOfertas.filter(o => o.plans && o.plans.service_id === srv.id);
-        return {
-          ...srv,
-          totalOffers: ofertasDelServicio.length
-        };
-      });
-
-      statusEl.style.display = 'none';
-      renderizarCatalogo();
-    }
-
-    function filtrarCategoria(categoria, btn) {
-      categoriaSeleccionada = categoria;
-      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-      btn.classList.add('active');
-      renderizarCatalogo();
-    }
-
-    function renderizarCatalogo() {
-      const grid = document.getElementById('servicesGrid');
-      const busqueda = document.getElementById('searchInput').value.toLowerCase().trim();
-      grid.innerHTML = '';
-
-      let filtrados = serviciosConOfertas;
-
-      if (categoriaSeleccionada !== 'Todas') {
-        filtrados = filtrados.filter(s => s.category === categoriaSeleccionada);
-      }
-
-      if (busqueda) {
-        filtrados = filtrados.filter(s => s.name.toLowerCase().includes(busqueda));
-      }
-
-      filtrados.forEach(srv => {
-        const card = document.createElement('div');
-        card.className = 'service-card';
-        card.onclick = () => verOfertasDePlataforma(srv);
-
-        card.innerHTML = `
-          <div class="icon">${srv.icon || '📺'}</div>
-          <h3>${srv.name}</h3>
-          <div class="offers-count">${srv.totalOffers} ${srv.totalOffers === 1 ? 'oferta' : 'ofertas'}</div>
-        `;
-        grid.appendChild(card);
-      });
-    }
-
-    function verOfertasDePlataforma(servicio) {
-      document.getElementById('servicesGrid').style.display = 'none';
-      document.getElementById('categoriesBar').style.display = 'none';
-      document.getElementById('offersGrid').style.display = 'grid';
-      document.getElementById('btnBack').style.display = 'block';
-      document.getElementById('filterBar').style.display = 'flex';
-      document.getElementById('titleText').innerText = `${servicio.icon} Ofertas de ${servicio.name}`;
-
-      ofertasPlataformaActual = todasLasOfertas.filter(o => o.plans && o.plans.service_id === servicio.id);
-
-      const planSelect = document.getElementById('planFilterSelect');
-      planSelect.innerHTML = '<option value="all">📦 Todos los planes</option>';
-      
-      const planesUnicos = {};
-      ofertasPlataformaActual.forEach(o => {
-        if (o.plans) {
-          planesUnicos[o.plans.id] = o.plans.name;
-        }
-      });
-
-      for (const [id, nombre] of Object.entries(planesUnicos)) {
-        planSelect.innerHTML += `<option value="${id}">${nombre}</option>`;
-      }
-
-      aplicarFiltrosYOrden();
-    }
-
-    function volverACatalogo() {
-      document.getElementById('servicesGrid').style.display = 'grid';
-      document.getElementById('categoriesBar').style.display = 'flex';
-      document.getElementById('offersGrid').style.display = 'none';
-      document.getElementById('btnBack').style.display = 'none';
-      document.getElementById('filterBar').style.display = 'none';
-      document.getElementById('titleText').innerText = 'Explorar Catálogo';
-      document.getElementById('status').style.display = 'none';
-    }
-
-    function aplicarFiltrosYOrden() {
-      let resultado = [...ofertasPlataformaActual];
-
-      const planSeleccionado = document.getElementById('planFilterSelect').value;
-      if (planSeleccionado !== 'all') {
-        resultado = resultado.filter(o => o.plan_id === planSeleccionado);
-      }
-
-      const criterioOrden = document.getElementById('sortSelect').value;
-      if (criterioOrden === 'price-asc') {
-        resultado.sort((a, b) => a.price_per_slot - b.price_per_slot);
-      } else if (criterioOrden === 'price-desc') {
-        resultado.sort((a, b) => b.price_per_slot - a.price_per_slot);
-      } else if (criterioOrden === 'rating') {
-        resultado.sort((a, b) => (b.seller_rating || 0) - (a.seller_rating || 0));
-      } else if (criterioOrden === 'sales') {
-        resultado.sort((a, b) => (b.seller_sales || 0) - (a.seller_sales || 0));
-      } else if (criterioOrden === 'recent') {
-        resultado.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-      }
-
-      renderizarOfertas(resultado);
-    }
-
-    function renderizarOfertas(lista) {
-      const grid = document.getElementById('offersGrid');
-      const statusEl = document.getElementById('status');
-      grid.innerHTML = '';
-
-      if (lista.length === 0) {
-        statusEl.style.display = 'block';
-        statusEl.innerText = 'No hay ofertas publicadas para esta selección aún.';
-        return;
+    function unirseGrupo(servicio) {
+      if (localStorage.getItem('usuarioLogueado') === 'true') {
+        alert(`¡Te has unido exitosamente al grupo de ${servicio}! Revisa Mis Ofertas para ver los datos de contacto.`);
       } else {
-        statusEl.style.display = 'none';
-      }
-
-      lista.forEach(offer => {
-        const card = document.createElement('div');
-        card.className = 'card';
-        
-        const planName = offer.plans ? offer.plans.name : 'Plataforma';
-        const phone = offer.whatsapp_number || '5491112345678';
-        const username = offer.seller_username ? `@${offer.seller_username}` : '@usuario';
-        const sales = offer.seller_sales || 0;
-        const rating = offer.seller_rating ? offer.seller_rating.toFixed(1) : '5.0';
-        const isNew = offer.is_new_user || sales === 0;
-
-        const mensajeWS = encodeURIComponent(`¡Hola ${username}! Vi tu oferta de ${planName} ($${offer.price_per_slot}/mes) en Compartí y me interesa ocupar un cupo.`);
-        const urlWhatsApp = `https://wa.me/${phone}?text=${mensajeWS}`;
-
-        card.innerHTML = `
-          <div>
-            <div class="card-header">
-              <div class="service-badge">${planName}</div>
-              ${isNew ? '<span class="new-badge">🌱 Nuevo</span>' : ''}
-            </div>
-
-            <div class="seller-meta">
-              <span class="seller-name">👤 ${username}</span>
-              <span class="rating-badge">⭐ ${rating}</span>
-              <span class="sales-badge">🛒 ${sales} ${sales === 1 ? 'venta' : 'ventas'}</span>
-            </div>
-
-            <div class="price-tag">
-              $${offer.price_per_slot.toLocaleString('es-AR')} <small>/ mes</small>
-            </div>
-
-            <div class="details-box">
-              📍 Cupos libres: <strong>${offer.available_slots}</strong><br>
-              💬 ${offer.description || 'Sin detalles adicionales'}
-            </div>
-          </div>
-
-          <a href="${urlWhatsApp}" target="_blank" class="btn-ws">
-            <span>💬</span> Contactar por WhatsApp
-          </a>
-
-          <button class="btn-report" onclick="reportarOferta('${offer.id}', '${planName}')">
-            🚨 Reportar publicación o usuario
-          </button>
-        `;
-        grid.appendChild(card);
-      });
-    }
-
-    function reportarOferta(offerId, planNombre) {
-      const motivo = prompt(`¿Por qué deseas reportar la oferta de ${planNombre}?`);
-      if (motivo) {
-        alert('Gracias por tu reporte. Nuestro equipo revisará la publicación en breve.');
+        alert('Debes iniciar sesión para unirte a un grupo.');
+        window.location.href = 'index.html';
       }
     }
-
-    document.getElementById('searchInput').addEventListener('input', renderizarCatalogo);
-
-    inicializar();
   </script>
 </body>
 </html>
