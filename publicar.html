@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Publicar Oferta — Compartí</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <title>Compartí — Publicar Oferta</title>
   <style>
     :root { 
       --primary: #3b82f6; 
@@ -22,18 +21,23 @@
     .logo { font-size: 1.25rem; font-weight: 800; color: #60a5fa; text-decoration: none; }
 
     .main-container { max-width: 600px; margin: 24px auto; padding: 0 16px; }
-    h1 { font-size: 1.5rem; margin-bottom: 20px; background: linear-gradient(135deg, #60a5fa 0%, #a855f7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-
+    
     .form-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 20px; }
-    .form-group { margin-bottom: 16px; }
-    label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.9rem; color: #cbd5e1; }
-    input, select, textarea { width: 100%; padding: 12px; background: #0f172a; border: 1px solid var(--card-border); border-radius: 10px; color: #fff; font-size: 0.95rem; outline: none; }
-    input:focus, select:focus, textarea:focus { border-color: var(--primary); }
-    textarea { resize: vertical; min-height: 80px; }
+    .form-title { font-size: 1.2rem; color: #60a5fa; margin-top: 0; margin-bottom: 16px; }
+    
+    .form-group { margin-bottom: 14px; }
+    .form-label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 6px; }
+    .form-input, .form-select { width: 100%; background: #0f172a; border: 1px solid var(--card-border); padding: 10px 12px; border-radius: 8px; color: #fff; font-size: 0.9rem; }
+    .form-input:focus, .form-select:focus { outline: none; border-color: var(--primary); }
+    
+    .btn-submit { width: 100%; background: var(--primary); color: #fff; border: none; padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer; margin-top: 10px; font-size: 0.95rem; }
 
-    .btn-submit { width: 100%; background: #2563eb; color: #fff; border: none; padding: 14px; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 10px; transition: background 0.2s; }
-    .btn-submit:hover { background: #1d4ed8; }
+    /* Aviso si no está logueado */
+    #authGuard { display: none; text-align: center; padding: 40px 20px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; margin-top: 40px; }
+    #authGuard h2 { color: #f87171; margin-bottom: 10px; }
+    .btn-login-redirect { display: inline-block; background: var(--primary); color: #fff; text-decoration: none; padding: 10px 20px; border-radius: 8px; font-weight: 700; margin-top: 15px; }
 
+    /* Navegación Inferior */
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 1000; }
     .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); text-decoration: none; font-size: 0.75rem; font-weight: 600; gap: 2px; }
     .nav-item.active { color: #60a5fa; }
@@ -49,52 +53,41 @@
   </nav>
 
   <div class="main-container">
-    <h1>Publicar una Cuenta</h1>
-
-    <div class="form-card">
-      <form id="publishForm" onsubmit="guardarOferta(event)">
+    
+    <!-- CONTENIDO SI ESTÁ LOGUEADO -->
+    <div class="form-card" id="publishFormContainer" style="display: none;">
+      <h2 class="form-title">➕ Publicar un nuevo cupo</h2>
+      <form onsubmit="publicarOferta(event)">
         <div class="form-group">
-          <label for="serviceSelect">Plataforma:</label>
-          <select id="serviceSelect" onchange="cargarPlanes()" required>
-            <option value="">Cargando plataformas...</option>
+          <label class="form-label">Seleccioná la plataforma</label>
+          <select class="form-select" id="pubPlataforma" required>
+            <option value="Netflix">🎬 Netflix</option>
+            <option value="Disney+">🏰 Disney+</option>
+            <option value="Spotify">🎧 Spotify</option>
+            <option value="ChatGPT">🤖 ChatGPT Plus</option>
+            <option value="Max">💜 Max</option>
+            <option value="Amazon Prime">📦 Amazon Prime</option>
           </select>
         </div>
-
         <div class="form-group">
-          <label for="planSelect">Plan Específico:</label>
-          <select id="planSelect" required disabled>
-            <option value="">Seleccioná una plataforma primero</option>
-          </select>
+          <label class="form-label">Lugares / Cupos disponibles</label>
+          <input type="number" class="form-input" id="pubCupos" min="1" max="5" value="3" required>
         </div>
-
         <div class="form-group">
-          <label for="sellerUsername">👤 Tu Nombre de Usuario / Alias:</label>
-          <input type="text" id="sellerUsername" placeholder="Ej: luca_streaming" required>
+          <label class="form-label">Precio mensual por persona (ARS)</label>
+          <input type="number" class="form-input" id="pubPrecio" placeholder="Ej: 4500" required>
         </div>
-
-        <div class="form-group">
-          <label for="whatsappInput">💬 Tu WhatsApp (con código de país sin +):</label>
-          <input type="tel" id="whatsappInput" placeholder="Ej: 5491112345678" required>
-        </div>
-
-        <div class="form-group">
-          <label for="priceInput">💰 Precio por cupo mensual ($ ARS):</label>
-          <input type="number" id="priceInput" placeholder="Ej: 3000" min="1" required>
-        </div>
-
-        <div class="form-group">
-          <label for="slotsInput">📍 Cupos disponibles:</label>
-          <input type="number" id="slotsInput" placeholder="Ej: 2" min="1" max="10" required>
-        </div>
-
-        <div class="form-group">
-          <label for="descInput">📝 Descripción / Aclaraciones:</label>
-          <textarea id="descInput" placeholder="Ej: Perfil individual con PIN, pago por transferencia Mercado Pago del 1 al 5 de cada mes."></textarea>
-        </div>
-
-        <button type="submit" class="btn-submit" id="btnPublish">🚀 Publicar Oferta</button>
+        <button type="submit" class="btn-submit">Publicar Oferta</button>
       </form>
     </div>
+
+    <!-- AVISO SI NO ESTÁ LOGUEADO -->
+    <div id="authGuard">
+      <h2>🔒 Acceso Restringido</h2>
+      <p style="color: var(--text-muted); font-size: 0.9rem;">Necesitas iniciar sesión o registrarte para poder publicar ofertas y gestionar tus grupos.</p>
+      <a href="index.html" class="btn-login-redirect">Ir al Inicio a Iniciar Sesión</a>
+    </div>
+
   </div>
 
   <div class="bottom-nav">
@@ -117,90 +110,23 @@
   </div>
 
   <script>
-    const SUPABASE_URL = 'https://xygatgvzdniivzwndaxy.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh5Z2F0Z3Z6ZG5paXZ6d25kYXh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc0MDU1MTcsImV4cCI6MjEwMjk4MTUxN30.oSoJcTxCw69F0AXmVVw5LFeF0HjdCSwHd_yOH4HwbS8';
-    const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-    let planesGlobales = [];
-
-    async function cargarServicios() {
-      const serviceSelect = document.getElementById('serviceSelect');
-      const { data: services, error: errSrv } = await db.from('services').select('*').order('name', { ascending: true });
-      const { data: plans, error: errPlans } = await db.from('plans').select('*');
-
-      if (errSrv || errPlans) {
-        alert('Error al cargar servicios de la base de datos.');
-        return;
-      }
-
-      planesGlobales = plans || [];
-      serviceSelect.innerHTML = '<option value="">-- Seleccionar Plataforma --</option>';
-
-      services.forEach(srv => {
-        serviceSelect.innerHTML += `<option value="${srv.id}">${srv.icon || '📺'} ${srv.name}</option>`;
-      });
-    }
-
-    function cargarPlanes() {
-      const serviceId = document.getElementById('serviceSelect').value;
-      const planSelect = document.getElementById('planSelect');
-
-      if (!serviceId) {
-        planSelect.innerHTML = '<option value="">Seleccioná una plataforma primero</option>';
-        planSelect.disabled = true;
-        return;
-      }
-
-      const planesFiltrados = planesGlobales.filter(p => p.service_id === serviceId);
-      planSelect.innerHTML = '<option value="">-- Seleccionar Plan --</option>';
-
-      planesFiltrados.forEach(p => {
-        planSelect.innerHTML += `<option value="${p.id}">${p.name}</option>`;
-      });
-
-      planSelect.disabled = false;
-    }
-
-    async function guardarOferta(e) {
-      e.preventDefault();
-      const btn = document.getElementById('btnPublish');
-      btn.innerText = 'Guardando...';
-      btn.disabled = true;
-
-      const planId = document.getElementById('planSelect').value;
-      const username = document.getElementById('sellerUsername').value.trim();
-      let whatsapp = document.getElementById('whatsappInput').value.trim().replace(/\D/g, '');
-      const precio = document.getElementById('priceInput').value;
-      const cupos = document.getElementById('slotsInput').value;
-      const descripcion = document.getElementById('descInput').value.trim();
-
-      if (whatsapp.length === 10 && !whatsapp.startsWith('549')) {
-        whatsapp = '549' + whatsapp;
-      }
-
-      const { data, error } = await db.from('offers').insert([{
-        plan_id: planId,
-        price_per_slot: parseInt(precio),
-        available_slots: parseInt(cupos),
-        whatsapp_number: whatsapp,
-        seller_username: username,
-        description: descripcion,
-        seller_sales: 0,
-        seller_rating: 5.0,
-        is_new_user: true
-      }]);
-
-      if (error) {
-        alert('Error al publicar: ' + error.message);
-        btn.innerText = '🚀 Publicar Oferta';
-        btn.disabled = false;
+    // Verificar si el usuario inició sesión
+    window.onload = function() {
+      const logueado = localStorage.getItem('usuarioLogueado');
+      if (logueado === 'true') {
+        document.getElementById('publishFormContainer').style.display = 'block';
+        document.getElementById('authGuard').style.display = 'none';
       } else {
-        alert('¡Oferta publicada exitosamente!');
-        window.location.href = 'explorar.html';
+        document.getElementById('publishFormContainer').style.display = 'none';
+        document.getElementById('authGuard').style.display = 'block';
       }
-    }
+    };
 
-    cargarServicios();
+    function publicarOferta(e) {
+      e.preventDefault();
+      alert('¡Oferta publicada con éxito! Ya aparece en la sección Explorar y Mis Ofertas.');
+      window.location.href = 'mis-ofertas.html';
+    }
   </script>
 </body>
 </html>
