@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Compartí — Mis Ofertas y Seguridad</title>
+  <title>Compartí — Mis Grupos y Ingresos</title>
   <style>
     :root { 
       --primary: #3b82f6; 
@@ -24,11 +24,15 @@
     .main-container { max-width: 800px; margin: 20px auto; padding: 0 16px; }
     .section-title { font-size: 1.2rem; color: #60a5fa; margin-bottom: 14px; }
 
-    .my-offer-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+    .my-offer-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
     .my-offer-info h3 { margin: 0 0 4px 0; font-size: 1rem; color: #fff; }
-    .my-offer-info p { margin: 0; font-size: 0.8rem; color: var(--text-muted); }
+    .my-offer-info p { margin: 0 0 6px 0; font-size: 0.8rem; color: var(--text-muted); }
     
-    .status-badge { background: rgba(234, 179, 8, 0.15); color: #facc15; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; display: inline-block; margin-top: 6px; }
+    .status-badge { background: rgba(234, 179, 8, 0.15); color: #facc15; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; display: inline-block; }
+    .status-badge.active { background: rgba(74, 222, 128, 0.15); color: #4ade80; }
+
+    .btn-action { background: #10b981; color: #fff; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 700; font-size: 0.8rem; cursor: pointer; }
+    .btn-action:hover { background: #059669; }
 
     /* Estado si no está logueado */
     #authGuard { display: none; text-align: center; padding: 40px 20px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; margin-top: 20px; }
@@ -55,31 +59,23 @@
     
     <!-- CONTENIDO SI ESTÁ LOGUEADO -->
     <div id="contentLogged" style="display: none;">
-      <h2 class="section-title">📂 Mis Ofertas y Grupos Protegidos</h2>
+      <h2 class="section-title">📂 Mis Grupos y Suscripciones</h2>
       
       <!-- Banner informativo de seguridad -->
       <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid var(--primary); border-radius: 12px; padding: 14px; margin-bottom: 16px; font-size: 0.85rem; line-height: 1.4;">
-        <span style="font-weight: 700; color: #60a5fa;">🛡️ Protección Activa:</span> Tus fondos están retenidos de forma segura. Se liberarán al vendedor en <strong>10 días</strong> si no hay reclamos. Tenés <strong>24 horas de prueba</strong> para reportar inconvenientes y las normas prohíben abandonar los grupos una vez iniciados.
+        <span style="font-weight: 700; color: #60a5fa;">🛡️ Seguridad Garantizada:</span> Al unirte, tenés <strong>24 horas de prueba</strong>. Si confirmas que ingresaste correctamente, arranca el periodo de retención de 10 días para proteger tus fondos contra estafas.
       </div>
 
-      <div class="my-offer-card">
-        <div class="my-offer-info">
-          <h3>🎬 Disney+ (Premium)</h3>
-          <p>Cupos compartidos: 3/4 • Precio: $4.000 c/u</p>
-          <div>
-            <span class="status-badge">🔒 Fondos Retenidos (Quedan 9 días)</span>
-          </div>
-        </div>
-        <div>
-          <button onclick="verDetalleSeguridad()" style="background: var(--card-bg); border: 1px solid var(--card-border); color: #fff; padding: 8px 14px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer;">Ver Estado</button>
-        </div>
+      <!-- Lista dinámica de grupos unidos -->
+      <div id="listaMisGrupos">
+        <!-- Se llena con JavaScript -->
       </div>
     </div>
 
     <!-- AVISO SI NO ESTÁ LOGUEADO -->
     <div id="authGuard">
       <h2>🔒 Acceso Restringido</h2>
-      <p style="color: var(--text-muted); font-size: 0.9rem;">Necesitas iniciar sesión para ver tus ofertas publicadas y los grupos a los que te uniste.</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem;">Necesitas iniciar sesión para ver tus grupos y gestionar tus ingresos.</p>
       <a href="index.html" class="btn-login-redirect">Ir a Iniciar Sesión</a>
     </div>
 
@@ -111,14 +107,62 @@
         document.getElementById('navAuthBtn').innerText = '👤 Mi Cuenta';
         document.getElementById('contentLogged').style.display = 'block';
         document.getElementById('authGuard').style.display = 'none';
+        renderMisGrupos();
       } else {
         document.getElementById('contentLogged').style.display = 'none';
         document.getElementById('authGuard').style.display = 'block';
       }
     };
 
-    function verDetalleSeguridad() {
-      alert("🔒 Estado de la Transacción:\n\n• Período de prueba de 24hs: Activo / Exitoso.\n• Retención de fondos: Quedan 9 días para liberar el dinero al vendedor.\n• Política de grupo: No se puede abandonar el grupo antes del cierre del ciclo para proteger a los miembros.");
+    function renderMisGrupos() {
+      const contenedor = document.getElementById('listaMisGrupos');
+      let grupos = JSON.parse(localStorage.getItem('misGruposUnidos') || '[]');
+
+      // Si no tiene grupos unidos de prueba, le cargamos uno por defecto para demo
+      if (grupos.length === 0) {
+        grupos = [{ servicio: 'Disney+ (Premium)', admin: 'Ana_Gomez', precio: '4.000', estado: 'Esperando Confirmación de Ingreso' }];
+        localStorage.setItem('misGruposUnidos', JSON.stringify(grupos));
+      }
+
+      contenedor.innerHTML = '';
+      grupos.forEach((g, index) => {
+        const card = document.createElement('div');
+        card.className = 'my-offer-card';
+        
+        let badgeHtml = '';
+        let botonHtml = '';
+
+        if (g.estado === 'Esperando Confirmación de Ingreso') {
+          badgeHtml = `<span class="status-badge">⏳ Pendiente de Ingreso</span>`;
+          botonHtml = `<button class="btn-action" onclick="confirmarIngreso(${index})">✅ Confirmar que pude ingresar</button>`;
+        } else {
+          badgeHtml = `<span class="status-badge active">🔒 Protegido (Retención 10 días)</span>`;
+          botonHtml = `<button style="background:var(--card-bg); border:1px solid var(--card-border); color:#fff; padding:6px 12px; border-radius:8px; font-size:0.75rem; cursor:pointer;" onclick="alert('Estás protegido. Quedan días en curso para liberar fondos al administrador.')">Ver Estado</button>`;
+        }
+
+        card.innerHTML = `
+          <div class="my-offer-info">
+            <h3>🎬 ${g.servicio}</h3>
+            <p>Admin: <strong>${g.admin}</strong> • Precio: $${g.precio} /mes</p>
+            <div>${badgeHtml}</div>
+          </div>
+          <div>${botonHtml}</div>
+        `;
+        contenedor.appendChild(card);
+      });
+    }
+
+    function confirmarIngreso(index) {
+      let grupos = JSON.parse(localStorage.getItem('misGruposUnidos') || '[]');
+      
+      const conf = confirm("¿Estás seguro de que pudiste ingresar a la cuenta correctamente con los datos provistos?\n\nAl confirmar, se activarán las 24hs de prueba finalizadas y comenzará el periodo de protección de fondos por 10 días.");
+      
+      if (conf) {
+        grupos[index].estado = 'Protegido';
+        localStorage.setItem('misGruposUnidos', JSON.stringify(grupos));
+        alert("¡Ingreso confirmado con éxito! Tu dinero está resguardado de forma segura.");
+        renderMisGrupos();
+      }
     }
   </script>
 </body>
