@@ -19,6 +19,9 @@
     .navbar { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(8px); border-bottom: 1px solid var(--card-border); padding: 12px 20px; position: sticky; top: 0; z-index: 100; }
     .navbar-inner { max-width: 800px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
     .logo { font-size: 1.25rem; font-weight: 800; color: #60a5fa; text-decoration: none; }
+    
+    .btn-login-nav { background: #2563eb; color: #fff; border: none; padding: 6px 14px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: background 0.2s; }
+    .btn-login-nav:hover { background: #1d4ed8; }
 
     .main-container { max-width: 800px; margin: 20px auto; padding: 0 16px; }
     
@@ -42,7 +45,6 @@
     .service-info { display: flex; align-items: center; gap: 8px; }
     .service-checkbox { width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer; }
     .service-name { font-weight: 600; font-size: 0.85rem; }
-    .service-prices { font-size: 0.7rem; color: var(--text-muted); }
 
     .service-cost-tag { text-align: right; }
     .cost-comparti { font-weight: 700; color: #4ade80; font-size: 0.85rem; }
@@ -52,17 +54,37 @@
     .calc-summary { background: #0f172a; border: 1px solid var(--card-border); border-radius: 10px; padding: 12px; display: flex; justify-content: space-around; align-items: center; text-align: center; }
     .summary-block div:first-child { font-size: 0.7rem; color: var(--text-muted); margin-bottom: 2px; }
 
+    /* MODAL DE LOGIN / REGISTRO */
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(5px); z-index: 2000; justify-content: center; align-items: center; padding: 16px; }
+    .modal-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; width: 100%; max-width: 400px; padding: 24px; position: relative; animation: fadeIn 0.2s ease; }
+    .modal-close { position: absolute; top: 16px; right: 16px; background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; }
+    
+    .modal-tabs { display: flex; border-bottom: 1px solid var(--card-border); margin-bottom: 20px; }
+    .modal-tab { flex: 1; text-align: center; padding: 10px; font-weight: 600; font-size: 0.9rem; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; }
+    .modal-tab.active { color: #60a5fa; border-color: #60a5fa; }
+
+    .form-group { margin-bottom: 14px; }
+    .form-label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px; }
+    .form-input { width: 100%; background: #0f172a; border: 1px solid var(--card-border); padding: 10px 12px; border-radius: 8px; color: #fff; font-size: 0.9rem; }
+    .form-input:focus { outline: none; border-color: var(--primary); }
+    .btn-submit { width: 100%; background: var(--primary); color: #fff; border: none; padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer; margin-top: 6px; font-size: 0.95rem; }
+
+    /* Navegación Inferior */
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 1000; }
     .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); text-decoration: none; font-size: 0.75rem; font-weight: 600; gap: 2px; }
     .nav-item.active { color: #60a5fa; }
     .nav-item .icon { font-size: 1.2rem; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
 <body>
 
+  <!-- BARRA DE NAVEGACIÓN SUPERIOR -->
   <nav class="navbar">
     <div class="navbar-inner">
       <a href="index.html" class="logo">🤝 Compartí</a>
+      <button class="btn-login-nav" onclick="openModal('login')">Ingresar / Registrarse</button>
     </div>
   </nav>
 
@@ -104,6 +126,49 @@
     </div>
   </div>
 
+  <!-- MODAL DE AUTENTICACIÓN -->
+  <div class="modal-overlay" id="authModal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+      
+      <div class="modal-tabs">
+        <div class="modal-tab active" id="tabLogin" onclick="switchTab('login')">Iniciar Sesión</div>
+        <div class="modal-tab" id="tabRegister" onclick="switchTab('register')">Registrarse</div>
+      </div>
+
+      <!-- Formulario de Inicio de Sesión -->
+      <form id="formLogin" onsubmit="handleAuth(event, 'login')">
+        <div class="form-group">
+          <label class="form-label">Correo Electrónico</label>
+          <input type="email" class="form-input" required placeholder="tu@email.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Contraseña</label>
+          <input type="password" class="form-input" required placeholder="••••••••">
+        </div>
+        <button type="submit" class="btn-submit">Entrar</button>
+      </form>
+
+      <!-- Formulario de Registro -->
+      <form id="formRegister" onsubmit="handleAuth(event, 'register')" style="display: none;">
+        <div class="form-group">
+          <label class="form-label">Nombre de Usuario</label>
+          <input type="text" class="form-input" required placeholder="Tu nombre o apodo">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Correo Electrónico</label>
+          <input type="email" class="form-input" required placeholder="tu@email.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Contraseña</label>
+          <input type="password" class="form-input" required placeholder="Crea una contraseña">
+        </div>
+        <button type="submit" class="btn-submit">Crear Cuenta</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- NAVEGACIÓN INFERIOR -->
   <div class="bottom-nav">
     <a href="index.html" class="nav-item active">
       <span class="icon">🏠</span>
@@ -124,6 +189,7 @@
   </div>
 
   <script>
+    // Lógica de la Calculadora
     const serviciosData = [
       { id: 'netflix', name: '🎬 Netflix (Estándar)', full: 21000, comparti: 4500 },
       { id: 'disney', name: '🏰 Disney+ (Premium)', full: 18400, comparti: 4000 },
@@ -191,6 +257,42 @@
     }
 
     renderServices();
+
+    // Lógica del Modal de Autenticación
+    const authModal = document.getElementById('authModal');
+    const formLogin = document.getElementById('formLogin');
+    const formRegister = document.getElementById('formRegister');
+    const tabLogin = document.getElementById('tabLogin');
+    const tabRegister = document.getElementById('tabRegister');
+
+    function openModal(mode) {
+      authModal.style.display = 'flex';
+      switchTab(mode);
+    }
+
+    function closeModal() {
+      authModal.style.display = 'none';
+    }
+
+    function switchTab(mode) {
+      if (mode === 'login') {
+        tabLogin.classList.add('active');
+        tabRegister.classList.remove('active');
+        formLogin.style.display = 'block';
+        formRegister.style.display = 'none';
+      } else {
+        tabRegister.classList.add('active');
+        tabLogin.classList.remove('active');
+        formRegister.style.display = 'block';
+        formLogin.style.display = 'none';
+      }
+    }
+
+    function handleAuth(event, type) {
+      event.preventDefault();
+      alert(type === 'login' ? '¡Sesión iniciada con éxito!' : '¡Cuenta creada con éxito!');
+      closeModal();
+    }
   </script>
 </body>
 </html>
