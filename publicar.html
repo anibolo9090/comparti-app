@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Publicar — Compartí</title>
-  <!-- Cargamos el cliente oficial de Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     body { font-family: system-ui, sans-serif; background: #f8fafc; color: #0f172a; padding: 20px; }
@@ -38,9 +37,10 @@
   </div>
 
   <script>
-    // Inicializamos Supabase con la librería oficial y tu nueva clave
+    // URL limpia SIN /rest/v1/ al final
     const supabaseUrl = 'https://xygatgvzdniivzwndaxy.supabase.co';
-    const supabaseKey = 'Sb_publishable_fDfrz9tONWlI3ETRbanG3w_cXYsFVif';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh5Z2F0Z3Z6ZG5paXZ6d25kYXh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc0MDU1MTcsImV4cCI6MjEwMjk4MTUxN30.oSoJcTxCw69F0AXmVVw5LFeF0HjdCSwHd_yOH4HwbS8';
+    
     const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
     async function enviarDatos(e) {
