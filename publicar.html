@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Publicar / Compartir — Compartí</title>
+  
+  <!-- Cargamos Supabase mediante el CDN clásico compatible con la clave -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     :root { 
@@ -170,13 +173,12 @@
   </div>
 
   <!-- SUPABASE Y LÓGICA DE ENVÍO -->
-  <script type="module">
-    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-
+  <script>
     const SUPABASE_URL = 'https://xygatgvzdniivzwndaxy.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh5Z2F0Z3Z6ZDniaXZ6d25kYXh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc0MDU1MTcsImV4cCI6MjEwMjk4MTUxN30.oSoJcTxCw69F0AXmVVw5LFeF0HjdCSwHd_yOH4HwbS8';
 
-    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // Inicializamos el cliente mediante la variable global del CDN
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const planesPorServicio = {
       "Netflix": ["Estándar (con anuncios)", "Estándar", "Premium (4K)"],
@@ -213,7 +215,7 @@
       "NBA League Pass": ["NBA League Pass Mensual"]
     };
 
-    window.actualizarPlanes = function() {
+    function actualizarPlanes() {
       const servicioSelect = document.getElementById('pubServicio').value;
       const planSelect = document.getElementById('pubPlan');
       planSelect.innerHTML = '';
@@ -234,7 +236,7 @@
       });
     }
 
-    window.publicarServicio = async function(e) {
+    async function publicarServicio(e) {
       e.preventDefault();
       
       const servicio = document.getElementById('pubServicio').value;
@@ -242,7 +244,7 @@
       const lugares = parseInt(document.getElementById('pubLugares').value);
       const precio = parseFloat(document.getElementById('pubPrecio').value);
 
-      const { data, error } = await supabase
+      const { data, error } = await supabaseClient
         .from('suscripciones')
         .insert([
           { 
@@ -264,9 +266,9 @@
       }
     }
 
-    window.abrirMenu = function() { document.getElementById('menuOverlay').classList.add('mostrar'); }
-    window.cerrarMenu = function() { document.getElementById('menuOverlay').classList.remove('mostrar'); }
-    window.cerrarMenuFuera = function(e) { if (e.target.id === 'menuOverlay') cerrarMenu(); }
+    function abrirMenu() { document.getElementById('menuOverlay').classList.add('mostrar'); }
+    function cerrarMenu() { document.getElementById('menuOverlay').classList.remove('mostrar'); }
+    function cerrarMenuFuera(e) { if (e.target.id === 'menuOverlay') cerrarMenu(); }
   </script>
 </body>
 </html>
