@@ -40,7 +40,7 @@
     .btn-submit { width: 100%; background: var(--primary); color: #fff; border: none; padding: 14px; border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
     .btn-submit:hover { background: #4338ca; }
 
-    /* MENÚ FLOTANTE MINIMALISTA (ESTILO NUEVO CON FLECHITAS) */
+    /* MENÚ FLOTANTE MINIMALISTA SIN STICKERS */
     .menu-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); z-index: 99999; display: none; align-items: flex-end; backdrop-filter: blur(2px); }
     .menu-overlay.mostrar { display: flex; }
     
@@ -78,10 +78,10 @@
       <h2>¿Qué quieres hacer?</h2>
       <div class="segmented-control">
         <a href="publicar.html" class="segment-btn active">
-          <span>📤</span> Compartir
+          Compartir
         </a>
         <a href="explorar.html" class="segment-btn">
-          <span>➕</span> Comprar
+          Comprar
         </a>
       </div>
     </div>
@@ -97,7 +97,7 @@
           <select id="pubServicio" class="form-select" onchange="actualizarPlanes()" required>
             <option value="">-- Elige una plataforma --</option>
             
-            <optgroup label="🍿 Streaming y Películas">
+            <optgroup label="Streaming y Películas">
               <option value="Netflix">Netflix</option>
               <option value="Disney+">Disney+</option>
               <option value="Max">Max</option>
@@ -110,7 +110,7 @@
               <option value="MUBI">MUBI</option>
             </optgroup>
 
-            <optgroup label="🎵 Música">
+            <optgroup label="Música">
               <option value="Spotify">Spotify</option>
               <option value="YouTube Premium">YouTube Premium</option>
               <option value="Apple Music">Apple Music</option>
@@ -119,14 +119,14 @@
               <option value="Amazon Music">Amazon Music</option>
             </optgroup>
 
-            <optgroup label="🤖 Inteligencia Artificial">
+            <optgroup label="Inteligencia Artificial">
               <option value="ChatGPT Plus">ChatGPT Plus</option>
               <option value="Gemini AI">Gemini AI</option>
               <option value="Claude.ai">Claude.ai</option>
               <option value="Perplexity">Perplexity</option>
             </optgroup>
 
-            <optgroup label="💻 Software y Herramientas">
+            <optgroup label="Software y Herramientas">
               <option value="Canva Pro">Canva Pro</option>
               <option value="Microsoft 365">Microsoft 365</option>
               <option value="Google One">Google One</option>
@@ -134,7 +134,7 @@
               <option value="Duolingo">Duolingo</option>
             </optgroup>
 
-            <optgroup label="⚽ Deportes">
+            <optgroup label="Deportes">
               <option value="F1 TV Pro">F1 TV Pro</option>
               <option value="DAZN">DAZN</option>
               <option value="NBA League Pass">NBA League Pass</option>
@@ -160,7 +160,7 @@
         </div>
 
         <!-- DATOS BANCARIOS DEL VENDEDOR -->
-        <div class="seccion-titulo">Tus datos para recibir cobros 🏦</div>
+        <div class="seccion-titulo">Tus datos para recibir cobros</div>
 
         <div class="form-group">
           <label class="form-label">Alias de Mercado Pago / Billetera</label>
@@ -176,7 +176,7 @@
           <label class="form-label">Banco o Billetera</label>
           <select id="pubBanco" class="form-select" required>
             <option value="">-- Selecciona tu Banco o Billetera --</option>
-            <optgroup label="🚀 Billeteras Virtuales">
+            <optgroup label="Billeteras Virtuales">
               <option value="Mercado Pago">Mercado Pago</option>
               <option value="Ualá">Ualá</option>
               <option value="Naranja X">Naranja X</option>
@@ -186,7 +186,7 @@
               <option value="BCO (Belo)">Belo</option>
               <option value="Satoshi Tango">Satoshi Tango</option>
             </optgroup>
-            <optgroup label="🏦 Bancos Tradicionales">
+            <optgroup label="Bancos Tradicionales">
               <option value="Banco Galicia">Banco Galicia</option>
               <option value="Banco Nación (BNA+)">Banco Nación (BNA+)</option>
               <option value="Banco Santander">Banco Santander</option>
@@ -232,7 +232,7 @@
 
   </div>
 
-  <!-- MENÚ FLOTANTE MINIMALISTA (ESTILO NUEVO CON FLECHITAS) -->
+  <!-- MENÚ FLOTANTE MINIMALISTA SIN STICKERS -->
   <div class="menu-overlay" id="menuOverlay" onclick="cerrarMenuFuera(event)">
     <div class="menu-drawer">
       <div class="menu-header-top">
@@ -242,19 +242,19 @@
       
       <div class="menu-list">
         <a href="explorar.html" class="menu-item-clean">
-          <span>➕ Comprar una suscripción</span>
+          <span>Comprar una suscripción</span>
           <span class="arrow">›</span>
         </a>
         <a href="publicar.html" class="menu-item-clean">
-          <span>📤 Compartir una suscripción</span>
+          <span>Compartir una suscripción</span>
           <span class="arrow">›</span>
         </a>
         <a href="mis-ofertas.html" class="menu-item-clean">
-          <span>💳 Mis Suscripciones / Grupos</span>
+          <span>Mis Suscripciones / Grupos</span>
           <span class="arrow">›</span>
         </a>
         <a href="billetera.html" class="menu-item-clean">
-          <span>👛 Billetera</span>
+          <span>Billetera</span>
           <span class="arrow">›</span>
         </a>
         
@@ -268,10 +268,10 @@
 
   <!-- BARRA DE NAVEGACIÓN INFERIOR -->
   <div class="bottom-nav">
-    <a href="index.html" class="nav-item"><span class="icon">🏠</span><span>Inicio</span></a>
-    <a href="billetera.html" class="nav-item"><span class="icon">💳</span><span>Billetera</span></a>
-    <a href="mis-ofertas.html" class="nav-item"><span class="icon">👤</span><span>Mi perfil</span></a>
-    <button class="nav-item" onclick="abrirMenu()"><span class="icon">☰</span><span>Menú</span></button>
+    <a href="index.html" class="nav-item"><span>Inicio</span></a>
+    <a href="billetera.html" class="nav-item"><span>Billetera</span></a>
+    <a href="mis-ofertas.html" class="nav-item"><span>Mi perfil</span></a>
+    <button class="nav-item" onclick="abrirMenu()"><span>Menú</span></button>
   </div>
 
   <!-- LÓGICA DE PLANES Y SUPABASE -->
