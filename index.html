@@ -148,7 +148,7 @@
       <button class="modal-close" onclick="cerrarModal()">&times;</button>
       
       <h3 style="margin-top:0; color:#60a5fa;">Iniciar Sesión</h3>
-      <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom: 16px;">Accedé con tus cuentas reales de Google</p>
+      <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom: 16px;">Accedé con tus cuentas reales o email</p>
       
       <div id="googleBtnContainer"></div>
 
@@ -164,6 +164,24 @@
           <input type="password" class="form-input" required placeholder="••••••••">
         </div>
         <button type="submit" class="btn-submit">Entrar con Email</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL PARA ELEGIR NICKNAME AL REGISTRARSE -->
+  <div class="modal-overlay" id="nicknameModal">
+    <div class="modal-box">
+      <h3 style="margin-top:0; color:#60a5fa;">¡Casi listo!</h3>
+      <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom: 16px;">
+        Elige tu nombre de usuario o apodo con el que te verán los demás miembros:
+      </p>
+
+      <form onsubmit="guardarNickname(event)">
+        <div class="form-group">
+          <label class="form-label">Nombre de Usuario / Apodo</label>
+          <input type="text" id="inputNickname" class="form-input" required placeholder="Ej: JuanComparti">
+        </div>
+        <button type="submit" class="btn-submit">Continuar</button>
       </form>
     </div>
   </div>
@@ -253,14 +271,18 @@
       const responsePayload = parseJwt(response.credential);
       if (responsePayload) {
         const email = responsePayload.email;
-        const nombre = responsePayload.name;
-
-        localStorage.setItem('usuarioLogueado', 'true');
-        localStorage.setItem('usuarioEmail', email);
         
+        localStorage.setItem('usuarioEmail', email);
         cerrarModal();
-        chequearSesionNavbar();
-        alert(`¡Hola ${nombre}! Has iniciado sesión con Google (${email}).`);
+        
+        // Si no tiene nickname registrado, le abrimos el modal para que lo elija
+        if (!localStorage.getItem('usuarioNickname')) {
+          document.getElementById('nicknameModal').style.display = 'flex';
+        } else {
+          localStorage.setItem('usuarioLogueado', 'true');
+          chequearSesionNavbar();
+          alert(`¡Bienvenido de nuevo, ${localStorage.getItem('usuarioNickname')}!`);
+        }
       } else {
         alert('Error al procesar las credenciales de Google.');
       }
@@ -321,12 +343,12 @@
 
     function chequearSesionNavbar() {
       const logueado = localStorage.getItem('usuarioLogueado');
-      const email = localStorage.getItem('usuarioEmail');
+      const nickname = localStorage.getItem('usuarioNickname');
       const btnNav = document.getElementById('navAuthBtn');
       
       if (logueado === 'true') {
-        btnNav.innerText = '👤 Mi Cuenta';
-        document.getElementById('userEmailDisplay').innerText = email || 'Usuario';
+        btnNav.innerText = `👤 ${nickname || 'Mi Cuenta'}`;
+        document.getElementById('userEmailDisplay').innerText = nickname ? `@${nickname}` : 'Cuenta';
       } else {
         btnNav.innerText = 'Ingresar';
       }
@@ -349,16 +371,35 @@
     function realizarLoginEmail(e) {
       e.preventDefault();
       const email = document.getElementById('inputEmail').value;
-      localStorage.setItem('usuarioLogueado', 'true');
       localStorage.setItem('usuarioEmail', email);
       cerrarModal();
-      chequearSesionNavbar();
-      alert('¡Sesión iniciada con email correctamente!');
+
+      // Si no tiene nickname registrado, le abrimos el modal
+      if (!localStorage.getItem('usuarioNickname')) {
+        document.getElementById('nicknameModal').style.display = 'flex';
+      } else {
+        localStorage.setItem('usuarioLogueado', 'true');
+        chequearSesionNavbar();
+        alert('¡Sesión iniciada con éxito!');
+      }
+    }
+
+    function guardarNickname(e) {
+      e.preventDefault();
+      const nicknameInput = document.getElementById('inputNickname').value.trim();
+      if (nicknameInput) {
+        localStorage.setItem('usuarioNickname', nicknameInput);
+        localStorage.setItem('usuarioLogueado', 'true');
+        document.getElementById('nicknameModal').style.display = 'none';
+        chequearSesionNavbar();
+        alert(`¡Cuenta creada con éxito! Hola, ${nicknameInput}`);
+      }
     }
 
     function cerrarSesion() {
       localStorage.removeItem('usuarioLogueado');
       localStorage.removeItem('usuarioEmail');
+      localStorage.removeItem('usuarioNickname');
       localStorage.removeItem('usuarioKyc');
       document.getElementById('userMenu').style.display = 'none';
       chequearSesionNavbar();
@@ -392,18 +433,4 @@
     }
 
     function actualizarBadgeKyc() {
-      const kycStatus = localStorage.getItem('usuarioKyc');
-      const badge = document.getElementById('kycStatusBadge');
-      if (!badge) return;
-
-      if (kycStatus === 'verificado') {
-        badge.className = 'badge-verified';
-        badge.innerText = 'Verificado';
-      } else {
-        badge.className = 'badge-unverified';
-        badge.innerText = 'Sin verificar';
-      }
-    }
-  </script>
-</body>
-</html>
+  
