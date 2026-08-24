@@ -3,297 +3,200 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Publicar Grupo — Compartí</title>
+  <title>Publicar / Compartir — Compartí</title>
 
   <style>
     :root { 
-      --primary: #3b82f6; 
-      --bg: #0f172a; 
-      --card-bg: #1e293b; 
-      --card-border: #334155; 
-      --text: #f8fafc; 
-      --text-muted: #94a3b8; 
+      --primary: #4f46e5; 
+      --bg: #f8fafc; 
+      --card-bg: #ffffff; 
+      --card-border: #e2e8f0; 
+      --text: #0f172a; 
+      --text-muted: #64748b; 
     }
     * { box-sizing: border-box; }
     body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
     
-    .navbar { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(8px); border-bottom: 1px solid var(--card-border); padding: 12px 20px; position: sticky; top: 0; z-index: 100; }
-    .navbar-inner { max-width: 800px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; position: relative; }
-    .logo { font-size: 1.25rem; font-weight: 800; color: #60a5fa; text-decoration: none; }
-    
-    .user-pill { background: rgba(59, 130, 246, 0.15); border: 1px solid var(--card-border); padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; color: #60a5fa; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+    .container { max-width: 800px; margin: 0 auto; padding: 16px; }
 
-    .main-container { max-width: 600px; margin: 20px auto; padding: 0 16px; }
-    
-    .form-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
-    .form-title { font-size: 1.2rem; color: #60a5fa; margin-top: 0; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    /* Cabecera de navegación superior (¿Qué quieres hacer?) */
+    .top-action-header { text-align: center; margin-bottom: 20px; }
+    .top-action-header h2 { font-size: 1.4rem; color: var(--text); margin-bottom: 14px; }
 
-    .user-status-box { background: #0f172a; border: 1px solid var(--card-border); padding: 12px; border-radius: 10px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; }
-    .btn-link-action { background: none; border: none; color: #60a5fa; cursor: pointer; font-size: 0.8rem; text-decoration: underline; padding: 0; }
+    .segmented-control { 
+      display: inline-flex; 
+      background: #edf2f7; 
+      padding: 4px; 
+      border-radius: 40px; 
+      gap: 4px; 
+      border: 1px solid var(--card-border);
+    }
+    .segment-btn { 
+      background: transparent; 
+      border: none; 
+      padding: 10px 24px; 
+      border-radius: 30px; 
+      font-weight: 700; 
+      font-size: 0.9rem; 
+      color: var(--text-muted); 
+      cursor: pointer; 
+      display: flex; 
+      align-items: center; 
+      gap: 6px; 
+      text-decoration: none;
+    }
+    .segment-btn.active { 
+      background: #4f46e5; 
+      color: #fff; 
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); 
+    }
 
-    .form-group { margin-bottom: 14px; text-align: left; }
-    .form-label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px; font-weight: 500; }
-    .form-input, .form-select, .form-textarea { width: 100%; background: #0f172a; border: 1px solid var(--card-border); padding: 12px; border-radius: 8px; color: #fff; font-size: 1rem; }
-    .form-textarea { resize: vertical; min-height: 80px; }
-    
-    .btn-submit { width: 100%; background: var(--primary); color: #fff; border: none; padding: 14px; border-radius: 10px; font-weight: 700; font-size: 1rem; cursor: pointer; margin-top: 10px; transition: background 0.2s; }
-    .btn-submit:active { background: #1d4ed8; }
+    /* Formulario de publicación */
+    .form-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+    .form-title { font-size: 1.15rem; font-weight: 700; color: var(--text); margin-top: 0; margin-bottom: 6px; }
+    .form-subtitle { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px; }
 
-    /* Navegación inferior */
-    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 1000; }
-    .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); text-decoration: none; font-size: 0.75rem; font-weight: 600; gap: 2px; }
-    .nav-item.active { color: #60a5fa; }
+    .form-group { margin-bottom: 16px; text-align: left; }
+    .form-label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    .form-input, .form-select { width: 100%; background: #f8fafc; border: 1px solid var(--card-border); padding: 12px; border-radius: 10px; color: var(--text); font-size: 0.95rem; }
+    .form-input:focus, .form-select:focus { outline: none; border-color: var(--primary); background: #ffffff; }
+
+    .btn-submit { width: 100%; background: var(--primary); color: #fff; border: none; padding: 14px; border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
+
+    /* MENÚ DESPLEGABLE INFERIOR */
+    .menu-overlay { 
+      position: fixed; 
+      top: 0; left: 0; right: 0; bottom: 0; 
+      background: rgba(15, 23, 42, 0.6); 
+      z-index: 99999; 
+      display: none; 
+      align-items: flex-end; 
+    }
+    .menu-overlay.mostrar { display: flex; }
+
+    .menu-drawer { 
+      background: #ffffff; 
+      border-top: 1px solid var(--card-border); 
+      border-top-left-radius: 20px; 
+      border-top-right-radius: 20px; 
+      width: 100%; 
+      max-height: 85vh; 
+      overflow-y: auto; 
+      padding: 20px; 
+    }
+    .menu-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); padding-bottom: 10px; margin-bottom: 10px; }
+    .menu-close { background: none; border: none; color: #0f172a; font-size: 1.8rem; cursor: pointer; }
+    .menu-item-link { display: flex; align-items: center; gap: 10px; padding: 12px; background: #f8fafc; border: 1px solid var(--card-border); border-radius: 8px; color: #4f46e5; text-decoration: none; margin-bottom: 8px; font-weight: 600; font-size: 0.95rem; }
+
+    /* Barra de navegación inferior */
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 9999; box-shadow: 0 -4px 10px rgba(0,0,0,0.03); }
+    .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); text-decoration: none; font-size: 0.75rem; font-weight: 600; gap: 2px; cursor: pointer; background: none; border: none; }
+    .nav-item.active { color: #4f46e5; }
     .nav-item .icon { font-size: 1.2rem; }
   </style>
 </head>
 <body>
 
-  <nav class="navbar">
-    <div class="navbar-inner">
-      <a href="index.html" class="logo">🤝 Compartí</a>
-      <div class="user-pill" id="navUserPill">👤 Cargando...</div>
-    </div>
-  </nav>
-
-  <div class="main-container">
-    <div class="form-card">
-      <h2 class="form-title">➕ Publicar un nuevo grupo</h2>
-      
-      <div class="user-status-box">
-        <div>Publicando como: <strong id="pubNickname" style="color: #60a5fa;">Cargando...</strong></div>
-        <button class="btn-link-action" onclick="cambiarApodoPrompt()">Cambiar apodo</button>
+  <div class="container">
+    
+    <!-- Selector Superior -->
+    <div class="top-action-header">
+      <h2>¿Qué quieres hacer?</h2>
+      <div class="segmented-control">
+        <a href="publicar.html" class="segment-btn active">
+          <span>📤</span> Compartir
+        </a>
+        <a href="explorar.html" class="segment-btn">
+          <span>➕</span> Comprar
+        </a>
       </div>
+    </div>
 
-      <form onsubmit="publicarOferta(event)">
-        
+    <!-- Formulario para publicar -->
+    <div class="form-box">
+      <h3 class="form-title">Publicar una suscripción</h3>
+      <p class="form-subtitle">Compartí los espacios libres de tus cuentas y ahorrá dinero.</p>
+
+      <form onsubmit="publicarServicio(event)">
         <div class="form-group">
-          <label class="form-label">Seleccioná la plataforma y tipo de plan</label>
-          <select id="pubPlataforma" class="form-select" required onchange="actualizarPrecioSugerido()">
-            
-            <optgroup label="🎬 Streaming de Video">
-              <option value="Netflix - Estándar">Netflix (Estándar - 2 pantallas)</option>
-              <option value="Netflix - Premium 4K">Netflix (Premium 4K - 4 pantallas)</option>
-              
-              <option value="Disney+ - Estándar con Anuncios">Disney+ (Estándar con Anuncios)</option>
-              <option value="Disney+ - Estándar sin Anuncios">Disney+ (Estándar sin Anuncios)</option>
-              <option value="Disney+ - Premium">Disney+ (Premium - UHD / Dolby)</option>
-              
-              <option value="Max - Básico con Anuncios">Max (Básico con Anuncios)</option>
-              <option value="Max - Estándar">Max (Estándar)</option>
-              <option value="Max - Platino">Max (Platino / 4K)</option>
-              
-              <option value="Amazon Prime Video - Estándar">Amazon Prime Video (Estándar)</option>
-              
-              <option value="Paramount+ - Estándar">Paramount+ (Estándar)</option>
-              
-              <option value="Apple TV+ - Estándar">Apple TV+ (Estándar)</option>
-              
-              <option value="YouTube Premium - Individual">YouTube Premium (Individual)</option>
-              <option value="YouTube Premium - Familiar">YouTube Premium (Familiar)</option>
-              
-              <option value="Crunchyroll - Fan">Crunchyroll (Plan Fan)</option>
-              <option value="Crunchyroll - Mega Fan">Crunchyroll (Plan Mega Fan)</option>
-              
-              <option value="Universal+ - Estándar">Universal+ (Estándar)</option>
-              <option value="ViX - Premium">ViX (Premium)</option>
-              <option value="MUBI - Estándar">MUBI (Estándar)</option>
-              <option value="AtresPlayer - Premium">AtresPlayer (Premium)</option>
-              <option value="VIKI Pass - Standard/Plus">VIKI Pass (Standard / Plus)</option>
-            </optgroup>
-            
-            <optgroup label="🎧 Música y Audio">
-              <option value="Spotify - Individual">Spotify (Individual)</option>
-              <option value="Spotify - Dúo">Spotify (Dúo)</option>
-              <option value="Spotify - Familiar">Spotify (Familiar)</option>
-              
-              <option value="YouTube Music - Individual">YouTube Music (Individual)</option>
-              <option value="YouTube Music - Familiar">YouTube Music (Familiar)</option>
-              
-              <option value="Apple Music - Individual">Apple Music (Individual)</option>
-              <option value="Apple Music - Familiar">Apple Music (Familiar)</option>
-              
-              <option value="TIDAL - HiFi Plus">TIDAL (HiFi / HiFi Plus)</option>
-              <option value="Deezer - Premium">Deezer (Premium)</option>
-              <option value="Amazon Music - Unlimited">Amazon Music (Unlimited)</option>
-            </optgroup>
-
-            <optgroup label="🤖 Inteligencia Artificial">
-              <option value="ChatGPT Plus - Cuenta Compartida">ChatGPT Plus (Cuenta Compartida)</option>
-              <option value="ChatGPT Plus - Personal / API">ChatGPT Plus (Personal)</option>
-              <option value="Gemini Advanced - Google One">Gemini Advanced (Google One AI)</option>
-              <option value="Claude.ai - Pro">Claude.ai (Pro)</option>
-              <option value="Perplexity - Pro">Perplexity Pro</option>
-            </optgroup>
-
-            <optgroup label="💻 Software y Productividad">
-              <option value="Canva Pro - Equipo">Canva Pro (Espacio de Equipo)</option>
-              <option value="Office 365 - Familiar">Microsoft Office 365 (Familiar)</option>
-              <option value="Google One - 200GB/2TB">Google One (Almacenamiento Compartido)</option>
-              <option value="Apple One - Familiar">Apple One (Familiar)</option>
-              <option value="Dropbox - Plus">Dropbox (Plus)</option>
-              <option value="Platzi - Expert">Platzi (Expert / Anual)</option>
-              <option value="Duolingo Plus - Familiar">Duolingo Plus (Familiar)</option>
-            </optgroup>
-
-            <optgroup label="⚽ Deportes">
-              <option value="F1 TV Pro - Anual/Mensual">F1 TV Pro</option>
-              <option value="NBA League Pass - Estándar">NBA League Pass</option>
-              <option value="DAZN - Global">DAZN (Global)</option>
-            </optgroup>
-
+          <label class="form-label">Selecciona el servicio</label>
+          <select id="pubServicio" class="form-select" required>
+            <option value="">-- Elige una plataforma --</option>
+            <option value="Netflix">🎬 Netflix</option>
+            <option value="Disney+">🏰 Disney+</option>
+            <option value="Spotify">🎧 Spotify</option>
+            <option value="YouTube">▶️ YouTube Premium</option>
+            <option value="ChatGPT">🤖 ChatGPT</option>
+            <option value="Max">💜 Max</option>
           </select>
         </div>
 
         <div class="form-group">
-          <label class="form-label">Lugares / Cupos disponibles</label>
-          <select id="pubCupos" class="form-select">
-            <option value="1">1 lugar disponible</option>
-            <option value="2">2 lugares disponibles</option>
-            <option value="3" selected>3 lugares disponibles</option>
-            <option value="4">4 lugares disponibles</option>
-            <option value="5">5 lugares disponibles</option>
-          </select>
+          <label class="form-label">Lugares o perfiles disponibles</label>
+          <input type="number" id="pubLugares" class="form-input" min="1" max="5" value="3" required>
         </div>
 
         <div class="form-group">
-          <label class="form-label">Precio mensual por persona (ARS)</label>
-          <input type="number" id="pubPrecio" class="form-input" required placeholder="Ej: 4500">
+          <label class="form-label">Precio mensual por lugar ($ ARS)</label>
+          <input type="number" id="pubPrecio" class="form-input" placeholder="Ej: 4500" required>
         </div>
 
-        <div class="form-group">
-          <label class="form-label">Notas adicionales o reglas del grupo (Opcional)</label>
-          <textarea id="pubNotas" class="form-textarea" placeholder="Ej: Perfil 3 libre, pago por transferencia antes del 10..."></textarea>
-        </div>
-
-        <button type="submit" class="btn-submit">Publicar Oferta</button>
+        <button type="submit" class="btn-submit">Publicar cuenta</button>
       </form>
+    </div>
+
+  </div>
+
+  <!-- MENÚ DESPLEGABLE INFERIOR -->
+  <div class="menu-overlay" id="menuOverlay" onclick="cerrarMenuFuera(event)">
+    <div class="menu-drawer">
+      <div class="menu-header">
+        <h3 style="margin:0; color:#0f172a;">Menú Principal</h3>
+        <button class="menu-close" onclick="cerrarMenu()">&times;</button>
+      </div>
+      <a href="explorar.html" class="menu-item-link"><span>➕</span> Comprar una suscripción</a>
+      <a href="publicar.html" class="menu-item-link"><span>📤</span> Compartir una suscripción</a>
+      <a href="mis-ofertas.html" class="menu-item-link"><span>💳</span> Mis Suscripciones / Grupos</a>
+      <div class="menu-item-link" onclick="cerrarMenu()" style="justify-content:center; background:#f1f5f9; margin-top: 10px; cursor:pointer;">Cerrar menú</div>
     </div>
   </div>
 
+  <!-- BARRA DE NAVEGACIÓN INFERIOR -->
   <div class="bottom-nav">
     <a href="index.html" class="nav-item"><span class="icon">🏠</span><span>Inicio</span></a>
-    <a href="explorar.html" class="nav-item"><span class="icon">🔍</span><span>Explorar</span></a>
-    <a href="publicar.html" class="nav-item active"><span class="icon">➕</span><span>Publicar</span></a>
-    <a href="mis-ofertas.html" class="nav-item"><span class="icon">📂</span><span>Mis Ofertas</span></a>
+    <a href="explorar.html" class="nav-item"><span class="icon">💳</span><span>Billetera</span></a>
+    <a href="mis-ofertas.html" class="nav-item"><span class="icon">👤</span><span>Mi perfil</span></a>
+    <button class="nav-item" onclick="abrirMenu()"><span class="icon">☰</span><span>Menú</span></button>
   </div>
 
   <script>
-    // Precios orientativos actualizados por cada tipo de plan específico
-    const preciosSugeridos = {
-      'Netflix - Estándar': 4500,
-      'Netflix - Premium 4K': 6500,
-      'Disney+ - Estándar con Anuncios': 2500,
-      'Disney+ - Estándar sin Anuncios': 3500,
-      'Disney+ - Premium': 4500,
-      'Max - Básico con Anuncios': 2200,
-      'Max - Estándar': 3000,
-      'Max - Platino': 4000,
-      'Amazon Prime Video - Estándar': 2000,
-      'Paramount+ - Estándar': 2000,
-      'Apple TV+ - Estándar': 2500,
-      'YouTube Premium - Individual': 3000,
-      'YouTube Premium - Familiar': 2000,
-      'Crunchyroll - Fan': 1500,
-      'Crunchyroll - Mega Fan': 2200,
-      'Universal+ - Estándar': 2500,
-      'ViX - Premium': 2500,
-      'MUBI - Estándar': 3000,
-      'AtresPlayer - Premium': 2000,
-      'VIKI Pass - Standard/Plus': 2000,
-      'Spotify - Individual': 3500,
-      'Spotify - Dúo': 2200,
-      'Spotify - Familiar': 1800,
-      'YouTube Music - Individual': 3000,
-      'YouTube Music - Familiar': 1800,
-      'Apple Music - Individual': 3500,
-      'Apple Music - Familiar': 2000,
-      'TIDAL - HiFi Plus': 3000,
-      'Deezer - Premium': 2500,
-      'Amazon Music - Unlimited': 2500,
-      'ChatGPT Plus - Cuenta Compartida': 4000,
-      'ChatGPT Plus - Personal / API': 12000,
-      'Gemini Advanced - Google One': 3500,
-      'Claude.ai - Pro': 8000,
-      'Perplexity - Pro': 5000,
-      'Canva Pro - Equipo': 2000,
-      'Office 365 - Familiar': 2500,
-      'Google One - 200GB/2TB': 2000,
-      'Apple One - Familiar': 3000,
-      'Dropbox - Plus': 2500,
-      'Platzi - Expert': 4000,
-      'Duolingo Plus - Familiar': 2000,
-      'F1 TV Pro - Anual/Mensual': 4500,
-      'NBA League Pass - Estándar': 5000,
-      'DAZN - Global': 4000
-    };
-
-    window.onload = function() {
-      chequearSesionPublicar();
-      actualizarPrecioSugerido();
-    };
-
-    function chequearSesionPublicar() {
-      const logueado = localStorage.getItem('usuarioLogueado');
-      const nickname = localStorage.getItem('usuarioNickname');
-
-      if (logueado !== 'true' || !nickname) {
-        const userRandom = 'Usuario_' + Math.floor(Math.random() * 1000);
-        localStorage.setItem('usuarioNickname', userRandom);
-        localStorage.setItem('usuarioLogueado', 'true');
-        
-        document.getElementById('navUserPill').innerText = `👤 ${userRandom}`;
-        document.getElementById('pubNickname').innerText = userRandom;
-      } else {
-        document.getElementById('navUserPill').innerText = `👤 ${nickname}`;
-        document.getElementById('pubNickname').innerText = nickname;
-      }
-    }
-
-    function cambiarApodoPrompt() {
-      const nuevo = prompt("Ingresa tu nuevo apodo o nombre de usuario:");
-      if (nuevo && nuevo.trim() !== '') {
-        localStorage.setItem('usuarioNickname', nuevo.trim());
-        chequearSesionPublicar();
-      }
-    }
-
-    function actualizarPrecioSugerido() {
-      const select = document.getElementById('pubPlataforma');
-      const inputPrecio = document.getElementById('pubPrecio');
-      const plataformaSeleccionada = select.value;
-
-      if (preciosSugeridos[plataformaSeleccionada]) {
-        inputPrecio.value = preciosSugeridos[plataformaSeleccionada];
-      } else {
-        inputPrecio.value = 3000;
-      }
-    }
-
-    function publicarOferta(e) {
+    function publicarServicio(e) {
       e.preventDefault();
-      
-      const plataforma = document.getElementById('pubPlataforma').value;
-      const cupos = document.getElementById('pubCupos').value;
+      const servicio = document.getElementById('pubServicio').value;
+      const lugares = document.getElementById('pubLugares').value;
       const precio = document.getElementById('pubPrecio').value;
-      const notas = document.getElementById('pubNotas').value;
-      const duenio = localStorage.getItem('usuarioNickname') || 'Anónimo';
 
-      const nuevaOferta = {
-        id: Date.now(),
-        plataforma,
-        cupos,
-        precio,
-        notas,
-        duenio,
-        fecha: new Date().toLocaleDateString()
-      };
+      // Guardar de manera temporal en localStorage para simular la publicación
+      let misPublicaciones = JSON.parse(localStorage.getItem('misPublicaciones') || '[]');
+      misPublicaciones.push({ servicio, lugares, precio, fecha: new Date().toLocaleDateString() });
+      localStorage.setItem('misPublicaciones', JSON.stringify(misPublicaciones));
 
-      let misOfertas = JSON.parse(localStorage.getItem('misOfertasPublicadas') || '[]');
-      misOfertas.push(nuevaOferta);
-      localStorage.setItem('misOfertasPublicadas', JSON.stringify(misOfertas));
-
-      alert('¡Grupo publicado con éxito!');
+      alert(`¡Tu servicio de ${servicio} fue publicado con éxito!`);
       window.location.href = 'mis-ofertas.html';
+    }
+
+    function abrirMenu() {
+      document.getElementById('menuOverlay').classList.add('mostrar');
+    }
+
+    function cerrarMenu() {
+      document.getElementById('menuOverlay').classList.remove('mostrar');
+    }
+
+    function cerrarMenuFuera(e) {
+      if (e.target.id === 'menuOverlay') {
+        cerrarMenu();
+      }
     }
   </script>
 </body>
