@@ -54,7 +54,7 @@
     .btn-action-primary { background: var(--primary); color: #fff; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 700; font-size: 0.95rem; cursor: pointer; box-shadow: 0 4px 12px rgba(255, 87, 34, 0.3); text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
     .btn-action-primary:hover { background: var(--primary-hover); }
 
-    /* MODAL INFERIOR (BOTTOM SHEET) PARA ELEGIR PLANES */
+    /* MODAL INFERIOR (BOTTOM SHEET) */
     .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); z-index: 9999; display: none; align-items: flex-end; backdrop-filter: blur(2px); }
     .modal-overlay.mostrar { display: flex; }
     .modal-drawer { background: #ffffff; border-top-left-radius: 24px; border-top-right-radius: 24px; width: 100%; max-height: 85vh; overflow-y: auto; padding: 24px 20px; box-shadow: 0 -10px 25px rgba(0,0,0,0.1); animation: slideUp 0.3s ease-out; }
@@ -71,7 +71,7 @@
     .plan-price { font-size: 1.1rem; font-weight: 800; color: var(--primary); }
     .plan-details { font-size: 0.75rem; color: #991b1b; background: #fee2e2; padding: 2px 8px; border-radius: 6px; display: inline-block; margin-top: 4px; }
 
-    /* VISTA DE RESULTADOS */
+    /* VISTA RESULTADOS */
     #vistaResultados { display: none; }
     .result-card-main { background: #ffffff; border: 1px solid var(--card-border); border-radius: 20px; padding: 24px; text-align: center; margin-bottom: 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
     .result-subtitle { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px; font-weight: 600; }
@@ -161,9 +161,7 @@
   </div>
 
   <script>
-    // Catálogo unificado con las plataformas completas de publicar
     const catalogoServicios = [
-      // Streaming
       { id: 'netflix', nombre: 'Netflix', categoria: 'streaming', planes: [ { nombre: 'Estándar', precio: 22948, detalle: '2 dispositivos' }, { nombre: 'Premium', precio: 30598, detalle: '3 dispositivos' } ] },
       { id: 'disney', nombre: 'Disney+', categoria: 'streaming', planes: [ { nombre: 'Estándar', precio: 6500, detalle: 'Sin publicidad' }, { nombre: 'Premium', precio: 9500, detalle: '4K UHD' } ] },
       { id: 'hbo', nombre: 'Max', categoria: 'streaming', planes: [ { nombre: 'Standard', precio: 7900, detalle: '2 pantallas' }, { nombre: 'Platinum', precio: 10200, detalle: '4 pantallas' } ] },
@@ -173,38 +171,36 @@
       { id: 'paramount', nombre: 'Paramount+', categoria: 'streaming', planes: [ { nombre: 'Estándar', precio: 4800, detalle: 'Cuenta base' } ] },
       { id: 'appleTV', nombre: 'Apple TV+', categoria: 'streaming', planes: [ { nombre: 'Individual', precio: 6200, detalle: 'Apple TV Plus' } ] },
 
-      // Inteligencia Artificial
       { id: 'chatgpt', nombre: 'ChatGPT', categoria: 'ia', planes: [ { nombre: 'ChatGPT Plus', precio: 24500, detalle: 'GPT-4o individual' } ] },
       { id: 'claude', nombre: 'Claude AI', categoria: 'ia', planes: [ { nombre: 'Claude Pro', precio: 24500, detalle: 'Acceso prioritario' } ] },
       { id: 'midjourney', nombre: 'Midjourney', categoria: 'ia', planes: [ { nombre: 'Plan Basic', precio: 18000, detalle: 'Generación de imágenes' } ] },
 
-      // Música
       { id: 'spotify', nombre: 'Spotify', categoria: 'musica', planes: [ { nombre: 'Individual', precio: 3800, detalle: '1 cuenta' }, { nombre: 'Familiar / Dúo', precio: 5200, detalle: 'Compartido' } ] },
       { id: 'appleMusic', nombre: 'Apple Music', categoria: 'musica', planes: [ { nombre: 'Individual', precio: 4100, detalle: 'Alta calidad' } ] },
       { id: 'youtubeMusic', nombre: 'YouTube Music', categoria: 'musica', planes: [ { nombre: 'Individual', precio: 3900, detalle: 'Música sin anuncios' } ] },
 
-      // Gaming
       { id: 'xbox', nombre: 'Xbox Game Pass', categoria: 'gaming', planes: [ { nombre: 'Ultimate', precio: 11500, detalle: 'PC y Consola' } ] },
       { id: 'playstation', nombre: 'PlayStation Plus', categoria: 'gaming', planes: [ { nombre: 'Extra / Deluxe', precio: 14000, detalle: 'Catálogo de juegos' } ] },
 
-      // Otros / Productividad
       { id: 'canva', nombre: 'Canva Pro', categoria: 'otros', planes: [ { nombre: 'Equipo Pro', precio: 6500, detalle: 'Herramienta de diseño' } ] },
       { id: 'icloud', nombre: 'iCloud+', categoria: 'otros', planes: [ { nombre: '200 GB', precio: 3500, detalle: 'Almacenamiento nube' } ] }
     ];
 
     let seleccionados = {};
+    let categoriaActual = 'todo';
 
     document.addEventListener("DOMContentLoaded", () => {
       renderizarServicios('todo');
     });
 
-    function renderizarServicios(categoriaFiltro) {
+    function renderizarServicios(cat) {
+      categoriaActual = cat;
       const contenedor = document.getElementById('listaPlataformas');
       contenedor.innerHTML = '';
 
-      const filtrados = categoriaFiltro === 'todo' 
+      const filtrados = cat === 'todo' 
         ? catalogoServicios 
-        : catalogoServicios.filter(s => s.categoria === categoriaFiltro);
+        : catalogoServicios.filter(s => s.categoria === cat);
 
       let html = '<div class="services-grid">';
       filtrados.forEach(serv => {
@@ -262,14 +258,7 @@
     function seleccionarPlan(idServicio, indexPlan) {
       seleccionados[idServicio] = indexPlan;
       cerrarModalPlanes();
-      const catActiva = document.querySelector('.tab-btn.active').getAttribute('onclick');
-      let catActual = 'todo';
-      if(catActiva.includes('streaming')) catActual = 'streaming';
-      if(catActiva.includes('ia')) catActual = 'ia';
-      if(catActiva.includes('musica')) catActual = 'musica';
-      if(catActiva.includes('gaming')) catActual = 'gaming';
-      if(catActiva.includes('otros')) catActual = 'otros';
-      renderizarServicios(catActual);
+      renderizarServicios(categoriaActual);
     }
 
     function calcularTotalMes() {
@@ -347,4 +336,9 @@
           url: window.location.href
         }).catch(() => {});
       } else {
-        alert("Enla
+        alert("Enlace copiado al portapapeles.");
+      }
+    }
+  </script>
+</body>
+</html>
