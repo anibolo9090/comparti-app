@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora de Suscripciones — Compartí</title>
+
+  <style>
+    :root { 
+      --primary: #ff5722; /* Estilo estilo Lank / Naranja destacado */
+      --primary-hover: #f4511e;
+      --bg: #f8fafc; 
+      --card-bg: #ffffff; 
+      --card-border: #e2e8f0; 
+      --text: #0f172a; 
+      --text-muted: #64748b; 
+    }
+    * { box-sizing: border-box; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 100px; }
+    
+    .container { max-width: 800px; margin: 0 auto; padding: 16px; }
+
+    /* CABECERA DE LA CALCULADORA */
+    .calc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-top: 8px; }
+    .btn-back { background: #f1f5f9; border: 1px solid var(--card-border); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; text-decoration: none; color: var(--text); }
+    .calc-brand { font-size: 1.25rem; font-weight: 800; color: var(--text); display: flex; align-items: center; gap: 4px; }
+    .calc-brand span { color: var(--primary); }
+
+    .calc-title-main { font-size: 1.5rem; font-weight: 800; color: var(--text); margin-bottom: 16px; text-align: center; }
+
+    /* PESTAÑAS DE CATEGORÍAS */
+    .tabs-container { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 20px; scrollbar-width: none; }
+    .tabs-container::-webkit-scrollbar { display: none; }
+    .tab-btn { display: flex; align-items: center; gap: 6px; background: #ffffff; border: 1px solid var(--card-border); padding: 10px 16px; border-radius: 30px; font-size: 0.9rem; font-weight: 600; color: var(--text-muted); cursor: pointer; white-space: nowrap; transition: all 0.2s; }
+    .tab-btn.active { background: var(--primary); color: #ffffff; border-color: var(--primary); box-shadow: 0 4px 12px rgba(255, 87, 34, 0.3); }
+
+    /* SECCIONES Y CUADRÍCULAS */
+    .section-title { font-size: 1.05rem; font-weight: 700; color: var(--text); margin: 20px 0 12px 0; display: flex; align-items: center; gap: 6px; }
+    
+    .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+    @media (max-width: 600px) { .services-grid { grid-template-columns: repeat(2, 1fr); } }
+
+    .service-card { background: #ffffff; border: 1px solid var(--card-border); border-radius: 16px; padding: 14px; text-align: center; cursor: pointer; position: relative; transition: all 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.02); display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 85px; }
+    .service-card:hover { border-color: var(--primary); }
+    .service-card.selected { border-color: var(--primary); background: #fff5f2; }
+    .service-card .badge-selected { position: absolute; top: 8px; right: 8px; width: 18px; height: 18px; background: var(--primary); color: #fff; border-radius: 50%; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; }
+    .service-name { font-size: 0.9rem; font-weight: 700; color: var(--text); }
+    .service-plan-tag { font-size: 0.7rem; color: var(--text-muted); margin-top: 4px; }
+
+    /* BARRA INFERIOR FLOTANTE */
+    .floating-footer { position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; border-top: 1px solid var(--card-border); padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 100; box-shadow: 0 -4px 15px rgba(0,0,0,0.05); }
+    .footer-total-label { font-size: 0.75rem; color: var(--text-muted); }
+    .footer-total-amount { font-size: 1.25rem; font-weight: 800; color: var(--text); }
+    .btn-action-primary { background: var(--primary); color: #fff; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 700; font-size: 0.95rem; cursor: pointer; box-shadow: 0 4px 12px rgba(255, 87, 34, 0.3); text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+    .btn-action-primary:hover { background: var(--primary-hover); }
+
+    /* MODAL INFERIOR (BOTTOM SHEET) PARA ELEGIR PLANES */
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); z-index: 9999; display: none; align-items: flex-end; backdrop-filter: blur(2px); }
+    .modal-overlay.mostrar { display: flex; }
+    .modal-drawer { background: #ffffff; border-top-left-radius: 24px; border-top-right-radius: 24px; width: 100%; max-height: 85vh; overflow-y: auto; padding: 24px 20px; box-shadow: 0 -10px 25px rgba(0,0,0,0.1); animation: slideUp 0.3s ease-out; }
+    
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .modal-title { font-size: 1.2rem; font-weight: 800; color: var(--text); margin: 0; }
+    .modal-close { background: #f1f5f9; border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+    .plan-option { background: #f8fafc; border: 1px solid var(--card-border); border-radius: 14px; padding: 14px; margin-bottom: 10px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; }
+    .plan-option.selected { background: #fff5f2; border-color: var(--primary); }
+    .plan-name { font-size: 0.95rem; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+    .plan-price { font-size: 1.1rem; font-weight: 800; color: var(--primary); }
+    .plan-details { font-size: 0.75rem; color: var(--text-muted); background: #fee2e2; color: #991b1b; padding: 2px 8px; border-radius: 6px; display: inline-block; margin-top: 4px; }
+
+    /* VISTA DE RESULTADOS (OCULTA POR DEFECTO) */
+    #vistaResultados { display: none; }
+    .result-card-main { background: #ffffff; border: 1px solid var(--card-border); border-radius: 20px; padding: 24px; text-align: center; margin-bottom: 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
+    .result-subtitle { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px; font-weight: 600; }
+    .result-big-number { font-size: 2.2rem; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+    .result-yearly { font-size: 0.9rem; color: var(--text-muted); }
+    
+    .savings-box { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 16px; padding: 20px; text-align: center; margin-bottom: 20px; }
+    .savings-title { font-size: 0.9rem; font-weight: 700; color: #166534; display: flex; align-items: center; justify-content: center; gap: 4px; margin-bottom: 4px; }
+    .savings-amount { font-size: 1.8rem; font-weight: 800; color: #16a34a; margin-bottom: 4px; }
+    .savings-yearly { font-size: 0.85rem; color: #15803d; font-weight: 600; }
+
+    .sub-item-row { display: flex; justify-content: space-between; align-items: center; background: #fff; border: 1px solid var(--card-border); padding: 12px 16px; border-radius: 12px; margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+
+  <div class="container" id="vistaSeleccion">
+    
+    <!-- CABECERA -->
+    <div class="calc-header">
+      <a href="index.html" class="btn-back">‹</a>
+      <div class="calc-brand"><span>Compartí</span> Calculadora</div>
+      <div style="width: 40px;"></div>
+    </div>
+
+    <h1 class="calc-title-main">¿Qué suscripciones tienes contratadas?</h1>
+
+    <!-- PESTAÑAS -->
+    <div class="tabs-container">
+      <button class="tab-btn active" onclick="filtrarCategoria('todo', this)">🔍 Todo</button>
+      <button class="tab-btn" onclick="filtrarCategoria('streaming', this)">📺 Streaming</button>
+      <button class="tab-btn" onclick="filtrarCategoria('ia', this)">🤖 IA</button>
+      <button class="tab-btn" onclick="filtrarCategoria('musica', this)">🎵 Música</button>
+    </div>
+
+    <!-- CONTENEDOR DE PLATAFORMAS -->
+    <div id="listaPlataformas">
+      <!-- Se llena dinámicamente con JS -->
+    </div>
+  </div>
+
+  <!-- VISTA DE RESULTADOS -->
+  <div class="container" id="vistaResultados">
+    <div class="calc-header">
+      <button class="btn-back" onclick="volverACalculadora()">‹</button>
+      <div class="calc-brand">Tu resultado</div>
+      <button class="btn-back" onclick="reiniciarCalculadora()" title="Reiniciar">🔄</button>
+    </div>
+
+    <div class="result-card-main">
+      <div class="result-subtitle">💳 Hoy estás pagando</div>
+      <div class="result-big-number" id="resTotalMes">$ 0</div>
+      <div class="result-yearly" id="resTotalAnio">Eso son $ 0 al año</div>
+    </div>
+
+    <div class="section-title">Tus suscripciones</div>
+    <div id="resListaSuscripciones"></div>
+
+    <div class="savings-box">
+      <div class="savings-title">📈 Podrías recuperar</div>
+      <div class="savings-amount" id="resAhorroMes">$ 0</div>
+      <div class="savings-yearly" id="resAhorroAnio">$ 0 al año en tu bolsillo</div>
+    </div>
+
+    <button class="btn-action-primary" style="width: 100%; margin-bottom: 12px;" onclick="location.href='publicar.html'">Compartir con Compartí</button>
+    <button class="btn-back" style="width: 100%; border-radius: 12px; height: 45px; font-weight: 600;" onclick="compartirResultado()">📤 Compartir mi resultado</button>
+  </div>
+
+  <!-- BARRA INFERIOR FLOTANTE (SELECCIÓN) -->
+  <div class="floating-footer" id="footerSeleccion">
+    <div>
+      <div class="footer-total-label">Total mensual</div>
+      <div class="footer-total-amount" id="footerMonto">$ 0</div>
+    </div>
+    <button class="btn-action-primary" onclick="verResultados()">Ver resultado ›</button>
+  </div>
+
+  <!-- MODAL DE PLANES -->
+  <div class="modal-overlay" id="modalPlanes" onclick="cerrarModalFuera(event)">
+    <div class="modal-drawer">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modalNombreServicio">Planes</h3>
+        <button class="modal-close" onclick="cerrarModalPlanes()">&times;</button>
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 14px;">Elige tu plan actual:</p>
+      <div id="modalOpcionesPlanes"></div>
+    </div>
+  </div>
+
+  <script>
+    // Base de datos de servicios con sus respectivos planes (Precios en ARS actualizables)
+    const catalogoServicios = [
+      { id: 'netflix', nombre: 'Netflix', categoria: 'streaming', planes: [ { nombre: 'Netflix Estándar', precio: 22948, detalle: '2 dispositivos' }, { nombre: 'Netflix Premium', precio: 30598, detalle: '3 dispositivos' } ] },
+      { id: 'chatgpt', nombre: 'ChatGPT', categoria: 'ia', planes: [ { nombre: 'ChatGPT Plus', precio: 24500, detalle: 'Uso individual Pro' } ] },
+      { id: 'disney', nombre: 'Disney+', categoria: 'streaming', planes: [ { nombre: 'Disney+ Estándar', precio: 6500, detalle: 'Sin publicidad' }, { nombre: 'Disney+ Premium', precio: 9500, detalle: 'Máxima calidad 4K' } ] },
+      { id: 'hbo', nombre: 'Max', categoria: 'streaming', planes: [ { nombre: 'Max Standard', precio: 7900, detalle: '2 pantallas' } ] },
+      { id: 'prime', nombre: 'Prime Video', categoria: 'streaming', planes: [ { nombre: 'Amazon Prime', precio: 5800, detalle: 'Incluye envíos y video' } ] },
+      { id: 'youtube', nombre: 'YouTube', categoria: 'streaming', planes: [ { nombre: 'YouTube Premium', precio: 4500, detalle: 'Sin anuncios' } ] },
+      { id: 'spotify', nombre: 'Spotify', categoria: 'musica', planes: [ { nombre: 'Spotify Individual', precio: 3800, detalle: '1 cuenta' }, { nombre: 'Spotify Dúo / Familiar', precio: 5200, detalle: 'Varias cuentas' } ] }
+    ];
+
+    // Estado de selecciones del usuario: { idServicio: indicePlanElegido }
+    let seleccionados = {};
+
+    document.addEventListener("DOMContentLoaded", () => {
+      renderizarServicios('todo');
+    });
+
+    function renderizarServicios(categoriaFiltro) {
+      const contenedor = document.getElementById('listaPlataformas');
+      contenedor.innerHTML = '';
+
+      const filtrados = categoriaFiltro === 'todo' 
+        ? catalogoServicios 
+        : catalogoServicios.filter(s => s.categoria === categoriaFiltro);
+
+      let html = '<div class="services-grid">';
+      filtrados.forEach(serv => {
+        const estaSeleccionado = seleccionados[serv.id] !== undefined;
+        const planElegidoTexto = estaSeleccionado ? serv.planes[seleccionados[serv.id]].nombre : '';
+        
+        html += `
+          <div class="service-card ${estaSeleccionado ? 'selected' : ''}" onclick="abrirPlanes('${serv.id}')">
+            ${estaSeleccionado ? '<div class="badge-selected">✓</div>' : ''}
+            <div class="service-name">${serv.nombre}</div>
+            <div class="service-plan-tag">${planElegidoTexto}</div>
+          </div>
+        `;
+      });
+      html += '</div>';
+      contenedor.innerHTML = html;
+      actualizarFooter();
+    }
+
+    function filtrarCategoria(cat, elementoBtn) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      elementoBtn.classList.add('active');
+      renderizarServicios(cat);
+    }
+
+    let servicioActualId = null;
+    function abrirPlanes(idServicio) {
+      servicioActualId = idServicio;
+      const servicio = catalogoServicios.find(s => s.id === idServicio);
+      document.getElementById('modalNombreServicio').innerText = servicio.nombre;
+
+      let html = '';
+      servicio.planes.forEach((plan, index) => {
+        const esElegido = seleccionados[idServicio] === index;
+        html += `
+          <div class="plan-option ${esElegido ? 'selected' : ''}" onclick="seleccionarPlan('${idServicio}', ${index})">
+            <div>
+              <div class="plan-name">${plan.nombre}</div>
+              <div class="plan-details">📺 ${plan.detalle}</div>
+            </div>
+            <div style="text-align: right;">
+              <div class="plan-price">$ ${plan.precio.toLocaleString('es-AR')}</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">/mes</div>
+            </div>
+          </div>
+        `;
+      });
+      document.getElementById('modalOpcionesPlanes').innerHTML = html;
+      document.getElementById('modalPlanes').classList.add('mostrar');
+    }
+
+    function cerrarModalPlanes() { document.getElementById('modalPlanes').classList.remove('mostrar'); }
+    function cerrarModalFuera(e) { if (e.target.id === 'modalPlanes') cerrarModalPlanes(); }
+
+    function seleccionarPlan(idServicio, indexPlan) {
+      seleccionados[idServicio] = indexPlan;
+      cerrarModalPlanes();
+      renderizarServicios(document.querySelector('.tab-btn.active').innerText.toLowerCase().includes('streaming') ? 'streaming' : document.querySelector('.tab-btn.active').innerText.toLowerCase().includes('ia') ? 'ia' : document.querySelector('.tab-btn.active').innerText.toLowerCase().includes('música') ? 'musica' : 'todo');
+    }
+
+    function calcularTotalMes() {
+      let total = 0;
+      for (const [idServ, indexPlan] of Object.entries(seleccionados)) {
+        const serv = catalogoServicios.find(s => s.id === idServ);
+        if (serv && serv.planes[indexPlan]) {
+          total += serv.planes[indexPlan].precio;
+        }
+      }
+      return total;
+    }
+
+    function actualizarFooter() {
+      const total = calcularTotalMes();
+      document.getElementById('footerMonto').innerText = `$ ${total.toLocaleString('es-AR')}`;
+    }
+
+    function verResultados() {
+      const totalMes = calcularTotalMes();
+      if (totalMes === 0) {
+        alert("Por favor, selecciona al menos una suscripción.");
+        return;
+      }
+
+      document.getElementById('resTotalMes').innerText = `$ ${totalMes.toLocaleString('es-AR')}`;
+      document.getElementById('resTotalAnio').innerText = `Eso son $ ${(totalMes * 12).toLocaleString('es-AR')} al año`;
+      
+      // Cálculo estimado de recuperación / ahorro (aprox 50% compartido)
+      const ahorroMes = Math.round(totalMes * 0.5);
+      document.getElementById('resAhorroMes').innerText = `$ ${ahorroMes.toLocaleString('es-AR')}`;
+      document.getElementById('resAhorroAnio').innerText = `$ ${(ahorroMes * 12).toLocaleString('es-AR')} al año en tu bolsillo`;
+
+      let listaHtml = '';
+      for (const [idServ, indexPlan] of Object.entries(seleccionados)) {
+        const serv = catalogoServicios.find(s => s.id === idServ);
+        const plan = serv.planes[indexPlan];
+        listaHtml += `
+          <div class="sub-item-row">
+            <div>
+              <div style="font-weight: 700; font-size: 0.95rem;">${serv.nombre}</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">${plan.nombre}</div>
+            </div>
+            <div style="font-weight: 700; color: var(--text);">
+              $ ${plan.precio.toLocaleString('es-AR')} <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: normal;">/mes</span>
+            </div>
+          </div>
+        `;
+      }
+      document.getElementById('resListaSuscripciones').innerHTML = listaHtml;
+
+      document.getElementById('vistaSeleccion').style.display = 'none';
+      document.getElementById('footerSeleccion').style.display = 'none';
+      document.getElementById('vistaResultados').style.display = 'block';
+      window.scrollTo(0, 0);
+    }
+
+    function volverACalculadora() {
+      document.getElementById('vistaResultados').style.display = 'none';
+      document.getElementById('vistaSeleccion').style.display = 'block';
+      document.getElementById('footerSeleccion').style.display = 'flex';
+    }
+
+    function reiniciarCalculadora() {
+      seleccionados = {};
+      volverACalculadora();
+      renderizarServicios('todo');
+    }
+
+    function compartirResultado() {
+      const totalMes = calcularTotalMes();
+      if (navigator.share) {
+        navigator.share({
+          title: 'Mi gasto en suscripciones',
+          text: `Gasto $ ${totalMes.toLocaleString('es-AR')} al mes en suscripciones. ¡Descubrí cuánto podés ahorrar con Compartí!`,
+          url: window.location.href
+        }).catch(() => {});
+      } else {
+        alert("Enlace copiado al portapapeles.");
+      }
+    }
+  </script>
+</body>
+</html>
