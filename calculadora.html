@@ -7,7 +7,7 @@
 
   <style>
     :root { 
-      --primary: #ff5722; /* Estilo estilo Lank / Naranja destacado */
+      --primary: #ff5722; 
       --primary-hover: #f4511e;
       --bg: #f8fafc; 
       --card-bg: #ffffff; 
@@ -69,9 +69,9 @@
     .plan-option.selected { background: #fff5f2; border-color: var(--primary); }
     .plan-name { font-size: 0.95rem; font-weight: 700; color: var(--text); margin-bottom: 2px; }
     .plan-price { font-size: 1.1rem; font-weight: 800; color: var(--primary); }
-    .plan-details { font-size: 0.75rem; color: var(--text-muted); background: #fee2e2; color: #991b1b; padding: 2px 8px; border-radius: 6px; display: inline-block; margin-top: 4px; }
+    .plan-details { font-size: 0.75rem; color: #991b1b; background: #fee2e2; padding: 2px 8px; border-radius: 6px; display: inline-block; margin-top: 4px; }
 
-    /* VISTA DE RESULTADOS (OCULTA POR DEFECTO) */
+    /* VISTA DE RESULTADOS */
     #vistaResultados { display: none; }
     .result-card-main { background: #ffffff; border: 1px solid var(--card-border); border-radius: 20px; padding: 24px; text-align: center; margin-bottom: 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
     .result-subtitle { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px; font-weight: 600; }
@@ -88,9 +88,8 @@
 </head>
 <body>
 
+  <!-- VISTA SELECCIÓN -->
   <div class="container" id="vistaSeleccion">
-    
-    <!-- CABECERA -->
     <div class="calc-header">
       <a href="index.html" class="btn-back">‹</a>
       <div class="calc-brand"><span>Compartí</span> Calculadora</div>
@@ -105,15 +104,15 @@
       <button class="tab-btn" onclick="filtrarCategoria('streaming', this)">📺 Streaming</button>
       <button class="tab-btn" onclick="filtrarCategoria('ia', this)">🤖 IA</button>
       <button class="tab-btn" onclick="filtrarCategoria('musica', this)">🎵 Música</button>
+      <button class="tab-btn" onclick="filtrarCategoria('gaming', this)">🎮 Gaming</button>
+      <button class="tab-btn" onclick="filtrarCategoria('otros', this)">💼 Otros</button>
     </div>
 
     <!-- CONTENEDOR DE PLATAFORMAS -->
-    <div id="listaPlataformas">
-      <!-- Se llena dinámicamente con JS -->
-    </div>
+    <div id="listaPlataformas"></div>
   </div>
 
-  <!-- VISTA DE RESULTADOS -->
+  <!-- VISTA RESULTADOS -->
   <div class="container" id="vistaResultados">
     <div class="calc-header">
       <button class="btn-back" onclick="volverACalculadora()">‹</button>
@@ -140,7 +139,7 @@
     <button class="btn-back" style="width: 100%; border-radius: 12px; height: 45px; font-weight: 600;" onclick="compartirResultado()">📤 Compartir mi resultado</button>
   </div>
 
-  <!-- BARRA INFERIOR FLOTANTE (SELECCIÓN) -->
+  <!-- BARRA INFERIOR FLOTANTE -->
   <div class="floating-footer" id="footerSeleccion">
     <div>
       <div class="footer-total-label">Total mensual</div>
@@ -162,18 +161,37 @@
   </div>
 
   <script>
-    // Base de datos de servicios con sus respectivos planes (Precios en ARS actualizables)
+    // Catálogo unificado con las plataformas completas de publicar
     const catalogoServicios = [
-      { id: 'netflix', nombre: 'Netflix', categoria: 'streaming', planes: [ { nombre: 'Netflix Estándar', precio: 22948, detalle: '2 dispositivos' }, { nombre: 'Netflix Premium', precio: 30598, detalle: '3 dispositivos' } ] },
-      { id: 'chatgpt', nombre: 'ChatGPT', categoria: 'ia', planes: [ { nombre: 'ChatGPT Plus', precio: 24500, detalle: 'Uso individual Pro' } ] },
-      { id: 'disney', nombre: 'Disney+', categoria: 'streaming', planes: [ { nombre: 'Disney+ Estándar', precio: 6500, detalle: 'Sin publicidad' }, { nombre: 'Disney+ Premium', precio: 9500, detalle: 'Máxima calidad 4K' } ] },
-      { id: 'hbo', nombre: 'Max', categoria: 'streaming', planes: [ { nombre: 'Max Standard', precio: 7900, detalle: '2 pantallas' } ] },
-      { id: 'prime', nombre: 'Prime Video', categoria: 'streaming', planes: [ { nombre: 'Amazon Prime', precio: 5800, detalle: 'Incluye envíos y video' } ] },
-      { id: 'youtube', nombre: 'YouTube', categoria: 'streaming', planes: [ { nombre: 'YouTube Premium', precio: 4500, detalle: 'Sin anuncios' } ] },
-      { id: 'spotify', nombre: 'Spotify', categoria: 'musica', planes: [ { nombre: 'Spotify Individual', precio: 3800, detalle: '1 cuenta' }, { nombre: 'Spotify Dúo / Familiar', precio: 5200, detalle: 'Varias cuentas' } ] }
+      // Streaming
+      { id: 'netflix', nombre: 'Netflix', categoria: 'streaming', planes: [ { nombre: 'Estándar', precio: 22948, detalle: '2 dispositivos' }, { nombre: 'Premium', precio: 30598, detalle: '3 dispositivos' } ] },
+      { id: 'disney', nombre: 'Disney+', categoria: 'streaming', planes: [ { nombre: 'Estándar', precio: 6500, detalle: 'Sin publicidad' }, { nombre: 'Premium', precio: 9500, detalle: '4K UHD' } ] },
+      { id: 'hbo', nombre: 'Max', categoria: 'streaming', planes: [ { nombre: 'Standard', precio: 7900, detalle: '2 pantallas' }, { nombre: 'Platinum', precio: 10200, detalle: '4 pantallas' } ] },
+      { id: 'prime', nombre: 'Prime Video', categoria: 'streaming', planes: [ { nombre: 'Amazon Prime', precio: 5800, detalle: 'Video y envíos' } ] },
+      { id: 'youtube', nombre: 'YouTube', categoria: 'streaming', planes: [ { nombre: 'Premium Individual', precio: 4500, detalle: 'Sin anuncios' }, { nombre: 'Familiar', precio: 7500, detalle: 'Hasta 5 cuentas' } ] },
+      { id: 'crunchyroll', nombre: 'Crunchyroll', categoria: 'streaming', planes: [ { nombre: 'Mega Fan', precio: 4200, detalle: 'Multi-dispositivo' } ] },
+      { id: 'paramount', nombre: 'Paramount+', categoria: 'streaming', planes: [ { nombre: 'Estándar', precio: 4800, detalle: 'Cuenta base' } ] },
+      { id: 'appleTV', nombre: 'Apple TV+', categoria: 'streaming', planes: [ { nombre: 'Individual', precio: 6200, detalle: 'Apple TV Plus' } ] },
+
+      // Inteligencia Artificial
+      { id: 'chatgpt', nombre: 'ChatGPT', categoria: 'ia', planes: [ { nombre: 'ChatGPT Plus', precio: 24500, detalle: 'GPT-4o individual' } ] },
+      { id: 'claude', nombre: 'Claude AI', categoria: 'ia', planes: [ { nombre: 'Claude Pro', precio: 24500, detalle: 'Acceso prioritario' } ] },
+      { id: 'midjourney', nombre: 'Midjourney', categoria: 'ia', planes: [ { nombre: 'Plan Basic', precio: 18000, detalle: 'Generación de imágenes' } ] },
+
+      // Música
+      { id: 'spotify', nombre: 'Spotify', categoria: 'musica', planes: [ { nombre: 'Individual', precio: 3800, detalle: '1 cuenta' }, { nombre: 'Familiar / Dúo', precio: 5200, detalle: 'Compartido' } ] },
+      { id: 'appleMusic', nombre: 'Apple Music', categoria: 'musica', planes: [ { nombre: 'Individual', precio: 4100, detalle: 'Alta calidad' } ] },
+      { id: 'youtubeMusic', nombre: 'YouTube Music', categoria: 'musica', planes: [ { nombre: 'Individual', precio: 3900, detalle: 'Música sin anuncios' } ] },
+
+      // Gaming
+      { id: 'xbox', nombre: 'Xbox Game Pass', categoria: 'gaming', planes: [ { nombre: 'Ultimate', precio: 11500, detalle: 'PC y Consola' } ] },
+      { id: 'playstation', nombre: 'PlayStation Plus', categoria: 'gaming', planes: [ { nombre: 'Extra / Deluxe', precio: 14000, detalle: 'Catálogo de juegos' } ] },
+
+      // Otros / Productividad
+      { id: 'canva', nombre: 'Canva Pro', categoria: 'otros', planes: [ { nombre: 'Equipo Pro', precio: 6500, detalle: 'Herramienta de diseño' } ] },
+      { id: 'icloud', nombre: 'iCloud+', categoria: 'otros', planes: [ { nombre: '200 GB', precio: 3500, detalle: 'Almacenamiento nube' } ] }
     ];
 
-    // Estado de selecciones del usuario: { idServicio: indicePlanElegido }
     let seleccionados = {};
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -244,7 +262,14 @@
     function seleccionarPlan(idServicio, indexPlan) {
       seleccionados[idServicio] = indexPlan;
       cerrarModalPlanes();
-      renderizarServicios(document.querySelector('.tab-btn.active').innerText.toLowerCase().includes('streaming') ? 'streaming' : document.querySelector('.tab-btn.active').innerText.toLowerCase().includes('ia') ? 'ia' : document.querySelector('.tab-btn.active').innerText.toLowerCase().includes('música') ? 'musica' : 'todo');
+      const catActiva = document.querySelector('.tab-btn.active').getAttribute('onclick');
+      let catActual = 'todo';
+      if(catActiva.includes('streaming')) catActual = 'streaming';
+      if(catActiva.includes('ia')) catActual = 'ia';
+      if(catActiva.includes('musica')) catActual = 'musica';
+      if(catActiva.includes('gaming')) catActual = 'gaming';
+      if(catActiva.includes('otros')) catActual = 'otros';
+      renderizarServicios(catActual);
     }
 
     function calcularTotalMes() {
@@ -273,7 +298,6 @@
       document.getElementById('resTotalMes').innerText = `$ ${totalMes.toLocaleString('es-AR')}`;
       document.getElementById('resTotalAnio').innerText = `Eso son $ ${(totalMes * 12).toLocaleString('es-AR')} al año`;
       
-      // Cálculo estimado de recuperación / ahorro (aprox 50% compartido)
       const ahorroMes = Math.round(totalMes * 0.5);
       document.getElementById('resAhorroMes').innerText = `$ ${ahorroMes.toLocaleString('es-AR')}`;
       document.getElementById('resAhorroAnio').innerText = `$ ${(ahorroMes * 12).toLocaleString('es-AR')} al año en tu bolsillo`;
@@ -323,9 +347,4 @@
           url: window.location.href
         }).catch(() => {});
       } else {
-        alert("Enlace copiado al portapapeles.");
-      }
-    }
-  </script>
-</body>
-</html>
+        alert("Enla
