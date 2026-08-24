@@ -96,12 +96,12 @@
           </div>
         </button>
 
-        <!-- Opción Transferencia -->
-        <button class="opcion-pago" onclick="procesarPago('Transferencia')">
+        <!-- Opción Transferencia (Redirige a la página de CBU/Alias del vendedor) -->
+        <button class="opcion-pago" onclick="irATransferencia()">
           <span class="opcion-icono">🏦</span>
           <div class="opcion-texto">
             <h4>Transferencia Bancaria / CBU / Alias</h4>
-            <p>Envía el comprobante para aprobación rápida</p>
+            <p>Ver datos del anfitrión y confirmar pago</p>
           </div>
         </button>
 
@@ -147,7 +147,7 @@
           <input type="text" placeholder="Como figura en la tarjeta" value="Usuario de Prueba">
         </div>
 
-        <button class="btn-pagar" style="margin-top: 10px;" onclick="procesarPago('Tarjeta')">Aprobar Pago de Prueba</button>
+        <button class="btn-pagar" style="margin-top: 10px;" onclick="procesarPagoTarjeta()">Aprobar Pago de Prueba</button>
         
         <button style="width:100%; background:none; border:none; color:var(--text-muted); font-size:0.85rem; margin-top:12px; cursor:pointer;" onclick="volverASeleccion()">← Elegir otro medio de pago</button>
       </div>
@@ -258,7 +258,12 @@
       if (e.target.id === 'modalPago') cerrarModal();
     }
 
-    async function procesarPago(metodo) {
+    function irATransferencia() {
+      if (!datosActualesItem) return;
+      window.location.href = `pago-transferencia.html?servicio=${encodeURIComponent(datosActualesItem.servicio)}`;
+    }
+
+    async function procesarPagoTarjeta() {
       if (!datosActualesItem) return;
 
       const nuevosCupos = datosActualesItem.cupos_disponibles - 1;
@@ -276,11 +281,7 @@
         });
 
         if (res.ok) {
-          if (metodo === 'Tarjeta') {
-            alert('¡Pago de prueba con Tarjeta aprobado con éxito! Tu lugar ha sido reservado.');
-          } else {
-            alert('¡Reserva registrada! Sigue las instrucciones de transferencia para validar tu pago.');
-          }
+          alert('¡Pago de prueba con Tarjeta aprobado con éxito! Tu lugar ha sido reservado.');
           window.location.href = 'mis-ofertas.html';
         } else {
           alert('Hubo un error al procesar tu suscripción.');
