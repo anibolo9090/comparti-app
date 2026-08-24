@@ -67,57 +67,80 @@
       <form onsubmit="publicarOferta(event)">
         
         <div class="form-group">
-          <label class="form-label">Seleccioná la plataforma</label>
+          <label class="form-label">Seleccioná la plataforma y tipo de plan</label>
           <select id="pubPlataforma" class="form-select" required onchange="actualizarPrecioSugerido()">
+            
             <optgroup label="🎬 Streaming de Video">
-              <option value="Netflix 4K">Netflix (4K / UHD)</option>
-              <option value="Netflix Estándar">Netflix (Estándar)</option>
-              <option value="Disney+ Premium">Disney+ (Premium)</option>
-              <option value="Max Platino">Max (Platino)</option>
-              <option value="Amazon Prime Video">Amazon Prime Video</option>
-              <option value="Paramount+">Paramount+</option>
-              <option value="Apple TV+">Apple TV+</option>
-              <option value="YouTube Premium">YouTube Premium</option>
-              <option value="Crunchyroll">Crunchyroll</option>
-              <option value="Universal+">Universal+</option>
-              <option value="VIX">ViX</option>
-              <option value="MUBI">MUBI</option>
-              <option value="AtresPlayer">AtresPlayer</option>
-              <option value="MegaGO">MegaGO</option>
-              <option value="VIKI Pass">VIKI Pass</option>
+              <option value="Netflix - Estándar">Netflix (Estándar - 2 pantallas)</option>
+              <option value="Netflix - Premium 4K">Netflix (Premium 4K - 4 pantallas)</option>
+              
+              <option value="Disney+ - Estándar con Anuncios">Disney+ (Estándar con Anuncios)</option>
+              <option value="Disney+ - Estándar sin Anuncios">Disney+ (Estándar sin Anuncios)</option>
+              <option value="Disney+ - Premium">Disney+ (Premium - UHD / Dolby)</option>
+              
+              <option value="Max - Básico con Anuncios">Max (Básico con Anuncios)</option>
+              <option value="Max - Estándar">Max (Estándar)</option>
+              <option value="Max - Platino">Max (Platino / 4K)</option>
+              
+              <option value="Amazon Prime Video - Estándar">Amazon Prime Video (Estándar)</option>
+              
+              <option value="Paramount+ - Estándar">Paramount+ (Estándar)</option>
+              
+              <option value="Apple TV+ - Estándar">Apple TV+ (Estándar)</option>
+              
+              <option value="YouTube Premium - Individual">YouTube Premium (Individual)</option>
+              <option value="YouTube Premium - Familiar">YouTube Premium (Familiar)</option>
+              
+              <option value="Crunchyroll - Fan">Crunchyroll (Plan Fan)</option>
+              <option value="Crunchyroll - Mega Fan">Crunchyroll (Plan Mega Fan)</option>
+              
+              <option value="Universal+ - Estándar">Universal+ (Estándar)</option>
+              <option value="ViX - Premium">ViX (Premium)</option>
+              <option value="MUBI - Estándar">MUBI (Estándar)</option>
+              <option value="AtresPlayer - Premium">AtresPlayer (Premium)</option>
+              <option value="VIKI Pass - Standard/Plus">VIKI Pass (Standard / Plus)</option>
             </optgroup>
             
             <optgroup label="🎧 Música y Audio">
-              <option value="Spotify Familiar">Spotify (Familiar)</option>
-              <option value="YouTube Music">YouTube Music</option>
-              <option value="Apple Music">Apple Music</option>
-              <option value="TIDAL">TIDAL</option>
-              <option value="Deezer">Deezer</option>
-              <option value="Amazon Music">Amazon Music</option>
+              <option value="Spotify - Individual">Spotify (Individual)</option>
+              <option value="Spotify - Dúo">Spotify (Dúo)</option>
+              <option value="Spotify - Familiar">Spotify (Familiar)</option>
+              
+              <option value="YouTube Music - Individual">YouTube Music (Individual)</option>
+              <option value="YouTube Music - Familiar">YouTube Music (Familiar)</option>
+              
+              <option value="Apple Music - Individual">Apple Music (Individual)</option>
+              <option value="Apple Music - Familiar">Apple Music (Familiar)</option>
+              
+              <option value="TIDAL - HiFi Plus">TIDAL (HiFi / HiFi Plus)</option>
+              <option value="Deezer - Premium">Deezer (Premium)</option>
+              <option value="Amazon Music - Unlimited">Amazon Music (Unlimited)</option>
             </optgroup>
 
             <optgroup label="🤖 Inteligencia Artificial">
-              <option value="ChatGPT Plus">ChatGPT Plus</option>
-              <option value="Gemini AI">Gemini Advanced</option>
-              <option value="Claude.ai">Claude.ai</option>
-              <option value="Perplexity">Perplexity Pro</option>
+              <option value="ChatGPT Plus - Cuenta Compartida">ChatGPT Plus (Cuenta Compartida)</option>
+              <option value="ChatGPT Plus - Personal / API">ChatGPT Plus (Personal)</option>
+              <option value="Gemini Advanced - Google One">Gemini Advanced (Google One AI)</option>
+              <option value="Claude.ai - Pro">Claude.ai (Pro)</option>
+              <option value="Perplexity - Pro">Perplexity Pro</option>
             </optgroup>
 
             <optgroup label="💻 Software y Productividad">
-              <option value="Canva Pro">Canva Pro</option>
-              <option value="Office 365">Microsoft Office 365</option>
-              <option value="Google One">Google One (Almacenamiento)</option>
-              <option value="Apple One">Apple One</option>
-              <option value="Dropbox">Dropbox</option>
-              <option value="Platzi">Platzi (Educación)</option>
-              <option value="Duolingo Plus">Duolingo Plus</option>
+              <option value="Canva Pro - Equipo">Canva Pro (Espacio de Equipo)</option>
+              <option value="Office 365 - Familiar">Microsoft Office 365 (Familiar)</option>
+              <option value="Google One - 200GB/2TB">Google One (Almacenamiento Compartido)</option>
+              <option value="Apple One - Familiar">Apple One (Familiar)</option>
+              <option value="Dropbox - Plus">Dropbox (Plus)</option>
+              <option value="Platzi - Expert">Platzi (Expert / Anual)</option>
+              <option value="Duolingo Plus - Familiar">Duolingo Plus (Familiar)</option>
             </optgroup>
 
             <optgroup label="⚽ Deportes">
-              <option value="F1 TV">F1 TV Pro</option>
-              <option value="NBA League Pass">NBA League Pass</option>
-              <option value="DAZN">DAZN</option>
+              <option value="F1 TV Pro - Anual/Mensual">F1 TV Pro</option>
+              <option value="NBA League Pass - Estándar">NBA League Pass</option>
+              <option value="DAZN - Global">DAZN (Global)</option>
             </optgroup>
+
           </select>
         </div>
 
@@ -139,7 +162,7 @@
 
         <div class="form-group">
           <label class="form-label">Notas adicionales o reglas del grupo (Opcional)</label>
-          <textarea id="pubNotas" class="form-textarea" placeholder="Ej: Perfil libre, pago por transferencia antes del 10..."></textarea>
+          <textarea id="pubNotas" class="form-textarea" placeholder="Ej: Perfil 3 libre, pago por transferencia antes del 10..."></textarea>
         </div>
 
         <button type="submit" class="btn-submit">Publicar Oferta</button>
@@ -155,21 +178,53 @@
   </div>
 
   <script>
-    // Precios orientativos sugeridos por plataforma
+    // Precios orientativos actualizados por cada tipo de plan específico
     const preciosSugeridos = {
-      'Netflix 4K': 6500,
-      'Netflix Estándar': 4500,
-      'Disney+ Premium': 4000,
-      'Max Platino': 3500,
-      'Amazon Prime Video': 2000,
-      'Paramount+': 2000,
-      'Apple TV+': 2500,
-      'YouTube Premium': 2500,
-      'Crunchyroll': 1500,
-      'Spotify Familiar': 2000,
-      'ChatGPT Plus': 8000,
-      'Canva Pro': 2000,
-      'F1 TV': 4000
+      'Netflix - Estándar': 4500,
+      'Netflix - Premium 4K': 6500,
+      'Disney+ - Estándar con Anuncios': 2500,
+      'Disney+ - Estándar sin Anuncios': 3500,
+      'Disney+ - Premium': 4500,
+      'Max - Básico con Anuncios': 2200,
+      'Max - Estándar': 3000,
+      'Max - Platino': 4000,
+      'Amazon Prime Video - Estándar': 2000,
+      'Paramount+ - Estándar': 2000,
+      'Apple TV+ - Estándar': 2500,
+      'YouTube Premium - Individual': 3000,
+      'YouTube Premium - Familiar': 2000,
+      'Crunchyroll - Fan': 1500,
+      'Crunchyroll - Mega Fan': 2200,
+      'Universal+ - Estándar': 2500,
+      'ViX - Premium': 2500,
+      'MUBI - Estándar': 3000,
+      'AtresPlayer - Premium': 2000,
+      'VIKI Pass - Standard/Plus': 2000,
+      'Spotify - Individual': 3500,
+      'Spotify - Dúo': 2200,
+      'Spotify - Familiar': 1800,
+      'YouTube Music - Individual': 3000,
+      'YouTube Music - Familiar': 1800,
+      'Apple Music - Individual': 3500,
+      'Apple Music - Familiar': 2000,
+      'TIDAL - HiFi Plus': 3000,
+      'Deezer - Premium': 2500,
+      'Amazon Music - Unlimited': 2500,
+      'ChatGPT Plus - Cuenta Compartida': 4000,
+      'ChatGPT Plus - Personal / API': 12000,
+      'Gemini Advanced - Google One': 3500,
+      'Claude.ai - Pro': 8000,
+      'Perplexity - Pro': 5000,
+      'Canva Pro - Equipo': 2000,
+      'Office 365 - Familiar': 2500,
+      'Google One - 200GB/2TB': 2000,
+      'Apple One - Familiar': 3000,
+      'Dropbox - Plus': 2500,
+      'Platzi - Expert': 4000,
+      'Duolingo Plus - Familiar': 2000,
+      'F1 TV Pro - Anual/Mensual': 4500,
+      'NBA League Pass - Estándar': 5000,
+      'DAZN - Global': 4000
     };
 
     window.onload = function() {
@@ -182,7 +237,6 @@
       const nickname = localStorage.getItem('usuarioNickname');
 
       if (logueado !== 'true' || !nickname) {
-        // Si no hay sesión, asignamos un usuario temporal para evitar que quede cargando indefinidamente
         const userRandom = 'Usuario_' + Math.floor(Math.random() * 1000);
         localStorage.setItem('usuarioNickname', userRandom);
         localStorage.setItem('usuarioLogueado', 'true');
@@ -211,7 +265,7 @@
       if (preciosSugeridos[plataformaSeleccionada]) {
         inputPrecio.value = preciosSugeridos[plataformaSeleccionada];
       } else {
-        inputPrecio.value = 3000; // Valor por defecto genérico
+        inputPrecio.value = 3000;
       }
     }
 
@@ -234,7 +288,6 @@
         fecha: new Date().toLocaleDateString()
       };
 
-      // Guardar en la lista de ofertas del localStorage
       let misOfertas = JSON.parse(localStorage.getItem('misOfertasPublicadas') || '[]');
       misOfertas.push(nuevaOferta);
       localStorage.setItem('misOfertasPublicadas', JSON.stringify(misOfertas));
