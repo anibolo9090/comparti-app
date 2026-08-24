@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Explorar — Compartí</title>
+  <title>Explorar Grupos — Compartí</title>
 
   <style>
     :root { 
-      --primary: #5850ec; 
+      --primary: #4f46e5; 
       --bg: #f8fafc; 
       --card-bg: #ffffff; 
       --card-border: #e2e8f0; 
@@ -19,98 +19,28 @@
     
     .container { max-width: 800px; margin: 0 auto; padding: 16px; }
 
-    /* Cabecera de navegación superior (¿Qué quieres hacer?) */
     .top-action-header { text-align: center; margin-bottom: 20px; }
     .top-action-header h2 { font-size: 1.4rem; color: var(--text); margin-bottom: 14px; }
 
-    .segmented-control { 
-      display: inline-flex; 
-      background: #edf2f7; 
-      padding: 4px; 
-      border-radius: 40px; 
-      gap: 4px; 
-      border: 1px solid var(--card-border);
-    }
-    .segment-btn { 
-      background: transparent; 
-      border: none; 
-      padding: 10px 24px; 
-      border-radius: 30px; 
-      font-weight: 700; 
-      font-size: 0.9rem; 
-      color: var(--text-muted); 
-      cursor: pointer; 
-      display: flex; 
-      align-items: center; 
-      gap: 6px; 
-      text-decoration: none;
-    }
-    .segment-btn.active { 
-      background: #4f46e5; 
-      color: #fff; 
-      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); 
-    }
+    .segmented-control { display: inline-flex; background: #edf2f7; padding: 4px; border-radius: 40px; gap: 4px; border: 1px solid var(--card-border); }
+    .segment-btn { background: transparent; border: none; padding: 10px 24px; border-radius: 30px; font-weight: 700; font-size: 0.9rem; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 6px; text-decoration: none; }
+    .segment-btn.active { background: #4f46e5; color: #fff; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
 
-    /* Secciones y categorías */
-    .category-section { margin-bottom: 24px; }
-    .category-title { font-size: 1.15rem; font-weight: 700; display: flex; align-items: center; gap: 8px; margin-bottom: 12px; color: var(--text); }
-
-    /* Cuadrícula de tarjetas */
-    .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
-    
-    .service-card { 
-      background: var(--card-bg); 
-      border: 1px solid var(--card-border); 
-      border-radius: 16px; 
-      padding: 16px; 
-      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-      transition: transform 0.2s ease;
-      cursor: pointer;
-    }
-    .service-card:active { transform: scale(0.98); }
-
-    .card-header-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-    .service-title { font-size: 1.05rem; font-weight: 700; color: var(--text); margin: 0; }
-    
-    .discount-badge { 
-      background: #d1fae5; 
-      color: #065f46; 
-      font-size: 0.75rem; 
-      font-weight: 700; 
-      padding: 4px 10px; 
-      border-radius: 20px; 
-    }
-
-    .price-old { font-size: 0.8rem; color: var(--text-muted); text-decoration: line-through; margin-bottom: 2px; }
-    .price-current { font-size: 1.15rem; font-weight: 800; color: #059669; }
-    .price-current span { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); }
+    .card-list { display: flex; flex-direction: column; gap: 12px; }
+    .group-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 16px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+    .group-info h4 { margin: 0 0 4px 0; font-size: 1rem; color: var(--text); }
+    .group-info p { margin: 0; font-size: 0.85rem; color: var(--text-muted); }
+    .btn-join { background: var(--primary); color: #fff; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; cursor: pointer; box-shadow: 0 2px 6px rgba(79, 70, 229, 0.2); }
 
     /* MENÚ DESPLEGABLE INFERIOR */
-    .menu-overlay { 
-      position: fixed; 
-      top: 0; left: 0; right: 0; bottom: 0; 
-      background: rgba(15, 23, 42, 0.6); 
-      z-index: 99999; 
-      display: none; 
-      align-items: flex-end; 
-    }
+    .menu-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); z-index: 99999; display: none; align-items: flex-end; }
     .menu-overlay.mostrar { display: flex; }
-
-    .menu-drawer { 
-      background: #ffffff; 
-      border-top: 1px solid var(--card-border); 
-      border-top-left-radius: 20px; 
-      border-top-right-radius: 20px; 
-      width: 100%; 
-      max-height: 85vh; 
-      overflow-y: auto; 
-      padding: 20px; 
-    }
+    .menu-drawer { background: #ffffff; border-top: 1px solid var(--card-border); border-top-left-radius: 20px; border-top-right-radius: 20px; width: 100%; max-height: 85vh; overflow-y: auto; padding: 20px; }
     .menu-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); padding-bottom: 10px; margin-bottom: 10px; }
     .menu-close { background: none; border: none; color: #0f172a; font-size: 1.8rem; cursor: pointer; }
     .menu-item-link { display: flex; align-items: center; gap: 10px; padding: 12px; background: #f8fafc; border: 1px solid var(--card-border); border-radius: 8px; color: #4f46e5; text-decoration: none; margin-bottom: 8px; font-weight: 600; font-size: 0.95rem; }
 
-    /* Barra de navegación inferior idéntica */
+    /* Barra de navegación inferior */
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 9999; box-shadow: 0 -4px 10px rgba(0,0,0,0.03); }
     .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); text-decoration: none; font-size: 0.75rem; font-weight: 600; gap: 2px; cursor: pointer; background: none; border: none; }
     .nav-item.active { color: #4f46e5; }
@@ -121,7 +51,6 @@
 
   <div class="container">
     
-    <!-- Selector Superior -->
     <div class="top-action-header">
       <h2>¿Qué quieres hacer?</h2>
       <div class="segmented-control">
@@ -134,81 +63,29 @@
       </div>
     </div>
 
-    <!-- Categoría: Series y películas -->
-    <div class="category-section">
-      <div class="category-title">🍿 Series y películas</div>
-      <div class="cards-grid">
-        
-        <div class="service-card" onclick="verDetalleServicio('Paramount+', 4490, 5579, '20% OFF')">
-          <div class="card-header-row">
-            <h3 class="service-title">Paramount+</h3>
-            <span class="discount-badge">20% OFF</span>
-          </div>
-          <div class="price-old">Precio fuera de Compartí: $5.579</div>
-          <div class="price-current">$4.490<span>/mes</span></div>
+    <div class="card-list">
+      <div class="group-card">
+        <div class="group-info">
+          <h4>🎬 Netflix Premium (4K)</h4>
+          <p>Organizador: Carlos M. • 2 lugares • $4.500/mes</p>
         </div>
-
-        <div class="service-card" onclick="verDetalleServicio('DirecTV GO', 9990, 14500, '30% OFF')">
-          <div class="card-header-row">
-            <h3 class="service-title">DirecTV GO</h3>
-            <span class="discount-badge">30% OFF</span>
-          </div>
-          <div class="price-old">Precio fuera de Compartí: $14.500</div>
-          <div class="price-current">$9.990<span>/mes</span></div>
-        </div>
-
+        <button class="btn-join" onclick="alert('Te uniste al grupo de Netflix con éxito')">Unirme</button>
       </div>
-    </div>
 
-    <!-- Categoría: Música -->
-    <div class="category-section">
-      <div class="category-title">🎵 Música</div>
-      <div class="cards-grid">
-        
-        <div class="service-card" onclick="verDetalleServicio('YouTube Premium', 3490, 12668, '72% OFF')">
-          <div class="card-header-row">
-            <h3 class="service-title">YouTube</h3>
-            <span class="discount-badge" style="background: #dbeafe; color: #1e40af;">72% OFF</span>
-          </div>
-          <div class="price-old">Precio fuera de Compartí: $12.668</div>
-          <div class="price-current">$3.490<span>/mes</span></div>
+      <div class="group-card">
+        <div class="group-info">
+          <h4>🏰 Disney+ Estándar</h4>
+          <p>Organizador: Lucía R. • 1 lugar • $3.200/mes</p>
         </div>
-
-        <div class="service-card" onclick="verDetalleServicio('Spotify', 3990, 7500, '45% OFF')">
-          <div class="card-header-row">
-            <h3 class="service-title">Spotify</h3>
-            <span class="discount-badge">45% OFF</span>
-          </div>
-          <div class="price-old">Precio fuera de Compartí: $7.500</div>
-          <div class="price-current">$3.990<span>/mes</span></div>
-        </div>
-
+        <button class="btn-join" onclick="alert('Te uniste al grupo de Disney+ con éxito')">Unirme</button>
       </div>
-    </div>
 
-    <!-- Categoría: Inteligencia Artificial -->
-    <div class="category-section">
-      <div class="category-title">🤖 Inteligencia Artificial</div>
-      <div class="cards-grid">
-        
-        <div class="service-card" onclick="verDetalleServicio('ChatGPT', 7490, 44735, '83% OFF')">
-          <div class="card-header-row">
-            <h3 class="service-title">ChatGPT</h3>
-            <span class="discount-badge" style="background: #e0e7ff; color: #3730a3;">83% OFF</span>
-          </div>
-          <div class="price-old">Precio fuera de Compartí: $44.735</div>
-          <div class="price-current">$7.490<span>/mes</span></div>
+      <div class="group-card">
+        <div class="group-info">
+          <h4>🎧 Spotify Familiar</h4>
+          <p>Organizador: Marcos P. • 3 lugares • $2.000/mes</p>
         </div>
-
-        <div class="service-card" onclick="verDetalleServicio('Claude.ai', 20962, 38000, '45% OFF')">
-          <div class="card-header-row">
-            <h3 class="service-title">Claude.ai</h3>
-            <span class="discount-badge">45% OFF</span>
-          </div>
-          <div class="price-old">Precio fuera de Compartí: $38.000</div>
-          <div class="price-current">$20.962<span>/mes</span></div>
-        </div>
-
+        <button class="btn-join" onclick="alert('Te uniste al grupo de Spotify con éxito')">Unirme</button>
       </div>
     </div>
 
@@ -228,32 +105,18 @@
     </div>
   </div>
 
-  <!-- BARRA DE NAVEGACIÓN INFERIOR (Estilo idéntico a la imagen) -->
+  <!-- BARRA DE NAVEGACIÓN INFERIOR (Apunta a billetera.html) -->
   <div class="bottom-nav">
     <a href="index.html" class="nav-item"><span class="icon">🏠</span><span>Inicio</span></a>
-    <a href="explorar.html" class="nav-item active"><span class="icon">💳</span><span>Billetera</span></a>
+    <a href="billetera.html" class="nav-item"><span class="icon">💳</span><span>Billetera</span></a>
     <a href="mis-ofertas.html" class="nav-item"><span class="icon">👤</span><span>Mi perfil</span></a>
     <button class="nav-item" onclick="abrirMenu()"><span class="icon">☰</span><span>Menú</span></button>
   </div>
 
   <script>
-    function verDetalleServicio(nombre, precio, original, descuento) {
-      alert(`Seleccionaste: ${nombre}\nPrecio Compartí: $${precio}\nAhorro: ${descuento}`);
-    }
-
-    function abrirMenu() {
-      document.getElementById('menuOverlay').classList.add('mostrar');
-    }
-
-    function cerrarMenu() {
-      document.getElementById('menuOverlay').classList.remove('mostrar');
-    }
-
-    function cerrarMenuFuera(e) {
-      if (e.target.id === 'menuOverlay') {
-        cerrarMenu();
-      }
-    }
+    function abrirMenu() { document.getElementById('menuOverlay').classList.add('mostrar'); }
+    function cerrarMenu() { document.getElementById('menuOverlay').classList.remove('mostrar'); }
+    function cerrarMenuFuera(e) { if (e.target.id === 'menuOverlay') cerrarMenu(); }
   </script>
 </body>
 </html>
