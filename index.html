@@ -40,7 +40,13 @@
     .btn-main:hover { background: #4338ca; }
     .btn-secondary:hover { background: #f1f5f9; }
 
-    /* CALCULADORA DE AHORRO (ORIGINAL) */
+    /* SECCIÓN DE GOOGLE LOGIN (ORIGINAL) */
+    .google-login-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 24px; text-align: center; margin-bottom: 24px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+    .google-login-box h3 { margin-top: 0; font-size: 1.1rem; color: var(--text); margin-bottom: 12px; }
+    .btn-google { display: inline-flex; align-items: center; justify-content: center; gap: 10px; background: #ffffff; color: #374151; border: 1px solid #cbd5e1; padding: 12px 20px; border-radius: 12px; font-weight: 600; font-size: 0.95rem; cursor: pointer; width: 100%; max-width: 300px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+    .btn-google:hover { background: #f8fafc; }
+
+    /* CALCULADORA DE AHORRO ORIGINAL */
     .calc-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); margin-top: 10px; }
     .calc-title { font-size: 1.15rem; font-weight: 700; color: var(--text); margin-bottom: 6px; }
     .calc-desc { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px; }
@@ -51,7 +57,7 @@
     .calc-result-text { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px; }
     .calc-result-amount { font-size: 1.4rem; font-weight: 800; color: var(--primary); }
 
-    /* MENÚ FLOTANTE MINIMALISTA SIN STICKERS */
+    /* MENÚ FLOTANTE MINIMALISTA */
     .menu-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); z-index: 99999; display: none; align-items: flex-end; backdrop-filter: blur(2px); }
     .menu-overlay.mostrar { display: flex; }
     
@@ -89,9 +95,8 @@
     <div class="top-bar">
       <a href="index.html" class="brand-logo">⚡ Compartí</a>
       
-      <!-- CONTENEDOR DINÁMICO SUPERIOR -->
+      <!-- CONTENEDOR DINÁMICO (Mantiene Google / Sesión) -->
       <div id="contenedorHeaderDerecha">
-        <!-- Si hay sesión se muestra esto por defecto (o JavaScript lo cambia si está cerrado) -->
         <div id="usuarioLogueadoContainer" class="user-profile-pill">
           <span class="avatar-dot"></span>
           <span>Aníbal Peralta</span>
@@ -108,6 +113,15 @@
         <a href="explorar.html" class="btn-main">Explorar Grupos</a>
         <a href="publicar.html" class="btn-secondary">Publicar</a>
       </div>
+    </div>
+
+    <!-- BLOQUE DE INICIO CON GOOGLE (ORIGINAL) -->
+    <div class="google-login-box">
+      <h3>¿Querés empezar a compartir?</h3>
+      <button class="btn-google" onclick="alert('Función de Google Login activa')">
+        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.13 0-5.78-2.11-6.73-4.96H1.18v3.15C3.15 21.32 7.23 24 12 24z"/><path fill="#FBBC05" d="M5.27 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.6H1.18C.43 8.13 0 9.87 0 12s.43 3.87 1.18 5.4l4.09-3.16z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.23 0 3.15 2.68 1.18 6.6l4.09 3.15c.95-2.85 3.6-4.96 6.73-4.96z"/></svg>
+        Continuar con Google
+      </button>
     </div>
 
     <!-- CALCULADORA DE AHORRO ORIGINAL -->
@@ -130,7 +144,7 @@
 
   </div>
 
-  <!-- MENÚ FLOTANTE MINIMALISTA SIN STICKERS -->
+  <!-- MENÚ FLOTANTE MINIMALISTA -->
   <div class="menu-overlay" id="menuOverlay" onclick="cerrarMenuFuera(event)">
     <div class="menu-drawer">
       <div class="menu-header-top">
@@ -173,14 +187,13 @@
   </div>
 
   <script>
-    // Validar estado de sesión al cargar index.html
+    // Validar estado de sesión al cargar index.html (Solo cambia el botón si se cerró sesión)
     document.addEventListener("DOMContentLoaded", () => {
       const contenedorDerecha = document.getElementById('contenedorHeaderDerecha');
       
-      // Si el localStorage está limpio (se cerró sesión), cambiamos el perfil por el botón de Iniciar Sesión
       if (localStorage.length === 0) {
         if (contenedorDerecha) {
-          contenedorDerecha.innerHTML = `<a href="login.html" class="btn-login-small">Iniciar sesión</a>`;
+          contenedorDerecha.innerHTML = `<a href="#" onclick="alert('Inicia sesión con Google abajo')" class="btn-login-small">Iniciar sesión</a>`;
         }
       }
     });
