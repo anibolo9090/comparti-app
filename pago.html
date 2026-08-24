@@ -43,13 +43,13 @@
     .payment-details h4 { margin: 0 0 2px 0; font-size: 0.95rem; font-weight: 700; }
     .payment-details p { margin: 0; font-size: 0.78rem; color: var(--text-muted); }
 
-    /* CAJA DE DATOS BANCARIOS (OCULTA POR DEFECTO) */
+    /* CAJA DE DATOS BANCARIOS */
     .bank-details-box { background: #ffffff; border: 1px dashed var(--primary); border-radius: 14px; padding: 16px; margin-bottom: 20px; display: none; }
     .bank-details-box.show { display: block; animation: fadeIn 0.3s ease-in-out; }
     .bank-row { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 8px; }
     .bank-row:last-child { margin-bottom: 0; }
     .bank-label { color: var(--text-muted); }
-    .bank-val { font-weight: 700; color: var(--text); }
+    .bank-val { font-weight: 700; color: var(--text); text-align: right; }
 
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(-5px); }
@@ -66,7 +66,7 @@
     .nav-item .icon { font-size: 1.2rem; }
   </style>
 </head>
-<body>
+<body onload="cargarDetallePago()">
 
   <div class="container">
     
@@ -122,29 +122,29 @@
         <span class="payment-icon">🏦</span>
         <div class="payment-details">
           <h4>Transferencia Bancaria</h4>
-          <p>Alias / CBU (Acreditación en 1-2 hs)</p>
+          <p>Alias / CBU provisto por el creador</p>
         </div>
       </div>
     </div>
 
-    <!-- DATOS BANCARIOS (Se muestra solo si eligen transferencia) -->
+    <!-- DATOS BANCARIOS REALES DE LA BASE DE DATOS -->
     <div class="bank-details-box" id="bankDetailsBox">
       <div style="font-weight: 700; color: var(--primary); margin-bottom: 10px; font-size: 0.95rem;">Datos para la transferencia:</div>
       <div class="bank-row">
         <span class="bank-label">Banco:</span>
-        <span class="bank-val">Brubank / Mercado Pago</span>
+        <span class="bank-val" id="lblBanco">-</span>
       </div>
       <div class="bank-row">
         <span class="bank-label">CVU / CBU:</span>
-        <span class="bank-val">0000003100012345678999</span>
+        <span class="bank-val" id="lblCbu">-</span>
       </div>
       <div class="bank-row">
         <span class="bank-label">Alias:</span>
-        <span class="bank-val">comparti.app.mp</span>
+        <span class="bank-val" id="lblAlias">-</span>
       </div>
       <div class="bank-row">
         <span class="bank-label">Titular:</span>
-        <span class="bank-val">Compartí Payments S.A.</span>
+        <span class="bank-val" id="lblTitular">-</span>
       </div>
     </div>
 
@@ -164,22 +164,46 @@
   </div>
 
   <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    const supabaseUrl = 'https://xygatgvzdniivzwndaxy.supabase.co';
+    const apikey = 'sb_publishable_fDfrz9tONWlI3ETRbanG3w_cXYsFVif';
+
+    async function cargarDetallePago() {
       const params = new URLSearchParams(window.location.search);
       const idGrupo = params.get('id');
 
-      const datosGrupos = {
-        'netflix': { nombre: 'Netflix', plan: 'Estándar', precio: '$5.000' },
-        'prime': { nombre: 'Amazon Prime Video', plan: 'Prime Video (Estándar)', precio: '$6.000' },
-        'disney': { nombre: 'Disney+', plan: 'Premium', precio: '$6.500' }
-      };
+      if (!idGrupo) {
+        alert("No se encontró el ID de la suscripción.");
+        return;
+      }
 
-      const info = datosGrupos[idGrupo] || { nombre: 'Suscripción Compartida', plan: 'Plan Estándar', precio: '$5.000' };
+      try {
+        const res = await fetch(`${supabaseUrl}/rest/v1/suscripciones?id=eq.${idGrupo}&select=*`, {
+          headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
+        });
 
-      document.getElementById('lblServicio').textContent = info.nombre;
-      document.getElementById('lblPlan').textContent = info.plan;
-      document.getElementById('lblPrecio').textContent = info.precio;
-    });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.length > 0) {
+            const item = data[0];
+
+            // Rellenar la tarjeta con los datos de Supabase
+            document.getElementById('lblServicio').textContent = item.servicio || 'Suscripción';
+            document.getElementById('lblPlan').textContent = item.plan || 'Plan Estándar';
+            document.getElementById('lblPrecio').textContent = `$${item.precio?.toLocaleString('es-AR') || '0'}`;
+
+            // Rellenar los datos bancarios reales que puso el usuario al publicar
+            document.getElementById('lblBanco').textContent = item.banco || 'No especificado';
+            document.getElementById('lblCbu').textContent = item.cbu || item.cvu || 'No especificado';
+            document.getElementById('lblAlias').textContent = item.alias || 'No especificado';
+            document.getElementById('lblTitular').textContent = item.titular || 'No especificado';
+          } else {
+            alert("No se encontró la suscripción.");
+          }
+        }
+      } catch (err) {
+        console.error("Error al conectar con Supabase:", err);
+      }
+    }
 
     function seleccionarMetodo(elemento, tipo) {
       document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('selected'));
