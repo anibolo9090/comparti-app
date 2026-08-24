@@ -58,12 +58,12 @@
 
     .form-group { margin-bottom: 16px; text-align: left; }
     .form-label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--text); margin-bottom: 6px; }
-    .form-input { width: 100%; background: #f8fafc; border: 1px solid var(--card-border); padding: 12px; border-radius: 10px; color: var(--text); font-size: 0.95rem; }
-    .form-input:focus { outline: none; border-color: var(--primary); background: #ffffff; }
+    .form-input, .form-select { width: 100%; background: #f8fafc; border: 1px solid var(--card-border); padding: 12px; border-radius: 10px; color: var(--text); font-size: 0.95rem; }
+    .form-input:focus, .form-select:focus { outline: none; border-color: var(--primary); background: #ffffff; }
 
-    /* Categorías y grilla de plataformas */
-    .category-label { font-size: 0.9rem; font-weight: 700; color: var(--primary); margin: 12px 0 6px 0; display: flex; align-items: center; gap: 6px; }
-    .services-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 10px; }
+    /* Categorías y grilla de plataformas estilo Lank */
+    .category-label { font-size: 0.9rem; font-weight: 700; color: var(--primary); margin: 16px 0 8px 0; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid var(--card-border); padding-bottom: 4px; }
+    .services-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
     
     .service-option { 
       background: #f8fafc; 
@@ -144,42 +144,81 @@
 
       <form onsubmit="publicarServicio(event)">
         <div class="form-group">
-          <label class="form-label">Selecciona el servicio</label>
+          <label class="form-label">1. Selecciona el servicio</label>
           <input type="hidden" id="pubServicio" required>
 
-          <!-- Categoría 1: Series y películas -->
-          <div class="category-label">🍿 Series y películas</div>
-          <div class="services-grid" data-cat="peliculas">
+          <!-- Streaming y Películas -->
+          <div class="category-label">🍿 Streaming y Películas</div>
+          <div class="services-grid">
             <div class="service-option" onclick="seleccionarServicio(this, 'Netflix')">🎬 Netflix</div>
             <div class="service-option" onclick="seleccionarServicio(this, 'Disney+')">🏰 Disney+</div>
-            <div class="service-option" onclick="seleccionarServicio(this, 'Paramount+')">🏔️ Paramount+</div>
-            <div class="service-option" onclick="seleccionarServicio(this, 'DirecTV GO')">📺 DirecTV GO</div>
             <div class="service-option" onclick="seleccionarServicio(this, 'Max')">💜 Max</div>
-            <div class="service-option" onclick="seleccionarServicio(this, 'Amazon Prime')">📦 Amazon Prime</div>
+            <div class="service-option" onclick="seleccionarServicio(this, 'Amazon Prime Video')">📦 Amazon Prime</div>
+            <div class="service-option" onclick="seleccionarServicio(this, 'Paramount+')">🏔️ Paramount+</div>
+            <div class="service-option" onclick="seleccionarServicio(this, 'Crunchyroll')">🍥 Crunchyroll</div>
+            <div class="service-option" onclick="seleccionarServicio(this, 'Apple TV+')">🍏 Apple TV+</div>
+            <div class="service-option" onclick="seleccionarServicio(this, 'DirecTV GO')">📺 DirecTV GO</div>
+            <div class="service-option" onclick="seleccionarServicio(this, 'VIX')">⚡ VIX</div>
+            <div class="service-option" onclick="seleccionarServicio(this, 'MUBI')">🎥 MUBI</div>
           </div>
 
-          <!-- Categoría 2: Música -->
+          <!-- Música -->
           <div class="category-label">🎵 Música</div>
-          <div class="services-grid" data-cat="musica">
+          <div class="services-grid">
             <div class="service-option" onclick="seleccionarServicio(this, 'Spotify')">🎧 Spotify</div>
             <div class="service-option" onclick="seleccionarServicio(this, 'YouTube Premium')">▶️ YouTube Premium</div>
+            <div class="service-option" onclick="seleccionarServicio(this, 'Apple Music')">🎵 Apple Music</div>
+            <div class="service-option" onclick="seleccionarServicio(this, 'Tidal')">🌊 Tidal</div>
+            <div class="service-option" onclick="seleccionarServicio(this, 'Deezer')">🎶 Deezer</div>
+            <div class="service-option" onclick="seleccionarServicio(this, 'Amazon Music')">🎼 Amazon Music</div>
           </div>
 
-          <!-- Categoría 3: Inteligencia Artificial -->
+          <!-- Inteligencia Artificial -->
           <div class="category-label">🤖 Inteligencia Artificial</div>
-          <div class="services-grid" data-cat="ia">
-            <div class="service-option" onclick="seleccionarServicio(this, 'ChatGPT')">🤖 ChatGPT</div>
+          <div class="services-grid">
+            <div class="service-option" onclick="seleccionarServicio(this, 'ChatGPT Plus')">🤖 ChatGPT Plus</div>
+            <div class="service-option" onclick="seleccionarServicio(this, 'Gemini AI')">✨ Gemini AI</div>
             <div class="service-option" onclick="seleccionarServicio(this, 'Claude.ai')">🧠 Claude.ai</div>
+            <div class="service-option" onclick="seleccionarServicio(this, 'Perplexity')">🔍 Perplexity</div>
+          </div>
+
+          <!-- Software y Productividad -->
+          <div class="category-label">💻 Software y Herramientas</div>
+          <div class="services-grid">
+            <div class="service-option" onclick="seleccionarServicio(this, 'Canva Pro')">🎨 Canva Pro</div>
+            <div class="service-option" onclick="seleccionarServicio(this, 'Microsoft 365')">📊 Microsoft 365</div>
+            <div class="service-option" onclick="seleccionarServicio(this, 'Google One')">☁️ Google One</div>
+            <div class="service-option" onclick="seleccionarServicio(this, 'Apple One')">🍎 Apple One</div>
+            <div class="service-option" onclick="seleccionarServicio(this, 'Duolingo')">🦉 Duolingo</div>
+          </div>
+
+          <!-- Deportes -->
+          <div class="category-label">⚽ Deportes</div>
+          <div class="services-grid">
+            <div class="service-option" onclick="seleccionarServicio(this, 'F1 TV Pro')">🏎️ F1 TV Pro</div>
+            <div class="service-option" onclick="seleccionarServicio(this, 'DAZN')">🥊 DAZN</div>
+            <div class="service-option" onclick="seleccionarServicio(this, 'NBA League Pass')">🏀 NBA League Pass</div>
           </div>
         </div>
 
-        <div class="form-group">
-          <label class="form-label">Lugares o perfiles disponibles</label>
-          <input type="number" id="pubLugares" class="form-input" min="1" max="5" value="3" required>
+        <!-- Tipo de Plan -->
+        <div class="form-group" style="margin-top: 20px;">
+          <label class="form-label">2. Selecciona el tipo de plan</label>
+          <select id="pubPlan" class="form-select" required>
+            <option value="Estándar / Individual">Estándar / Individual</option>
+            <option value="Premium / 4K">Premium / 4K</option>
+            <option value="Familiar / Grupal">Familiar / Grupal</option>
+            <option value="Platino / Pro">Platino / Pro</option>
+          </select>
         </div>
 
         <div class="form-group">
-          <label class="form-label">Precio mensual por lugar ($ ARS)</label>
+          <label class="form-label">3. Lugares o perfiles disponibles</label>
+          <input type="number" id="pubLugares" class="form-input" min="1" max="6" value="3" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">4. Precio mensual por lugar ($ ARS)</label>
           <input type="number" id="pubPrecio" class="form-input" placeholder="Ej: 4500" required>
         </div>
 
@@ -221,6 +260,7 @@
     function publicarServicio(e) {
       e.preventDefault();
       const servicio = document.getElementById('pubServicio').value;
+      const plan = document.getElementById('pubPlan').value;
       const lugares = document.getElementById('pubLugares').value;
       const precio = document.getElementById('pubPrecio').value;
 
@@ -230,10 +270,10 @@
       }
 
       let misPublicaciones = JSON.parse(localStorage.getItem('misPublicaciones') || '[]');
-      misPublicaciones.push({ servicio, lugares, precio, fecha: new Date().toLocaleDateString() });
+      misPublicaciones.push({ servicio, plan, lugares, precio, fecha: new Date().toLocaleDateString() });
       localStorage.setItem('misPublicaciones', JSON.stringify(misPublicaciones));
 
-      alert(`¡Tu servicio de ${servicio} fue publicado con éxito!`);
+      alert(`¡Tu servicio de ${servicio} (${plan}) fue publicado con éxito!`);
       window.location.href = 'mis-ofertas.html';
     }
 
