@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Publicar — Compartí v2</title>
+  <title>Publicar — Compartí</title>
   <style>
     body { font-family: system-ui, sans-serif; background: #f8fafc; color: #0f172a; padding: 20px; }
     .box { background: #fff; padding: 20px; border-radius: 12px; max-width: 500px; margin: 0 auto; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
@@ -13,7 +13,7 @@
 </head>
 <body>
   <div class="box">
-    <h2>Publicar Suscripción (Versión Directa)</h2>
+    <h2>Publicar Suscripción</h2>
     <form onsubmit="enviarDatos(event)">
       <label>Servicio:</label>
       <select id="s">
@@ -44,11 +44,13 @@
       const cupos = parseInt(document.getElementById('l').value);
       const precio = parseFloat(document.getElementById('pr').value);
 
-      const url = 'https://xygatgvzdniivzwndaxy.supabase.co/rest/v1/suscripciones';
+      // URL base del proyecto limpia
+      const supabaseUrl = 'https://xygatgvzdniivzwndaxy.supabase.co';
+      // Clave anon correcta
       const apikey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh5Z2F0Z3Z6ZDniaXZ6d25kYXh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc0MDU1MTcsImV4cCI6MjEwMjk4MTUxN30.oSoJcTxCw69F0AXmVVw5LFeF0HjdCSwHd_yOH4HwbS8';
 
       try {
-        const res = await fetch(url, {
+        const res = await fetch(`${supabaseUrl}/rest/v1/suscripciones`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
