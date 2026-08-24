@@ -59,20 +59,17 @@
 
     /* MENÚ ESTILO LANK (Drawer Inferior) */
     .menu-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.8); z-index: 2000; align-items: flex-end; }
-    .menu-drawer { background: #1e293b; border-top: 1px solid var(--card-border); border-top-left-radius: 20px; border-top-right-radius: 20px; width: 100%; max-height: 85vh; overflow-y: auto; padding: 20px; animation: slideUp 0.3s ease-out; }
+    .menu-drawer { background: #1e293b; border-top: 1px solid var(--card-border); border-top-left-radius: 20px; border-top-right-radius: 20px; width: 100%; max-height: 85vh; overflow-y: auto; padding: 20px; }
     
-    @keyframes slideUp {
-      from { transform: translateY(100%); }
-      to { transform: translateY(0); }
-    }
-
     .menu-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); padding-bottom: 12px; margin-bottom: 10px; }
     .menu-header h3 { margin: 0; font-size: 1.2rem; color: var(--text); }
     .menu-close { background: none; border: none; color: var(--text); font-size: 1.5rem; cursor: pointer; }
 
     .menu-accordion { border-bottom: 1px solid var(--card-border); padding: 12px 0; }
     .menu-accordion-header { display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 1rem; color: var(--text); cursor: pointer; }
-    .menu-accordion-content { display: none; padding-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+    
+    /* Control de despliegue de acordeones corregido */
+    .menu-accordion-content { display: none; padding-top: 10px; flex-direction: column; gap: 8px; }
     .menu-accordion.open .menu-accordion-content { display: flex; }
     
     .menu-subitem { display: flex; align-items: flex-start; gap: 12px; padding: 10px; background: #0f172a; border: 1px solid var(--card-border); border-radius: 10px; text-decoration: none; color: var(--text); transition: background 0.2s; }
@@ -158,7 +155,7 @@
         <button class="menu-close" onclick="toggleMenu(false)">&times;</button>
       </div>
 
-      <!-- Sección 1: Lankear / Compartir -->
+      <!-- Sección 1 -->
       <div class="menu-accordion open" id="accLankear">
         <div class="menu-accordion-header" onclick="toggleAccordion('accLankear')">
           <span>Acciones de Cuenta</span> <span>▼</span>
@@ -181,7 +178,7 @@
         </div>
       </div>
 
-      <!-- Sección 2: Mi cuenta -->
+      <!-- Sección 2 -->
       <div class="menu-accordion" id="accMiCuenta">
         <div class="menu-accordion-header" onclick="toggleAccordion('accMiCuenta')">
           <span>Mi cuenta</span> <span>▼</span>
@@ -203,7 +200,7 @@
           </div>
           <div class="menu-subitem" onclick="cerrarSesion()" style="cursor: pointer; border-color: rgba(248, 113, 113, 0.4);">
             <span class="menu-subitem-icon">🚪</span>
-            <div class="menu-subitem-text" style="color: #f87171;">
+            <div class="menu-subitem-text">
               <div style="color: #f87171;">Cerrar sesión</div>
               <div>Salir de tu cuenta actual</div>
             </div>
@@ -211,7 +208,7 @@
         </div>
       </div>
 
-      <!-- Sección 3: Beneficios -->
+      <!-- Sección 3 -->
       <div class="menu-accordion" id="accBeneficios">
         <div class="menu-accordion-header" onclick="toggleAccordion('accBeneficios')">
           <span>Beneficios</span> <span>▼</span>
@@ -227,7 +224,7 @@
         </div>
       </div>
 
-      <!-- Sección 4: Ayuda -->
+      <!-- Sección 4 -->
       <a href="https://wa.me/" target="_blank" class="menu-simple-link">
         <span>Ayuda y Soporte</span> <span>›</span>
       </a>
@@ -288,7 +285,7 @@
     </div>
   </div>
 
-  <!-- BARRA DE NAVEGACIÓN INFERIOR (Estilo Lank) -->
+  <!-- BARRA DE NAVEGACIÓN INFERIOR -->
   <div class="bottom-nav">
     <a href="index.html" class="nav-item active"><span class="icon">🏠</span><span>Inicio</span></a>
     <a href="explorar.html" class="nav-item"><span class="icon">💳</span><span>Explorar</span></a>
@@ -415,4 +412,11 @@
         if (chk && chk.checked) {
           totalFull += s.full;
           totalComparti += s.comparti;
-          if(caja) caja.classList.add('sel
+          if(caja) caja.classList.add('selected');
+        } else {
+          if(caja) caja.classList.remove('selected');
+        }
+      });
+
+      document.getElementById('sumFull').innerText = '$' + totalFull.toLocaleString();
+    
