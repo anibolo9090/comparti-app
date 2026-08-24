@@ -4,9 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Compartí — Ahorrá compartiendo tus cuentas</title>
-  
-  <!-- SDK oficial de Google Sign-In -->
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
 
   <style>
     :root { 
@@ -72,16 +69,10 @@
     .modal-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; width: 100%; max-width: 380px; padding: 24px; position: relative; text-align: center; }
     .modal-close { position: absolute; top: 14px; right: 16px; background: none; border: none; color: var(--text-muted); font-size: 1.4rem; cursor: pointer; }
     
-    .auth-divider { display: flex; align-items: center; text-align: center; margin: 16px 0; color: var(--text-muted); font-size: 0.75rem; }
-    .auth-divider::before, .auth-divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--card-border); }
-    .auth-divider span { padding: 0 10px; }
-
     .form-group { margin-bottom: 12px; text-align: left; }
     .form-label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px; }
     .form-input { width: 100%; background: #0f172a; border: 1px solid var(--card-border); padding: 10px; border-radius: 8px; color: #fff; font-size: 0.9rem; }
     .btn-submit { width: 100%; background: var(--primary); color: #fff; border: none; padding: 10px; border-radius: 8px; font-weight: 700; cursor: pointer; margin-top: 8px; }
-
-    #googleBtnContainer { display: flex; justify-content: center; margin-top: 10px; min-height: 40px; }
 
     /* Navegación inferior */
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 1000; }
@@ -147,41 +138,19 @@
     <div class="modal-box">
       <button class="modal-close" onclick="cerrarModal()">&times;</button>
       
-      <h3 style="margin-top:0; color:#60a5fa;">Iniciar Sesión</h3>
-      <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom: 16px;">Accedé con tu cuenta de Google o email</p>
-      
-      <div id="googleBtnContainer"></div>
+      <h3 style="margin-top:0; color:#60a5fa;">Iniciar Sesión / Registro</h3>
+      <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom: 16px;">Ingresa con tu email y elige tu apodo</p>
 
-      <div class="auth-divider"><span>o con email alternativo</span></div>
-
-      <form onsubmit="realizarLoginEmail(event)">
+      <form onsubmit="realizarLogin(event)">
         <div class="form-group">
           <label class="form-label">Correo electrónico</label>
           <input type="email" id="inputEmail" class="form-input" required placeholder="tu@email.com">
         </div>
         <div class="form-group">
-          <label class="form-label">Contraseña</label>
-          <input type="password" class="form-input" required placeholder="••••••••">
-        </div>
-        <button type="submit" class="btn-submit">Entrar con Email</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- MODAL PARA ELEGIR NICKNAME AL REGISTRARSE -->
-  <div class="modal-overlay" id="nicknameModal">
-    <div class="modal-box">
-      <h3 style="margin-top:0; color:#60a5fa;">¡Casi listo!</h3>
-      <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom: 16px;">
-        Elige tu nombre de usuario o apodo con el que te verán los demás miembros:
-      </p>
-
-      <form onsubmit="guardarNickname(event)">
-        <div class="form-group">
-          <label class="form-label">Nombre de Usuario / Apodo</label>
+          <label class="form-label">Nombre de usuario o Apodo</label>
           <input type="text" id="inputNickname" class="form-input" required placeholder="Ej: JuanComparti">
         </div>
-        <button type="submit" class="btn-submit">Continuar</button>
+        <button type="submit" class="btn-submit">Entrar / Registrarse</button>
       </form>
     </div>
   </div>
@@ -223,7 +192,7 @@
 
   <script>
     const serviciosData = [
-      { id: 'netflix', name: '🎬 Netflix (Estándار)', full: 21000, comparti: 4500 },
+      { id: 'netflix', name: '🎬 Netflix (Estándar)', full: 21000, comparti: 4500 },
       { id: 'disney', name: '🏰 Disney+ (Premium)', full: 18400, comparti: 4000 },
       { id: 'spotify', name: '🎧 Spotify (Familiar)', full: 7500, comparti: 2000 },
       { id: 'chatgpt', name: '🤖 ChatGPT Plus', full: 32000, comparti: 8000 },
@@ -237,69 +206,7 @@
       renderizarCalculadora();
       chequearSesionNavbar();
       actualizarBadgeKyc();
-      inicializarGoogleAuth();
     };
-
-    function inicializarGoogleAuth() {
-      if (typeof google !== 'undefined') {
-        try {
-          google.accounts.id.initialize({
-            client_id: '572281007707-5k25l8rvq23sj6lh7h1f0u4speips678.apps.googleusercontent.com',
-            callback: manejarRespuestaGoogle
-          });
-        } catch (e) {
-          console.error("Error al inicializar Google Auth:", e);
-        }
-      }
-    }
-
-    function renderizarBotonGoogle() {
-      const container = document.getElementById('googleBtnContainer');
-      if (container && typeof google !== 'undefined') {
-        container.innerHTML = ''; // Limpia por si acaso
-        try {
-          google.accounts.id.renderButton(
-            container,
-            { theme: 'outline', size: 'large', width: '300', text: 'continue_with', locale: 'es' }
-          );
-        } catch (e) {
-          console.error("Error al renderizar botón:", e);
-        }
-      }
-    }
-
-    function parseJwt(token) {
-      try {
-        let base64Url = token.split('.')[1];
-        let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        let jsonPayload = decodeURIComponent(atob(base64).split('').map(c => {
-          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-        }).join(''));
-        return JSON.parse(jsonPayload);
-      } catch (e) {
-        return null;
-      }
-    }
-
-    function manejarRespuestaGoogle(response) {
-      const responsePayload = parseJwt(response.credential);
-      if (responsePayload) {
-        const email = responsePayload.email;
-        
-        localStorage.setItem('usuarioEmail', email);
-        cerrarModal();
-        
-        if (!localStorage.getItem('usuarioNickname')) {
-          document.getElementById('nicknameModal').style.display = 'flex';
-        } else {
-          localStorage.setItem('usuarioLogueado', 'true');
-          chequearSesionNavbar();
-          alert(`¡Bienvenido de nuevo, ${localStorage.getItem('usuarioNickname')}!`);
-        }
-      } else {
-        alert('Error al procesar las credenciales de Google.');
-      }
-    }
 
     function renderizarCalculadora() {
       const contenedor = document.getElementById('serviceList');
@@ -374,8 +281,6 @@
         menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
       } else {
         document.getElementById('authModal').style.display = 'flex';
-        // Renderizamos el botón de Google justo al abrir el modal para que aparezca sin fallas
-        setTimeout(renderizarBotonGoogle, 100);
       }
     }
 
@@ -383,30 +288,19 @@
       document.getElementById('authModal').style.display = 'none';
     }
 
-    function realizarLoginEmail(e) {
+    function realizarLogin(e) {
       e.preventDefault();
-      const email = document.getElementById('inputEmail').value;
-      localStorage.setItem('usuarioEmail', email);
-      cerrarModal();
-
-      if (!localStorage.getItem('usuarioNickname')) {
-        document.getElementById('nicknameModal').style.display = 'flex';
-      } else {
+      const email = document.getElementById('inputEmail').value.trim();
+      const nickname = document.getElementById('inputNickname').value.trim();
+      
+      if (email && nickname) {
+        localStorage.setItem('usuarioEmail', email);
+        localStorage.setItem('usuarioNickname', nickname);
         localStorage.setItem('usuarioLogueado', 'true');
+        
+        cerrarModal();
         chequearSesionNavbar();
-        alert('¡Sesión iniciada con éxito!');
-      }
-    }
-
-    function guardarNickname(e) {
-      e.preventDefault();
-      const nicknameInput = document.getElementById('inputNickname').value.trim();
-      if (nicknameInput) {
-        localStorage.setItem('usuarioNickname', nicknameInput);
-        localStorage.setItem('usuarioLogueado', 'true');
-        document.getElementById('nicknameModal').style.display = 'none';
-        chequearSesionNavbar();
-        alert(`¡Cuenta creada con éxito! Hola, ${nicknameInput}`);
+        alert(`¡Bienvenido, ${nickname}! Sesión iniciada correctamente.`);
       }
     }
 
@@ -428,7 +322,37 @@
         alert('Debes iniciar sesión primero para verificar tu cuenta.');
         document.getElementById('userMenu').style.display = 'none';
         document.getElementById('authModal').style.display = 'flex';
-        setTimeout(renderizarBotonGoogle, 100);
         return;
       }
-      document.getElementById('userMenu').style.display
+      document.getElementById('userMenu').style.display = 'none';
+      document.getElementById('kycModal').style.display = 'flex';
+    }
+
+    function cerrarModalKyc() {
+      document.getElementById('kycModal').style.display = 'none';
+    }
+
+    function enviarKyc(e) {
+      e.preventDefault();
+      localStorage.setItem('usuarioKyc', 'verificado');
+      cerrarModalKyc();
+      actualizarBadgeKyc();
+      alert('¡Verificación KYC enviada con éxito! Tu perfil ahora cuenta con la insignia de verificado.');
+    }
+
+    function actualizarBadgeKyc() {
+      const kycStatus = localStorage.getItem('usuarioKyc');
+      const badge = document.getElementById('kycStatusBadge');
+      if (!badge) return;
+
+      if (kycStatus === 'verificado') {
+        badge.className = 'badge-verified';
+        badge.innerText = 'Verificado';
+      } else {
+        badge.className = 'badge-unverified';
+        badge.innerText = 'Sin verificar';
+      }
+    }
+  </script>
+</body>
+</html>
