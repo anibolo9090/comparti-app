@@ -4,9 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Publicar / Compartir — Compartí</title>
-  
-  <!-- Cargamos Supabase mediante el CDN clásico compatible con la clave -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     :root { 
@@ -172,14 +169,8 @@
     <button class="nav-item" onclick="abrirMenu()"><span class="icon">☰</span><span>Menú</span></button>
   </div>
 
-  <!-- SUPABASE Y LÓGICA DE ENVÍO -->
+  <!-- LÓGICA DE PLANES Y SUPABASE -->
   <script>
-    const SUPABASE_URL = 'https://xygatgvzdniivzwndaxy.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh5Z2F0Z3Z6ZDniaXZ6d25kYXh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc0MDU1MTcsImV4cCI6MjEwMjk4MTUxN30.oSoJcTxCw69F0AXmVVw5LFeF0HjdCSwHd_yOH4HwbS8';
-
-    // Inicializamos el cliente mediante la variable global del CDN
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
     const planesPorServicio = {
       "Netflix": ["Estándar (con anuncios)", "Estándar", "Premium (4K)"],
       "Disney+": ["Estándar", "Premium"],
@@ -244,25 +235,37 @@
       const lugares = parseInt(document.getElementById('pubLugares').value);
       const precio = parseFloat(document.getElementById('pubPrecio').value);
 
-      const { data, error } = await supabaseClient
-        .from('suscripciones')
-        .insert([
-          { 
-            servicio: servicio, 
-            plan: plan, 
-            precio: precio, 
-            cupos_totales: lugares, 
-            cupos_disponibles: lugares, 
-            usuario: 'Anibal Peralta' 
-          }
-        ]);
+      const supabaseUrl = 'https://xygatgvzdniivzwndaxy.supabase.co';
+      const apikey = 'sb_publishable_fDfrz9tONWlI3ETRbanG3w_cXYsFVif';
 
-      if (error) {
-        console.error('Error detallado:', error);
-        alert('DETALLE DEL ERROR: ' + error.message);
-      } else {
-        alert(`¡Publicado con éxito en Supabase!`);
-        window.location.href = 'explorar.html';
+      try {
+        const res = await fetch(`${supabaseUrl}/rest/v1/suscripciones`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': apikey,
+            'Authorization': 'Bearer ' + apikey,
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({
+            servicio: servicio,
+            plan: plan,
+            precio: precio,
+            cupos_totales: lugares,
+            cupos_disponibles: lugares,
+            usuario: 'Anibal Peralta'
+          })
+        });
+
+        if (res.ok) {
+          alert('¡Publicado con éxito en Supabase!');
+          window.location.href = 'explorar.html';
+        } else {
+          const errText = await res.text();
+          alert('Error de servidor: ' + errText);
+        }
+      } catch (err) {
+        alert('Error de red: ' + err.message);
       }
     }
 
