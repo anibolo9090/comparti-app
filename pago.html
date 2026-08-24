@@ -153,31 +153,33 @@
     <button class="nav-item" onclick="location.href='index.html'"><span class="icon">☰</span><span>Menú</span></button>
   </div>
 
-  <script>
+    <script>
     const supabaseUrl = 'https://xygatgvzdniivzwndaxy.supabase.co';
     const apikey = 'sb_publishable_fDfrz9tONWlI3ETRbanG3w_cXYsFVif';
 
     async function cargarDetallePago() {
       const params = new URLSearchParams(window.location.search);
-      const idGrupo = params.get('id');
+      let idGrupo = params.get('id');
+
+      // Si el id está vacío o no viene, forzamos uno por defecto (ej: el primer registro)
+      if (!idGrupo || idGrupo === "" || idGrupo === "null") {
+        idGrupo = "1"; 
+      }
 
       try {
-        let res;
-        if (idGrupo && idGrupo !== "") {
-          // Intentar buscar por ID exacto
-          res = await fetch(`${supabaseUrl}/rest/v1/suscripciones?id=eq.${idGrupo}&select=*`, {
-            headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
-          });
-        }
+        // Consultamos directamente el registro por ID
+        let res = await fetch(`${supabaseUrl}/rest/v1/suscripciones?id=eq.${idGrupo}&select=*`, {
+          headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
+        });
 
         let data = [];
-        if (res && res.ok) {
+        if (res.ok) {
           data = await res.json();
         }
 
-        // Si no vino por ID o no se encontró, traemos el último registro creado para que nunca falle
+        // Si por alguna razón ese ID no existe, traemos el primer registro disponible en la tabla
         if (!data || data.length === 0) {
-          const resFallback = await fetch(`${supabaseUrl}/rest/v1/suscripciones?select=*&order=id.desc&limit=1`, {
+          const resFallback = await fetch(`${supabaseUrl}/rest/v1/suscripciones?select=*&limit=1`, {
             headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
           });
           if (resFallback.ok) {
@@ -188,18 +190,18 @@
         if (data && data.length > 0) {
           const item = data[0];
 
-          // Rellenar con los datos reales de Supabase
+          // Rellenar la tarjeta con los datos de Supabase
           document.getElementById('lblServicio').textContent = item.servicio || 'Suscripción';
           document.getElementById('lblPlan').textContent = item.plan || 'Plan Estándar';
           document.getElementById('lblPrecio').textContent = `$${item.precio?.toLocaleString('es-AR') || '0'}`;
 
-          // Datos bancarios exactos que creaste
+          // Rellenar los datos bancarios reales de tus columnas
           document.getElementById('lblBanco').textContent = item.banco || 'No especificado';
           document.getElementById('lblCbu').textContent = item.cbu || item.cvu || 'No especificado';
           document.getElementById('lblAlias').textContent = item.alias || 'No especificado';
           document.getElementById('lblTitular').textContent = item.titular || 'No especificado';
         } else {
-          alert("No se encontraron suscripciones registradas.");
+          alert("Error: La tabla de suscripciones en Supabase está vacía o no tiene registros publicados.");
         }
       } catch (err) {
         console.error("Error al conectar con Supabase:", err);
@@ -222,6 +224,9 @@
       alert("¡Operación procesada con éxito! Te estamos redirigiendo a tus grupos.");
       window.location.href = 'mis-ofertas.html';
     }
+
+    window.onload = cargarDetallePago;
   </script>
+
 </body>
 </html>
