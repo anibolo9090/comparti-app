@@ -17,7 +17,6 @@
       --card-border: #e2e8f0; 
       --text: #0f172a; 
       --text-muted: #64748b; 
-      --whatsapp: #25d366;
     }
     * { box-sizing: border-box; }
     body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
@@ -63,12 +62,6 @@
     /* POPULARES CHIPS */
     .services-preview { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 16px; }
     .service-mini-chip { background: var(--card-bg); border: 1px solid var(--card-border); padding: 8px 14px; border-radius: 20px; font-size: 0.82rem; font-weight: 600; white-space: nowrap; display: flex; align-items: center; gap: 6px; }
-
-    /* ESTILOS NUEVOS PARA INSIGNIAS DE VERIFICACIÓN */
-    .badge-verified { background: #dcfce7; color: #166534; font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 10px; display: inline-flex; align-items: center; gap: 3px; }
-    .badge-unverified { background: #f1f5f9; color: var(--text-muted); font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 10px; display: inline-flex; align-items: center; gap: 3px; }
-    .btn-whatsapp { background: var(--whatsapp); color: #fff; width: 100%; border: none; padding: 12px; border-radius: 12px; font-weight: 700; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3); }
-    .btn-whatsapp:hover { background: #22bf5b; }
 
     /* MODAL DE LOGIN / REGISTRO */
     .auth-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); z-index: 999999; display: none; align-items: flex-end; backdrop-filter: blur(2px); }
@@ -237,36 +230,9 @@
       
       <div class="menu-list">
         <button onclick="editarNombreUsuario(event)" class="menu-item-clean"><span>✏️ Editar nombre de usuario</span><span class="arrow">›</span></button>
-        <button onclick="abrirModalWhatsapp()" class="menu-item-clean">
-          <span>📱 Verificar WhatsApp</span>
-          <span id="estadoWapMenu"><span class="badge-unverified">Pendiente</span></span>
-        </button>
         <a href="mis-ofertas.html" class="menu-item-clean"><span>👤 Ver perfil completo</span><span class="arrow">›</span></a>
         <button onclick="cerrarSesion()" class="menu-item-clean menu-item-logout"><span>🚪 Cerrar sesión</span><span class="arrow">›</span></button>
       </div>
-    </div>
-  </div>
-
-  <!-- MODAL PARA INGRESAR Y VALIDAR WHATSAPP -->
-  <div class="auth-overlay" id="whatsappModal" onclick="cerrarWhatsappFuera(event)">
-    <div class="auth-drawer">
-      <div class="menu-header-top">
-        <h3 class="menu-title">Verificar WhatsApp</h3>
-        <button class="menu-close" onclick="cerrarModalWhatsapp()">&times;</button>
-      </div>
-      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">
-        Ingresá tu número con código de área para validar tu cuenta y generar mayor confianza en los grupos.
-      </p>
-
-      <form onsubmit="guardarVerificacionWhatsapp(event)">
-        <div class="form-group">
-          <label class="form-label">Número de WhatsApp</label>
-          <input type="tel" id="whatsappInput" class="form-input" placeholder="+54 9 11 1234 5678" required>
-        </div>
-        <button type="submit" class="btn-whatsapp">
-          <span>💬 Guardar y Verificar</span>
-        </button>
-      </form>
     </div>
   </div>
 
@@ -290,24 +256,13 @@
 
       const sesion = localStorage.getItem('sesionActiva');
       const nombreUsuario = localStorage.getItem('usuarioNombre') || 'Mi Perfil';
-      const whatsappVerificado = localStorage.getItem('whatsappVerificado');
       const contenedorDerecha = document.getElementById('contenedorHeaderDerecha');
       
-      // Actualizar insignia en el menú de usuario si ya está verificado previamente
-      if (whatsappVerificado === 'true') {
-        const estadoWap = document.getElementById('estadoWapMenu');
-        if (estadoWap) {
-          estadoWap.innerHTML = `<span class="badge-verified">✓ Verificado</span>`;
-        }
-      }
-      
       if (sesion === 'true' && contenedorDerecha) {
-        let badgeHtml = whatsappVerificado === 'true' ? `<span style="font-size: 0.65rem; background: #dcfce7; color: #166534; padding: 1px 5px; border-radius: 4px; font-weight:700;">✓ WA</span>` : '';
         contenedorDerecha.innerHTML = `
           <button onclick="abrirMenuUsuario()" class="user-profile-pill">
             <span class="avatar-dot"></span>
             <span>${nombreUsuario}</span>
-            ${badgeHtml}
             <span style="font-size: 0.7rem; color: var(--text-muted); margin-left: 2px;">▼</span>
           </button>
         `;
@@ -334,4 +289,59 @@
       try {
         const base64Url = response.credential.split('.')[1];
         const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const jsonP
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        
+        const payload = JSON.parse(jsonPayload);
+        
+        localStorage.setItem('sesionActiva', 'true');
+        localStorage.setItem('usuarioNombre', payload.name || payload.email);
+        
+        cerrarAuthModal();
+        location.reload();
+      } catch (error) {
+        console.error("Error al procesar la credencial de Google:", error);
+      }
+    }
+
+    function realizarLoginEmail(e) {
+      e.preventDefault();
+      const email = document.getElementById('emailInput').value;
+      localStorage.setItem('sesionActiva', 'true');
+      localStorage.setItem('usuarioNombre', email);
+      location.reload();
+    }
+
+    function abrirMenuUsuario() {
+      document.getElementById('menuUsuarioOverlay').classList.add('mostrar');
+    }
+    function cerrarMenuUsuario() {
+      document.getElementById('menuUsuarioOverlay').classList.remove('mostrar');
+    }
+    function cerrarMenuUsuarioFuera(e) {
+      if (e.target.id === 'menuUsuarioOverlay') cerrarMenuUsuario();
+    }
+
+    function editarNombreUsuario(e) {
+      e.preventDefault();
+      const nombreActual = localStorage.getItem('usuarioNombre') || '';
+      const nuevoNombre = prompt("Ingresa tu nuevo nombre de usuario:", nombreActual);
+      if (nuevoNombre && nuevoNombre.trim() !== "") {
+        localStorage.setItem('usuarioNombre', nuevoNombre.trim());
+        location.reload();
+      }
+    }
+
+    function abrirMenu() { document.getElementById('menuOverlay').classList.add('mostrar'); }
+    function cerrarMenu() { document.getElementById('menuOverlay').classList.remove('mostrar'); }
+    function cerrarMenuFuera(e) { if (e.target.id === 'menuOverlay') cerrarMenu(); }
+    
+    function cerrarSesion() {
+      localStorage.clear();
+      sessionStorage.clear();
+      window.location.replace('index.html');
+    }
+  </script>
+</body>
+</html>
