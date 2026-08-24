@@ -81,7 +81,7 @@
     .form-input { width: 100%; background: #0f172a; border: 1px solid var(--card-border); padding: 10px; border-radius: 8px; color: #fff; font-size: 0.9rem; }
     .btn-submit { width: 100%; background: var(--primary); color: #fff; border: none; padding: 10px; border-radius: 8px; font-weight: 700; cursor: pointer; margin-top: 8px; }
 
-    #googleBtnContainer { display: flex; justify-content: center; margin-top: 10px; }
+    #googleBtnContainer { display: flex; justify-content: center; margin-top: 10px; min-height: 40px; }
 
     /* Navegación inferior */
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 1000; }
@@ -96,7 +96,7 @@
     <div class="navbar-inner">
       <a href="index.html" class="logo">🤝 Compartí</a>
       <div style="position: relative;">
-        <button class="btn-login-nav" id="navAuthBtn" onclick="toggleMenuSession()">Ingresar</button>
+        <button class="btn-login-nav" id="navAuthBtn" onclick="clickBotonPrincipal()">Ingresar</button>
         <div class="user-menu" id="userMenu">
           <div class="user-menu-item" style="color: #60a5fa; font-weight: bold;" id="userEmailDisplay">Cuenta</div>
           <a href="mis-ofertas.html" class="user-menu-item">📂 Mis Ofertas</a>
@@ -148,7 +148,7 @@
       <button class="modal-close" onclick="cerrarModal()">&times;</button>
       
       <h3 style="margin-top:0; color:#60a5fa;">Iniciar Sesión</h3>
-      <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom: 16px;">Accedé con tus cuentas reales o email</p>
+      <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom: 16px;">Accedé con tu cuenta de Google o email</p>
       
       <div id="googleBtnContainer"></div>
 
@@ -223,7 +223,7 @@
 
   <script>
     const serviciosData = [
-      { id: 'netflix', name: '🎬 Netflix (Estándar)', full: 21000, comparti: 4500 },
+      { id: 'netflix', name: '🎬 Netflix (Estándار)', full: 21000, comparti: 4500 },
       { id: 'disney', name: '🏰 Disney+ (Premium)', full: 18400, comparti: 4000 },
       { id: 'spotify', name: '🎧 Spotify (Familiar)', full: 7500, comparti: 2000 },
       { id: 'chatgpt', name: '🤖 ChatGPT Plus', full: 32000, comparti: 8000 },
@@ -242,15 +242,29 @@
 
     function inicializarGoogleAuth() {
       if (typeof google !== 'undefined') {
-        google.accounts.id.initialize({
-          client_id: '572281007707-5k25l8rvq23sj6lh7h1f0u4speips678.apps.googleusercontent.com',
-          callback: manejarRespuestaGoogle
-        });
+        try {
+          google.accounts.id.initialize({
+            client_id: '572281007707-5k25l8rvq23sj6lh7h1f0u4speips678.apps.googleusercontent.com',
+            callback: manejarRespuestaGoogle
+          });
+        } catch (e) {
+          console.error("Error al inicializar Google Auth:", e);
+        }
+      }
+    }
 
-        google.accounts.id.renderButton(
-          document.getElementById('googleBtnContainer'),
-          { theme: 'outline', size: 'large', width: '300', text: 'continue_with', locale: 'es' }
-        );
+    function renderizarBotonGoogle() {
+      const container = document.getElementById('googleBtnContainer');
+      if (container && typeof google !== 'undefined') {
+        container.innerHTML = ''; // Limpia por si acaso
+        try {
+          google.accounts.id.renderButton(
+            container,
+            { theme: 'outline', size: 'large', width: '300', text: 'continue_with', locale: 'es' }
+          );
+        } catch (e) {
+          console.error("Error al renderizar botón:", e);
+        }
       }
     }
 
@@ -275,7 +289,6 @@
         localStorage.setItem('usuarioEmail', email);
         cerrarModal();
         
-        // Si no tiene nickname registrado, le abrimos el modal para que lo elija
         if (!localStorage.getItem('usuarioNickname')) {
           document.getElementById('nicknameModal').style.display = 'flex';
         } else {
@@ -354,13 +367,15 @@
       }
     }
 
-    function toggleMenuSession() {
+    function clickBotonPrincipal() {
       const logueado = localStorage.getItem('usuarioLogueado');
       if (logueado === 'true') {
         const menu = document.getElementById('userMenu');
         menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
       } else {
         document.getElementById('authModal').style.display = 'flex';
+        // Renderizamos el botón de Google justo al abrir el modal para que aparezca sin fallas
+        setTimeout(renderizarBotonGoogle, 100);
       }
     }
 
@@ -374,7 +389,6 @@
       localStorage.setItem('usuarioEmail', email);
       cerrarModal();
 
-      // Si no tiene nickname registrado, le abrimos el modal
       if (!localStorage.getItem('usuarioNickname')) {
         document.getElementById('nicknameModal').style.display = 'flex';
       } else {
@@ -414,23 +428,7 @@
         alert('Debes iniciar sesión primero para verificar tu cuenta.');
         document.getElementById('userMenu').style.display = 'none';
         document.getElementById('authModal').style.display = 'flex';
+        setTimeout(renderizarBotonGoogle, 100);
         return;
       }
-      document.getElementById('userMenu').style.display = 'none';
-      document.getElementById('kycModal').style.display = 'flex';
-    }
-
-    function cerrarModalKyc() {
-      document.getElementById('kycModal').style.display = 'none';
-    }
-
-    function enviarKyc(e) {
-      e.preventDefault();
-      localStorage.setItem('usuarioKyc', 'verificado');
-      cerrarModalKyc();
-      actualizarBadgeKyc();
-      alert('¡Verificación KYC enviada con éxito! Tu perfil ahora cuenta con la insignia de verificado.');
-    }
-
-    function actualizarBadgeKyc() {
-  
+      document.getElementById('userMenu').style.display
