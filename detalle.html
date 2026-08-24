@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detalle del Grupo — Compartí</title>
+
+  <style>
+    :root { 
+      --primary: #4f46e5; 
+      --bg: #f8fafc; 
+      --card-bg: #ffffff; 
+      --card-border: #e2e8f0; 
+      --text: #0f172a; 
+      --text-muted: #64748b; 
+    }
+    * { box-sizing: border-box; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
+    
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+
+    .back-btn { background: none; border: none; color: var(--primary); font-weight: 600; font-size: 0.95rem; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; margin-bottom: 20px; padding: 0; text-decoration: none; }
+
+    .detalle-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+    .detalle-header { text-align: center; border-bottom: 1px solid var(--card-border); padding-bottom: 20px; margin-bottom: 20px; }
+    .detalle-header h2 { margin: 0 0 6px 0; font-size: 1.6rem; color: var(--text); }
+    .detalle-header p { margin: 0; color: var(--text-muted); font-size: 0.95rem; }
+
+    .detalle-info-group { display: flex; flex-direction: column; gap: 14px; margin-bottom: 24px; }
+    .info-row { display: flex; justify-content: space-between; font-size: 0.95rem; border-bottom: 1px dashed var(--card-border); padding-bottom: 10px; }
+    .info-label { color: var(--text-muted); font-weight: 500; }
+    .info-value { color: var(--text); font-weight: 700; }
+
+    .precio-box { background: #f1f5f9; border-radius: 12px; padding: 16px; text-align: center; margin-bottom: 24px; }
+    .precio-box span { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px; }
+    .precio-box .precio-total { font-size: 1.8rem; font-weight: 800; color: var(--primary); }
+
+    .btn-pagar { width: 100%; background: var(--primary); color: #fff; border: none; padding: 14px; border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer; box-shadow: 0 4px 14px rgba(79, 70, 229, 0.4); text-align: center; display: block; text-decoration: none; }
+    .btn-pagar:hover { opacity: 0.95; }
+
+    .mensaje-estado { text-align: center; color: var(--text-muted); padding: 40px; font-size: 1rem; }
+  </style>
+</head>
+<body onload="cargarDetalle()">
+
+  <div class="container">
+    <a href="explorar.html" class="back-btn">← Volver a explorar</a>
+
+    <div id="contenedorDetalle">
+      <div class="mensaje-estado">Cargando detalles del grupo...</div>
+    </div>
+  </div>
+
+  <!-- LÓGICA PARA CARGAR EL DETALLE Y GESTIONAR EL PAGO/UNIÓN -->
+  <script>
+    const supabaseUrl = 'https://xygatgvzdniivzwndaxy.supabase.co';
+    const apikey = 'sb_publishable_fDfrz9tONWlI3ETRbanG3w_cXYsFVif';
+
+    async function cargarDetalle() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const servicioParam = urlParams.get('servicio');
+      const contenedor = document.getElementById('contenedorDetalle');
+
+      if (!servicioParam) {
+        contenedor.innerHTML = '<div class="mensaje-estado">No se especificó ninguna suscripción.</div>';
+        return;
+      }
+
+      try {
+        const res = await fetch(`${supabaseUrl}/rest/v1/suscripciones?servicio=eq.${encodeURIComponent(servicioParam)}&select=*`, {
+          method: 'GET',
+          headers: {
+            'apikey': apikey,
+            'Authorization': 'Bearer ' + apikey
+          }
+        });
+
+        if (!res.ok) throw new Error('Error al conectar con el servidor');
+
+        const data = await res.json();
+
+        if (!data || data.length === 0) {
+          contenedor.innerHTML = '<div class="mensaje-estado">No se encontró información de este grupo.</div>';
+          return;
+        }
+
+        const item = data[0];
+        const sinCupos = item.cupos_disponibles <= 0;
+
+        contenedor.innerHTML = `
+          <div class="detalle-card">
+            <div class="detalle-header">
+              <h2>${item.servicio}</h2>
+              <p>Plan: ${item.plan || 'General'}</p>
+            </div>
+
+            <div class="detalle-info-group">
+              <div class="info-row">
+                <span class="info-label">Anfitrión del grupo</span>
+                <span class="info-value">${item.usuario || 'Anfitrión'}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Lugares disponibles</span>
+                <span class="info-value" style="color: ${sinCupos ? '#ef4444' : '#10b981'};">${item.cupos_disponibles} libres</span>
+              </div>
+            </div>
+
+            <div class="precio-box">
+              <span>Aporte mensual por miembro</span>
+              <div class="precio-total">$${item.precio} ARS</div>
+            </div>
+
+            ${sinCupos ? 
+              '<button class="btn-pagar" style="background:#cbd5e1; cursor:not-allowed;" disabled>Grupo sin lugares disponibles</button>' :
+              `<button class="btn-pagar" onclick="unirseYProceder('${encodeURIComponent(item.servicio)}', ${item.cupos_disponibles})">Unirme y pagar / Reservar</button>`
+            }
+          </div>
+        `;
+
+      } catch (err) {
+        console.error(err);
+        contenedor.innerHTML = '<div class="mensaje-estado">Error al cargar los datos del grupo.</div>';
+      }
+    }
+
+    async function unirseYProceder(servicioEncoded, cuposActuales) {
+      const servicio = decodeURIComponent(servicioEncoded);
+      if (cuposActuales <= 0) return;
+
+      const nuevosCupos = cuposActuales - 1;
+
+      try {
+        // Descontamos el cupo en Supabase
+        const res = await fetch(`${supabaseUrl}/rest/v1/suscripciones?servicio=eq.${encodeURIComponent(servicio)}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': apikey,
+            'Authorization': 'Bearer ' + apikey,
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({ cupos_disponibles: nuevosCupos })
+        });
+
+        if (res.ok) {
+          alert('¡Lugar reservado con éxito! Redirigiendo a tu sección de grupos...');
+          window.location.href = 'mis-ofertas.html';
+        } else {
+          alert('Hubo un error al unirse al grupo.');
+        }
+      } catch (err) {
+        alert('Error de red: ' + err.message);
+      }
+    }
+  </script>
+</body>
+</html>
