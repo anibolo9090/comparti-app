@@ -64,7 +64,7 @@
     .menu-item-logout { color: #dc2626; font-weight: 600; margin-top: 8px; border-top: 1px solid var(--card-border); border-bottom: none; }
     .menu-item-logout .arrow { color: #dc2626; }
 
-    /* Barra de navegación inferior (CON SUS ÍCONOS) */
+    /* Barra de navegación inferior */
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 9999; box-shadow: 0 -4px 10px rgba(0,0,0,0.03); }
     .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); text-decoration: none; font-size: 0.75rem; font-weight: 600; gap: 2px; cursor: pointer; background: none; border: none; }
     .nav-item.active { color: #4f46e5; }
@@ -76,7 +76,6 @@
   <div class="container">
     <h2 class="header-title">Mi Billetera</h2>
 
-    <!-- TARJETA DE SALDO -->
     <div class="balance-card">
       <div class="balance-label">Saldo disponible</div>
       <div class="balance-amount">$ 12.500,00 ARS</div>
@@ -86,7 +85,6 @@
       </div>
     </div>
 
-    <!-- HISTORIAL DE TRANSACCIONES -->
     <h3 class="section-title">Historial de movimientos</h3>
     
     <div class="transaction-list">
@@ -97,27 +95,10 @@
         </div>
         <div class="tx-amount negative">-$ 4.500,00</div>
       </div>
-
-      <div class="transaction-item">
-        <div class="tx-info">
-          <h4>Ingreso por cupo - Spotify</h4>
-          <p>15 de Octubre, 2026</p>
-        </div>
-        <div class="tx-amount positive">+$ 2.200,00</div>
-      </div>
-
-      <div class="transaction-item">
-        <div class="tx-info">
-          <h4>Carga de saldo vía Mercado Pago</h4>
-          <p>10 de Octubre, 2026</p>
-        </div>
-        <div class="tx-amount positive">+$ 15.000,00</div>
-      </div>
     </div>
-
   </div>
 
-  <!-- MENÚ FLOTANTE MINIMALISTA SIN STICKERS -->
+  <!-- MENÚ FLOTANTE MINIMALISTA -->
   <div class="menu-overlay" id="menuOverlay" onclick="cerrarMenuFuera(event)">
     <div class="menu-drawer">
       <div class="menu-header-top">
@@ -151,7 +132,7 @@
     </div>
   </div>
 
-  <!-- BARRA DE NAVEGACIÓN INFERIOR (CON SUS ÍCONOS) -->
+  <!-- BARRA INFERIOR -->
   <div class="bottom-nav">
     <a href="index.html" class="nav-item"><span class="icon">🏠</span><span>Inicio</span></a>
     <a href="billetera.html" class="nav-item active"><span class="icon">💳</span><span>Billetera</span></a>
@@ -165,8 +146,13 @@
     function cerrarMenuFuera(e) { if (e.target.id === 'menuOverlay') cerrarMenu(); }
     
     function cerrarSesion() {
+      // 1. Limpiar completamente el almacenamiento local
+      localStorage.clear();
+      sessionStorage.clear();
+      
+      // 2. Notificar y redirigir de forma estricta reemplazando el historial
       alert('Has cerrado sesión correctamente.');
-      window.location.href = 'index.html';
+      window.location.replace('index.html');
     }
   </script>
 </body>
