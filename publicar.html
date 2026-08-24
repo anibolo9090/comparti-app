@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Publicar — Compartí</title>
+  <!-- Cargamos el cliente oficial de Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     body { font-family: system-ui, sans-serif; background: #f8fafc; color: #0f172a; padding: 20px; }
     .box { background: #fff; padding: 20px; border-radius: 12px; max-width: 500px; margin: 0 auto; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
@@ -36,6 +38,11 @@
   </div>
 
   <script>
+    // Inicializamos Supabase con la librería oficial y tu nueva clave
+    const supabaseUrl = 'https://xygatgvzdniivzwndaxy.supabase.co';
+    const supabaseKey = 'Sb_publishable_fDfrz9tONWlI3ETRbanG3w_cXYsFVif';
+    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
     async function enviarDatos(e) {
       e.preventDefault();
       
@@ -44,37 +51,28 @@
       const cupos = parseInt(document.getElementById('l').value);
       const precio = parseFloat(document.getElementById('pr').value);
 
-      const supabaseUrl = 'https://xygatgvzdniivzwndaxy.supabase.co';
-      const apikey = 'Sb_publishable_fDfrz9tONWlI3ETRbanG3w_cXYsFVif';
-
       try {
-        const res = await fetch(`${supabaseUrl}/rest/v1/suscripciones`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'apikey': apikey,
-            'Authorization': 'Bearer ' + apikey,
-            'Prefer': 'return=minimal'
-          },
-          body: JSON.stringify({
-            servicio: servicio,
-            plan: plan,
-            precio: precio,
-            cupos_totales: cupos,
-            cupos_disponibles: cupos,
-            usuario: 'Anibal Peralta'
-          })
-        });
+        const { data, error } = await supabaseClient
+          .from('suscripciones')
+          .insert([
+            { 
+              servicio: servicio, 
+              plan: plan, 
+              precio: precio, 
+              cupos_totales: cupos, 
+              cupos_disponibles: cupos, 
+              usuario: 'Anibal Peralta' 
+            }
+          ]);
 
-        if (res.ok) {
+        if (error) {
+          alert('Error de Supabase: ' + error.message);
+        } else {
           alert('¡Guardado con éxito en la base de datos!');
           window.location.href = 'explorar.html';
-        } else {
-          const errText = await res.text();
-          alert('Error de servidor: ' + errText);
         }
       } catch (err) {
-        alert('Error de red: ' + err.message);
+        alert('Error inesperado: ' + err.message);
       }
     }
   </script>
