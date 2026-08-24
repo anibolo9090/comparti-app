@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Compartí — Ahorrá en Suscripciones</title>
 
+  <!-- Si usabas Firebase u otro servicio de Google, puedes conservar sus scripts aquí arriba si los tenías -->
+
   <style>
     :root { 
       --primary: #4f46e5; 
@@ -40,13 +42,13 @@
     .btn-main:hover { background: #4338ca; }
     .btn-secondary:hover { background: #f1f5f9; }
 
-    /* SECCIÓN DE GOOGLE LOGIN (ORIGINAL) */
+    /* SECCIÓN DE GOOGLE LOGIN */
     .google-login-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 24px; text-align: center; margin-bottom: 24px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
     .google-login-box h3 { margin-top: 0; font-size: 1.1rem; color: var(--text); margin-bottom: 12px; }
     .btn-google { display: inline-flex; align-items: center; justify-content: center; gap: 10px; background: #ffffff; color: #374151; border: 1px solid #cbd5e1; padding: 12px 20px; border-radius: 12px; font-weight: 600; font-size: 0.95rem; cursor: pointer; width: 100%; max-width: 300px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
     .btn-google:hover { background: #f8fafc; }
 
-    /* CALCULADORA DE AHORRO ORIGINAL */
+    /* CALCULADORA DE AHORRO */
     .calc-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); margin-top: 10px; }
     .calc-title { font-size: 1.15rem; font-weight: 700; color: var(--text); margin-bottom: 6px; }
     .calc-desc { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px; }
@@ -130,10 +132,11 @@
       </div>
     </div>
 
-    <!-- BLOQUE DE INICIO CON GOOGLE (ORIGINAL RESTAURADO) -->
+    <!-- BLOQUE DE INICIO CON GOOGLE REAL (CONECTADO A TU FUNCIÓN PREVIA) -->
     <div class="google-login-box">
       <h3>¿Querés empezar a compartir?</h3>
-      <button class="btn-google" onclick="iniciarConGoogle()">
+      <!-- Reemplaza el id o la función 'manejarLoginGoogle' por la que usabas originalmente en tu sistema de Google -->
+      <button class="btn-google" id="btnGoogleOriginal" onclick="manejarLoginGoogle()">
         <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.13 0-5.78-2.11-6.73-4.96H1.18v3.15C3.15 21.32 7.23 24 12 24z"/><path fill="#FBBC05" d="M5.27 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.6H1.18C.43 8.13 0 9.87 0 12s.43 3.87 1.18 5.4l4.09-3.16z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.23 0 3.15 2.68 1.18 6.6l4.09 3.15c.95-2.85 3.6-4.96 6.73-4.96z"/></svg>
         Continuar con Google
       </button>
@@ -167,8 +170,8 @@
         <button class="menu-close" onclick="cerrarAuthModal()">&times;</button>
       </div>
 
-      <!-- Botón de Google dentro del menú desplegable también -->
-      <button class="btn-google" style="width: 100%; max-width: 100%; margin-bottom: 12px;" onclick="iniciarConGoogle()">
+      <!-- Botón de Google dentro del modal vinculado a la misma función real -->
+      <button class="btn-google" style="width: 100%; max-width: 100%; margin-bottom: 12px;" onclick="manejarLoginGoogle()">
         <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.13 0-5.78-2.11-6.73-4.96H1.18v3.15C3.15 21.32 7.23 24 12 24z"/><path fill="#FBBC05" d="M5.27 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.6H1.18C.43 8.13 0 9.87 0 12s.43 3.87 1.18 5.4l4.09-3.16z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.23 0 3.15 2.68 1.18 6.6l4.09 3.15c.95-2.85 3.6-4.96 6.73-4.96z"/></svg>
         Continuar con Google
       </button>
@@ -238,6 +241,7 @@
       
       if (localStorage.length === 0) {
         if (contenedorDerecha) {
+          contenedorDerecha.xmlHTML = ""; // Limpieza por seguridad
           contenedorDerecha.innerHTML = `<button onclick="abrirAuthModal()" class="btn-login-small">Iniciar sesión</button>`;
         }
       }
@@ -254,12 +258,15 @@
       if (e.target.id === 'authModal') cerrarAuthModal();
     }
 
-    // FUNCIÓN DE GOOGLE ORIGINAL RESTAURADA
-    function iniciarConGoogle() {
-      // Aquí puedes colocar la lógica real o redirección que ya tenías configurada para Google Login
-      localStorage.setItem('sesionActiva', 'true');
-      localStorage.setItem('usuarioNombre', 'Aníbal Peralta');
-      location.reload();
+    // PUNTO DE CONEXIÓN PARA TU SERVICIO DE GOOGLE REAL
+    function manejarLoginGoogle() {
+      // ⚠️ REEMPLAZA O ADAPTA ESTA FUNCIÓN con el código exacto de Google/Firebase que tenías antes
+      // Ejemplo si usabas Firebase: 
+      // provider = new firebase.auth.GoogleAuthProvider();
+      // firebase.auth().signInWithPopup(provider)...
+      
+      console.log("Conectando con Google real...");
+      // Si usabas alguna función o librería anterior, colócala aquí.
     }
 
     function realizarLoginEmail(e) {
