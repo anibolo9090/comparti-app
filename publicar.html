@@ -63,7 +63,7 @@
     .menu-item-logout { color: #dc2626; font-weight: 600; margin-top: 8px; border-top: 1px solid var(--card-border); border-bottom: none; }
     .menu-item-logout .arrow { color: #dc2626; }
 
-    /* Barra de navegación inferior (CON SUS ÍCONOS INTACTOS) */
+    /* Barra de navegación inferior (CON SUS ÍCONOS) */
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 9999; box-shadow: 0 -4px 10px rgba(0,0,0,0.03); }
     .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); text-decoration: none; font-size: 0.75rem; font-weight: 600; gap: 2px; cursor: pointer; background: none; border: none; }
     .nav-item.active { color: #4f46e5; }
@@ -274,7 +274,7 @@
     <button class="nav-item" onclick="abrirMenu()"><span class="icon">☰</span><span>Menú</span></button>
   </div>
 
-  <!-- LÓGICA DE PLANES Y SUPABASE -->
+  <!-- LÓGICA DE PLANES, SUPABASE Y CIERRE DE SESIÓN -->
   <script>
     const planesPorServicio = {
       "Netflix": ["Estándar (con anuncios)", "Estándar", "Premium (4K)"],
@@ -385,8 +385,13 @@
     function cerrarMenuFuera(e) { if (e.target.id === 'menuOverlay') cerrarMenu(); }
     
     function cerrarSesion() {
+      // 1. Limpiar completamente el almacenamiento local y de sesión
+      localStorage.clear();
+      sessionStorage.clear();
+      
+      // 2. Notificar y redirigir de forma estricta reemplazando el historial
       alert('Has cerrado sesión correctamente.');
-      window.location.href = 'index.html';
+      window.location.replace('index.html');
     }
   </script>
 </body>
