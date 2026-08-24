@@ -220,10 +220,116 @@
       }
     }
 
-    function procesarPago() {
-      alert("¡Operación procesada con éxito! Te estamos redirigiendo a tus grupos.");
-      window.location.href = 'mis-ofertas.html';
+        async function procesarPago() {
+      const params = new URLSearchParams(window.location.search);
+      let idGrupo = params.get('id') || "1";
+      const usuarioComprador = "usuario_1"; // ID del usuario actual de la sesión
+
+      try {
+        // 1. Obtener los detalles de la suscripción actual (para saber el precio, vendedor y cupos)
+        let resSub = await fetch(`${supabaseUrl}/rest/v1/suscripciones?id=eq.${idGrupo}&select=*`, {
+          headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
+        });
+        let datosSub = await resSub.json();
+        if (!datosSub || datosSub.length === 0) {
+          alert("No se encontró la suscripción.");
+          return;
+        }
+        let suscripcion = datosSub[0];
+        let precioServicio = parseFloat(suscripcion.precio) || 0;
+        let cuposActuales = parseInt(suscripcion.cupos_disponibles) || 0;
+        let vendedorId = suscripcion.vendedor_id || "vendedor_generico";
+
+        if (cuposActuales <= 0) {
+          alert("Lo sentimos, ya no quedan cupos disponibles para esta suscripción.");
+          return;
+        }
+
+        // 2. Verificar el saldo en la billetera del comprador
+        let resWallet = await fetch(`${supabaseUrl}/rest/v1/billetera?usuario_id=eq.${usuarioComprador}&select=*`, {
+          headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
+        });
+        let datosWallet = await resWallet.json();
+        
+        if (!datosWallet || datosWallet.length === 0) {
+          alert("No tienes una billetera activa o no posees fondos suficientes.");
+          return;
+        }
+
+        let saldoActual = parseFloat(datosWallet.length > 0 ? datosWallet[0].saldo : 0);
+        let walletRowId = datosWallet[0].id;
+
+        if (saldoActual < precioServicio) {
+          alert(`Saldo insuficiente. Tienes $${saldoActual.toLocaleString('es-AR')} y necesitas $${precioServicio.toLocaleString('es-AR')}. Por favor recarga tu billetera.`);
+          window.location.href = 'billetera.html';
+          return;
+        }
+
+        let nuevoSaldo = saldoActual - precioServicio;
+
+        // 3. Descontar el dinero de la billetera del comprador
+        let patchWallet = await fetch(`${supabaseUrl}/rest/v1/billetera?id=eq.${walletRowId}`, {
+          method: 'PATCH',
+          headers: {
+            'apikey': apikey,
+            'Authorization': 'Bearer ' + apikey,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({ saldo: nuevoSaldo, actualizado_at: new Date() })
+        });
+
+        if (!patchWallet.ok) {
+          alert("Error al debitar el saldo de tu billetera.");
+          return;
+        }
+
+        // 4. Registrar la compra en la tabla 'compras' (Rol de Intermediario)
+        let postCompra = await fetch(`${supabaseUrl}/rest/v1/compras`, {
+          method: 'POST',
+          headers: {
+            'apikey': apikey,
+            'Authorization': 'Bearer ' + apikey,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({
+            suscripcion_id: parseInt(idGrupo),
+            comprador_id: usuarioComprador,
+            vendedor_id: vendedorId,
+            monto_pagado: precioServicio,
+            estado_pago: 'retenido' // El dinero queda retenido por la plataforma
+          })
+        });
+
+        if (!postCompra.ok) {
+          alert("Error al registrar la transacción de compra.");
+          return;
+        }
+
+        // 5. Restar un cupo disponible en la suscripción
+        let nuevosCupos = cuposActuales - 1;
+        await fetch(`${supabaseUrl}/rest/v1/suscripciones?id=eq.${idGrupo}`, {
+          method: 'PATCH',
+          headers: {
+            'apikey': apikey,
+            'Authorization': 'Bearer ' + apikey,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({ cupos_disponibles: nuevosCupos })
+        });
+
+        // 6. Éxito total
+        alert("¡Compra y pago procesados con éxito! Los datos de acceso ya están disponibles en tu perfil.");
+        window.location.href = 'mis-ofertas.html';
+
+      } catch (err) {
+        console.error("Error crítico en el proceso de pago:", err);
+        alert("Ocurrió un error inesperado al procesar la compra.");
+      }
     }
+
 
     window.onload = cargarDetallePago;
   </script>
