@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mi Billetera — Compartí</title>
+  <title>Billetera — Compartí</title>
 
   <style>
     :root { 
@@ -19,48 +19,52 @@
     
     .container { max-width: 800px; margin: 0 auto; padding: 16px; }
 
-    /* Tarjeta de Saldo */
-    .wallet-card { background: linear-gradient(135deg, #4f46e5, #6366f1); color: #fff; border-radius: 20px; padding: 24px; margin-bottom: 20px; box-shadow: 0 10px 20px rgba(79, 70, 229, 0.2); }
-    .wallet-title { font-size: 0.9rem; opacity: 0.9; margin: 0 0 6px 0; text-transform: uppercase; letter-spacing: 0.5px; }
-    .wallet-balance { font-size: 2.2rem; font-weight: 800; margin: 0 0 20px 0; }
-    .wallet-actions { display: flex; gap: 10px; }
-    .wallet-btn { background: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255, 255, 255, 0.3); color: #fff; padding: 10px 16px; border-radius: 10px; font-weight: 700; font-size: 0.85rem; cursor: pointer; text-decoration: none; flex: 1; text-align: center; }
-    .wallet-btn.primary { background: #fff; color: var(--primary); border: none; }
+    .header-title { font-size: 1.4rem; font-weight: 700; color: var(--text); margin-bottom: 20px; text-align: center; }
 
-    /* Secciones */
+    /* TARJETA DE SALDO */
+    .balance-card { background: linear-gradient(135deg, #4f46e5, #6366f1); color: #fff; border-radius: 20px; padding: 24px; box-shadow: 0 10px 20px rgba(79, 70, 229, 0.2); margin-bottom: 20px; text-align: center; }
+    .balance-label { font-size: 0.9rem; opacity: 0.9; margin-bottom: 6px; }
+    .balance-amount { font-size: 2.2rem; font-weight: 800; margin-bottom: 20px; }
+    
+    .balance-actions { display: flex; gap: 12px; justify-content: center; }
+    .btn-action { background: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255, 255, 255, 0.4); color: #fff; padding: 10px 20px; border-radius: 12px; font-weight: 600; font-size: 0.9rem; cursor: pointer; backdrop-filter: blur(5px); }
+    .btn-action:hover { background: rgba(255, 255, 255, 0.3); }
+
+    /* SECCIÓN DE HISTORIAL */
     .section-title { font-size: 1.1rem; font-weight: 700; color: var(--text); margin: 24px 0 12px 0; }
     
-    .card-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; align-items: center; justify-content: space-between; }
-    .transaction-info h4 { margin: 0 0 4px 0; font-size: 0.95rem; color: var(--text); }
-    .transaction-info p { margin: 0; font-size: 0.8rem; color: var(--text-muted); }
-    .transaction-amount { font-weight: 700; font-size: 0.95rem; color: #166534; }
+    .transaction-list { display: flex; flex-direction: column; gap: 10px; }
+    .transaction-item { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+    .tx-info h4 { margin: 0 0 4px 0; font-size: 0.95rem; color: var(--text); }
+    .tx-info p { margin: 0; font-size: 0.75rem; color: var(--text-muted); }
+    .tx-amount { font-weight: 700; font-size: 1rem; }
+    .tx-amount.positive { color: #16a34a; }
+    .tx-amount.negative { color: #dc2626; }
 
-    /* MENÚ DESPLEGABLE INFERIOR */
-    .menu-overlay { 
-      position: fixed; 
-      top: 0; left: 0; right: 0; bottom: 0; 
-      background: rgba(15, 23, 42, 0.6); 
-      z-index: 99999; 
-      display: none; 
-      align-items: flex-end; 
-    }
+    /* MENÚ FLOTANTE MINIMALISTA SIN STICKERS */
+    .menu-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); z-index: 99999; display: none; align-items: flex-end; backdrop-filter: blur(2px); }
     .menu-overlay.mostrar { display: flex; }
-
-    .menu-drawer { 
-      background: #ffffff; 
-      border-top: 1px solid var(--card-border); 
-      border-top-left-radius: 20px; 
-      border-top-right-radius: 20px; 
-      width: 100%; 
-      max-height: 85vh; 
-      overflow-y: auto; 
-      padding: 20px; 
+    
+    .menu-drawer { background: #ffffff; border-top-left-radius: 24px; border-top-right-radius: 24px; width: 100%; max-height: 85vh; overflow-y: auto; padding: 24px 20px; box-shadow: 0 -10px 25px rgba(0,0,0,0.1); animation: slideUp 0.3s ease-out; }
+    
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
     }
-    .menu-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); padding-bottom: 10px; margin-bottom: 10px; }
-    .menu-close { background: none; border: none; color: #0f172a; font-size: 1.8rem; cursor: pointer; }
-    .menu-item-link { display: flex; align-items: center; gap: 10px; padding: 12px; background: #f8fafc; border: 1px solid var(--card-border); border-radius: 8px; color: #4f46e5; text-decoration: none; margin-bottom: 8px; font-weight: 600; font-size: 0.95rem; }
 
-    /* Barra de navegación inferior */
+    .menu-header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+    .menu-title { font-size: 1.35rem; font-weight: 700; color: var(--text); margin: 0; }
+    .menu-close { background: #f1f5f9; border: none; width: 36px; height: 36px; border-radius: 50%; color: #0f172a; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+
+    .menu-list { display: flex; flex-direction: column; }
+    .menu-item-clean { display: flex; align-items: center; justify-content: space-between; padding: 16px 4px; color: var(--text); text-decoration: none; font-size: 1.05rem; font-weight: 500; border-bottom: 1px solid #f1f5f9; }
+    .menu-item-clean:last-child { border-bottom: none; }
+    .menu-item-clean .arrow { color: #94a3b8; font-size: 1.2rem; font-weight: bold; }
+
+    .menu-item-logout { color: #dc2626; font-weight: 600; margin-top: 8px; border-top: 1px solid var(--card-border); border-bottom: none; }
+    .menu-item-logout .arrow { color: #dc2626; }
+
+    /* Barra de navegación inferior (CON SUS ÍCONOS) */
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 9999; box-shadow: 0 -4px 10px rgba(0,0,0,0.03); }
     .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); text-decoration: none; font-size: 0.75rem; font-weight: 600; gap: 2px; cursor: pointer; background: none; border: none; }
     .nav-item.active { color: #4f46e5; }
@@ -70,55 +74,84 @@
 <body>
 
   <div class="container">
-    
-    <h2 style="font-size: 1.4rem; margin-bottom: 16px;">Mi Billetera</h2>
+    <h2 class="header-title">Mi Billetera</h2>
 
-    <!-- Tarjeta Principal de Saldo -->
-    <div class="wallet-card">
-      <p class="wallet-title">Saldo disponible</p>
-      <h1 class="wallet-balance">$ 0,00 ARS</h1>
-      <div class="wallet-actions">
-        <button class="wallet-btn primary" onclick="alert('Funcionalidad de carga de saldo próximamente')">Ingresar dinero</button>
-        <button class="wallet-btn" onclick="alert('No tienes saldo suficiente para retirar')">Retirar</button>
+    <!-- TARJETA DE SALDO -->
+    <div class="balance-card">
+      <div class="balance-label">Saldo disponible</div>
+      <div class="balance-amount">$ 12.500,00 ARS</div>
+      <div class="balance-actions">
+        <button class="btn-action" onclick="alert('Función de Cargar Saldo próximamente')">Cargar Dinero</button>
+        <button class="btn-action" onclick="alert('Función de Retirar próximamente')">Retirar</button>
       </div>
     </div>
 
-    <!-- Historial de Movimientos -->
-    <div class="section-title">📊 Últimos movimientos</div>
+    <!-- HISTORIAL DE TRANSACCIONES -->
+    <h3 class="section-title">Historial de movimientos</h3>
     
-    <div class="card-box">
-      <div class="transaction-info">
-        <h4>Suscripción Netflix (Aporte mensual)</h4>
-        <p>Hoy, 10:45 hs • Tarjeta de débito</p>
+    <div class="transaction-list">
+      <div class="transaction-item">
+        <div class="tx-info">
+          <h4>Pago de suscripción - Netflix</h4>
+          <p>22 de Octubre, 2026</p>
+        </div>
+        <div class="tx-amount negative">-$ 4.500,00</div>
       </div>
-      <div class="transaction-amount" style="color: #991b1b;">-$ 4.500</div>
-    </div>
 
-    <div class="card-box">
-      <div class="transaction-info">
-        <h4>Depósito recibido por grupo Spotify</h4>
-        <p>Ayer, 18:30 hs • Transferencia</p>
+      <div class="transaction-item">
+        <div class="tx-info">
+          <h4>Ingreso por cupo - Spotify</h4>
+          <p>15 de Octubre, 2026</p>
+        </div>
+        <div class="tx-amount positive">+$ 2.200,00</div>
       </div>
-      <div class="transaction-amount">+$ 2.000</div>
+
+      <div class="transaction-item">
+        <div class="tx-info">
+          <h4>Carga de saldo vía Mercado Pago</h4>
+          <p>10 de Octubre, 2026</p>
+        </div>
+        <div class="tx-amount positive">+$ 15.000,00</div>
+      </div>
     </div>
 
   </div>
 
-  <!-- MENÚ DESPLEGABLE INFERIOR -->
+  <!-- MENÚ FLOTANTE MINIMALISTA SIN STICKERS -->
   <div class="menu-overlay" id="menuOverlay" onclick="cerrarMenuFuera(event)">
     <div class="menu-drawer">
-      <div class="menu-header">
-        <h3 style="margin:0; color:#0f172a;">Menú Principal</h3>
+      <div class="menu-header-top">
+        <h3 class="menu-title">Menú Principal</h3>
         <button class="menu-close" onclick="cerrarMenu()">&times;</button>
       </div>
-      <a href="explorar.html" class="menu-item-link"><span>➕</span> Comprar una suscripción</a>
-      <a href="publicar.html" class="menu-item-link"><span>📤</span> Compartir una suscripción</a>
-      <a href="mis-ofertas.html" class="menu-item-link"><span>💳</span> Mis Suscripciones / Grupos</a>
-      <div class="menu-item-link" onclick="cerrarMenu()" style="justify-content:center; background:#f1f5f9; margin-top: 10px; cursor:pointer;">Cerrar menú</div>
+      
+      <div class="menu-list">
+        <a href="explorar.html" class="menu-item-clean">
+          <span>Comprar una suscripción</span>
+          <span class="arrow">›</span>
+        </a>
+        <a href="publicar.html" class="menu-item-clean">
+          <span>Compartir una suscripción</span>
+          <span class="arrow">›</span>
+        </a>
+        <a href="mis-ofertas.html" class="menu-item-clean">
+          <span>Mis Suscripciones / Grupos</span>
+          <span class="arrow">›</span>
+        </a>
+        <a href="billetera.html" class="menu-item-clean">
+          <span>Billetera</span>
+          <span class="arrow">›</span>
+        </a>
+        
+        <a href="#" onclick="cerrarSesion()" class="menu-item-clean menu-item-logout">
+          <span>Cerrar sesión</span>
+          <span class="arrow">›</span>
+        </a>
+      </div>
     </div>
   </div>
 
-  <!-- BARRA DE navegación inferior -->
+  <!-- BARRA DE NAVEGACIÓN INFERIOR (CON SUS ÍCONOS) -->
   <div class="bottom-nav">
     <a href="index.html" class="nav-item"><span class="icon">🏠</span><span>Inicio</span></a>
     <a href="billetera.html" class="nav-item active"><span class="icon">💳</span><span>Billetera</span></a>
@@ -127,18 +160,13 @@
   </div>
 
   <script>
-    function abrirMenu() {
-      document.getElementById('menuOverlay').classList.add('mostrar');
-    }
-
-    function cerrarMenu() {
-      document.getElementById('menuOverlay').classList.remove('mostrar');
-    }
-
-    function cerrarMenuFaura(e) {
-      if (e.target.id === 'menuOverlay') {
-        cerrarMenu();
-      }
+    function abrirMenu() { document.getElementById('menuOverlay').classList.add('mostrar'); }
+    function cerrarMenu() { document.getElementById('menuOverlay').classList.remove('mostrar'); }
+    function cerrarMenuFuera(e) { if (e.target.id === 'menuOverlay') cerrarMenu(); }
+    
+    function cerrarSesion() {
+      alert('Has cerrado sesión correctamente.');
+      window.location.href = 'index.html';
     }
   </script>
 </body>
