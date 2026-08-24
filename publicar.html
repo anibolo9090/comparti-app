@@ -63,7 +63,7 @@
     .menu-item-logout { color: #dc2626; font-weight: 600; margin-top: 8px; border-top: 1px solid var(--card-border); border-bottom: none; }
     .menu-item-logout .arrow { color: #dc2626; }
 
-    /* Barra de navegación inferior */
+    /* Barra de navegación inferior (CON SUS ÍCONOS INTACTOS) */
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 9999; box-shadow: 0 -4px 10px rgba(0,0,0,0.03); }
     .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); text-decoration: none; font-size: 0.75rem; font-weight: 600; gap: 2px; cursor: pointer; background: none; border: none; }
     .nav-item.active { color: #4f46e5; }
@@ -266,12 +266,12 @@
     </div>
   </div>
 
-  <!-- BARRA DE NAVEGACIÓN INFERIOR -->
+  <!-- BARRA DE NAVEGACIÓN INFERIOR (CON SUS ÍCONOS) -->
   <div class="bottom-nav">
-    <a href="index.html" class="nav-item"><span>Inicio</span></a>
-    <a href="billetera.html" class="nav-item"><span>Billetera</span></a>
-    <a href="mis-ofertas.html" class="nav-item"><span>Mi perfil</span></a>
-    <button class="nav-item" onclick="abrirMenu()"><span>Menú</span></button>
+    <a href="index.html" class="nav-item"><span class="icon">🏠</span><span>Inicio</span></a>
+    <a href="billetera.html" class="nav-item"><span class="icon">💳</span><span>Billetera</span></a>
+    <a href="mis-ofertas.html" class="nav-item"><span class="icon">👤</span><span>Mi perfil</span></a>
+    <button class="nav-item" onclick="abrirMenu()"><span class="icon">☰</span><span>Menú</span></button>
   </div>
 
   <!-- LÓGICA DE PLANES Y SUPABASE -->
