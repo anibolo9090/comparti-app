@@ -36,12 +36,25 @@
     .summary-value { font-weight: 600; color: var(--text); }
 
     /* METODOS DE PAGO */
-    .payment-methods { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+    .payment-methods { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
     .payment-option { background: var(--card-bg); border: 2px solid var(--card-border); border-radius: 14px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: all 0.2s ease; }
     .payment-option.selected { border-color: var(--primary); background: var(--primary-light); }
     .payment-icon { font-size: 1.5rem; }
     .payment-details h4 { margin: 0 0 2px 0; font-size: 0.95rem; font-weight: 700; }
     .payment-details p { margin: 0; font-size: 0.78rem; color: var(--text-muted); }
+
+    /* CAJA DE DATOS BANCARIOS (OCULTA POR DEFECTO) */
+    .bank-details-box { background: #ffffff; border: 1px dashed var(--primary); border-radius: 14px; padding: 16px; margin-bottom: 20px; display: none; }
+    .bank-details-box.show { display: block; animation: fadeIn 0.3s ease-in-out; }
+    .bank-row { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 8px; }
+    .bank-row:last-child { margin-bottom: 0; }
+    .bank-label { color: var(--text-muted); }
+    .bank-val { font-weight: 700; color: var(--text); }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
     .btn-pay { background: var(--primary); color: #fff; width: 100%; border: none; padding: 14px; border-radius: 14px; font-weight: 700; font-size: 1rem; cursor: pointer; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); display: flex; align-items: center; justify-content: center; gap: 8px; }
     .btn-pay:hover { background: #4338ca; }
@@ -89,7 +102,7 @@
 
     <!-- SELECCIÓN DE PAGO -->
     <div class="payment-methods">
-      <div class="payment-option selected" onclick="seleccionarMetodo(this)">
+      <div class="payment-option selected" onclick="seleccionarMetodo(this, 'tarjeta')">
         <span class="payment-icon">💳</span>
         <div class="payment-details">
           <h4>Tarjeta de Crédito / Débito</h4>
@@ -97,12 +110,41 @@
         </div>
       </div>
 
-      <div class="payment-option" onclick="seleccionarMetodo(this)">
+      <div class="payment-option" onclick="seleccionarMetodo(this, 'mercadopago')">
         <span class="payment-icon">📱</span>
         <div class="payment-details">
           <h4>Mercado Pago / Dinero en cuenta</h4>
           <p>Pagá con tu billetera virtual favorita</p>
         </div>
+      </div>
+
+      <div class="payment-option" onclick="seleccionarMetodo(this, 'transferencia')">
+        <span class="payment-icon">🏦</span>
+        <div class="payment-details">
+          <h4>Transferencia Bancaria</h4>
+          <p>Alias / CBU (Acreditación en 1-2 hs)</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- DATOS BANCARIOS (Se muestra solo si eligen transferencia) -->
+    <div class="bank-details-box" id="bankDetailsBox">
+      <div style="font-weight: 700; color: var(--primary); margin-bottom: 10px; font-size: 0.95rem;">Datos para la transferencia:</div>
+      <div class="bank-row">
+        <span class="bank-label">Banco:</span>
+        <span class="bank-val">Brubank / Mercado Pago</span>
+      </div>
+      <div class="bank-row">
+        <span class="bank-label">CVU / CBU:</span>
+        <span class="bank-val">0000003100012345678999</span>
+      </div>
+      <div class="bank-row">
+        <span class="bank-label">Alias:</span>
+        <span class="bank-val">comparti.app.mp</span>
+      </div>
+      <div class="bank-row">
+        <span class="bank-label">Titular:</span>
+        <span class="bank-val">Compartí Payments S.A.</span>
       </div>
     </div>
 
@@ -123,18 +165,15 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", function() {
-      // Capturar los parámetros enviados por URL desde explorar.html
       const params = new URLSearchParams(window.location.search);
       const idGrupo = params.get('id');
 
-      // Simulación de datos según el ID (puedes ajustarlo o conectarlo a tu lógica)
       const datosGrupos = {
         'netflix': { nombre: 'Netflix', plan: 'Estándar', precio: '$5.000' },
         'prime': { nombre: 'Amazon Prime Video', plan: 'Prime Video (Estándar)', precio: '$6.000' },
         'disney': { nombre: 'Disney+', plan: 'Premium', precio: '$6.500' }
       };
 
-      // Si viene un ID específico, lo buscamos o mostramos valores por defecto
       const info = datosGrupos[idGrupo] || { nombre: 'Suscripción Compartida', plan: 'Plan Estándar', precio: '$5.000' };
 
       document.getElementById('lblServicio').textContent = info.nombre;
@@ -142,13 +181,20 @@
       document.getElementById('lblPrecio').textContent = info.precio;
     });
 
-    function seleccionarMetodo(elemento) {
+    function seleccionarMetodo(elemento, tipo) {
       document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('selected'));
       elemento.classList.add('selected');
+
+      const box = document.getElementById('bankDetailsBox');
+      if (tipo === 'transferencia') {
+        box.classList.add('show');
+      } else {
+        box.classList.remove('show');
+      }
     }
 
     function procesarPago() {
-      alert("¡Pago simulado con éxito! Te estamos redirigiendo a tus grupos.");
+      alert("¡Operación procesada con éxito! Te estamos redirigiendo a tus grupos.");
       window.location.href = 'mis-ofertas.html';
     }
   </script>
