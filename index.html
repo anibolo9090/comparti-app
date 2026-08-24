@@ -17,6 +17,7 @@
       --card-border: #e2e8f0; 
       --text: #0f172a; 
       --text-muted: #64748b; 
+      --whatsapp: #25d366;
     }
     * { box-sizing: border-box; }
     body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
@@ -33,7 +34,7 @@
     .btn-login-small { background: var(--primary); color: #fff; padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; text-decoration: none; box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2); border: none; cursor: pointer; }
     .btn-login-small:hover { background: #4338ca; }
 
-    /* HERO SECTION MEJORADA */
+    /* HERO SECTION */
     .hero-section { text-align: center; padding: 10px 0 20px 0; }
     .hero-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--primary-light); color: var(--primary); padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; margin-bottom: 12px; }
     .hero-title { font-size: 1.75rem; font-weight: 800; color: var(--text); margin-bottom: 8px; line-height: 1.2; }
@@ -45,7 +46,7 @@
     .btn-main:hover { background: #4338ca; }
     .btn-secondary:hover { background: #f1f5f9; }
 
-    /* SECCIÓN DE TARJETAS INFORMATIVAS / PASOS */
+    /* SECCIÓN DE PASOS Y TARJETAS */
     .section-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
     
     .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 24px; }
@@ -53,17 +54,19 @@
     .step-icon { font-size: 1.5rem; margin-bottom: 6px; }
     .step-text { font-size: 0.78rem; font-weight: 600; color: var(--text); line-height: 1.3; }
 
-    /* TARJETA DESTACADA DE SERVICIOS */
     .featured-card { background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%); color: #fff; border-radius: 20px; padding: 20px; margin-bottom: 24px; box-shadow: 0 10px 20px rgba(79, 70, 229, 0.2); display: flex; justify-content: space-between; align-items: center; }
     .featured-info h3 { font-size: 1.15rem; font-weight: 800; margin: 0 0 4px 0; }
     .featured-info p { font-size: 0.85rem; margin: 0; opacity: 0.9; }
     .featured-btn { background: #ffffff; color: var(--primary); padding: 8px 16px; border-radius: 10px; font-weight: 700; font-size: 0.85rem; text-decoration: none; box-shadow: 0 2px 6px rgba(0,0,0,0.1); white-space: nowrap; }
 
-    /* POPULARES CHIPS */
     .services-preview { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 16px; }
     .service-mini-chip { background: var(--card-bg); border: 1px solid var(--card-border); padding: 8px 14px; border-radius: 20px; font-size: 0.82rem; font-weight: 600; white-space: nowrap; display: flex; align-items: center; gap: 6px; }
 
-    /* MODAL DE LOGIN / REGISTRO */
+    /* ESTILOS DE INSIGNIAS DE VERIFICACIÓN */
+    .badge-verified { background: #dcfce7; color: #166534; font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 10px; display: inline-flex; align-items: center; gap: 3px; }
+    .badge-unverified { background: #f1f5f9; color: var(--text-muted); font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 10px; display: inline-flex; align-items: center; gap: 3px; }
+
+    /* MODAL DE LOGIN / REGISTRO Y MENÚS */
     .auth-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); z-index: 999999; display: none; align-items: flex-end; backdrop-filter: blur(2px); }
     .auth-overlay.mostrar { display: flex; }
     .auth-drawer { background: #ffffff; border-top-left-radius: 24px; border-top-right-radius: 24px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 24px 20px; box-shadow: 0 -10px 25px rgba(0,0,0,0.1); animation: slideUp 0.3s ease-out; }
@@ -81,7 +84,9 @@
     .btn-google { display: inline-flex; align-items: center; justify-content: center; gap: 10px; background: #ffffff; color: #374151; border: 1px solid #cbd5e1; padding: 12px 20px; border-radius: 12px; font-weight: 600; font-size: 0.95rem; cursor: pointer; width: 100%; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
     .btn-google:hover { background: #f8fafc; }
 
-    /* MENÚ FLOTANTE */
+    .btn-whatsapp { background: var(--whatsapp); color: #fff; width: 100%; border: none; padding: 12px; border-radius: 12px; font-weight: 700; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3); }
+    .btn-whatsapp:hover { background: #22bf5b; }
+
     .menu-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); z-index: 99999; display: none; align-items: flex-end; backdrop-filter: blur(2px); }
     .menu-overlay.mostrar { display: flex; }
     .menu-drawer { background: #ffffff; border-top-left-radius: 24px; border-top-right-radius: 24px; width: 100%; max-height: 85vh; overflow-y: auto; padding: 24px 20px; box-shadow: 0 -10px 25px rgba(0,0,0,0.1); animation: slideUp 0.3s ease-out; }
@@ -144,7 +149,7 @@
       <a href="calculadora.html" class="featured-btn">Calcular ahora</a>
     </div>
 
-    <!-- CÓMO FUNCIONA (3 PASOS) -->
+    <!-- CÓMO FUNCIONA -->
     <div class="section-title">¿Cómo funciona?</div>
     <div class="steps-grid">
       <div class="step-card">
@@ -161,7 +166,7 @@
       </div>
     </div>
 
-    <!-- VISTA PREVIA DE CATEGORÍAS / POPULARES -->
+    <!-- POPULARES -->
     <div class="section-title">Servicios populares</div>
     <div class="services-preview">
       <div class="service-mini-chip">🎬 Netflix</div>
@@ -220,7 +225,7 @@
     </div>
   </div>
 
-  <!-- MODAL DE OPCIONES DE USUARIO (SUPERIOR DERECHA) -->
+  <!-- MODAL DE OPCIONES DE USUARIO Y WHATSAPP -->
   <div class="menu-overlay" id="menuUsuarioOverlay" onclick="cerrarMenuUsuarioFuera(event)">
     <div class="menu-drawer">
       <div class="menu-header-top">
@@ -230,9 +235,36 @@
       
       <div class="menu-list">
         <button onclick="editarNombreUsuario(event)" class="menu-item-clean"><span>✏️ Editar nombre de usuario</span><span class="arrow">›</span></button>
+        <button onclick="abrirModalWhatsapp()" class="menu-item-clean">
+          <span>📱 Verificar WhatsApp</span>
+          <span id="estadoWapMenu"><span class="badge-unverified">Pendiente</span></span>
+        </button>
         <a href="mis-ofertas.html" class="menu-item-clean"><span>👤 Ver perfil completo</span><span class="arrow">›</span></a>
         <button onclick="cerrarSesion()" class="menu-item-clean menu-item-logout"><span>🚪 Cerrar sesión</span><span class="arrow">›</span></button>
       </div>
+    </div>
+  </div>
+
+  <!-- MODAL PARA INGRESAR Y VALIDAR WHATSAPP -->
+  <div class="auth-overlay" id="whatsappModal" onclick="cerrarWhatsappFuera(event)">
+    <div class="auth-drawer">
+      <div class="menu-header-top">
+        <h3 class="menu-title">Verificar WhatsApp</h3>
+        <button class="menu-close" onclick="cerrarModalWhatsapp()">&times;</button>
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">
+        Ingresá tu número con código de área (ej: +54 9 11...) para validar tu cuenta y generar mayor confianza en los grupos.
+      </p>
+
+      <form onsubmit="guardarVerificacionWhatsapp(event)">
+        <div class="form-group">
+          <label class="form-label">Número de WhatsApp</label>
+          <input type="tel" id="whatsappInput" class="form-input" placeholder="+54 9 11 1234 5678" required>
+        </div>
+        <button type="submit" class="btn-whatsapp">
+          <span>💬 Verificar por WhatsApp</span>
+        </button>
+      </form>
     </div>
   </div>
 
@@ -256,13 +288,24 @@
 
       const sesion = localStorage.getItem('sesionActiva');
       const nombreUsuario = localStorage.getItem('usuarioNombre') || 'Mi Perfil';
+      const whatsappVerificado = localStorage.getItem('whatsappVerificado');
       const contenedorDerecha = document.getElementById('contenedorHeaderDerecha');
       
+      // Actualizar insignia en el menú de usuario si está verificado
+      if (whatsappVerificado === 'true') {
+        const estadoWap = document.getElementById('estadoWapMenu');
+        if (estadoWap) {
+          estadoWap.innerHTML = `<span class="badge-verified">✓ Verificado</span>`;
+        }
+      }
+
       if (sesion === 'true' && contenedorDerecha) {
+        let badgeHtml = whatsappVerificado === 'true' ? `<span style="font-size: 0.65rem; background: #dcfce7; color: #166534; padding: 1px 5px; border-radius: 4px; font-weight:700;">✓ WA</span>` : '';
         contenedorDerecha.innerHTML = `
           <button onclick="abrirMenuUsuario()" class="user-profile-pill">
             <span class="avatar-dot"></span>
             <span>${nombreUsuario}</span>
+            ${badgeHtml}
             <span style="font-size: 0.7rem; color: var(--text-muted); margin-left: 2px;">▼</span>
           </button>
         `;
@@ -291,57 +334,4 @@
         const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
         const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
             return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-        }).join(''));
-        
-        const payload = JSON.parse(jsonPayload);
-        
-        localStorage.setItem('sesionActiva', 'true');
-        localStorage.setItem('usuarioNombre', payload.name || payload.email);
-        
-        cerrarAuthModal();
-        location.reload();
-      } catch (error) {
-        console.error("Error al procesar la credencial de Google:", error);
-      }
-    }
-
-    function realizarLoginEmail(e) {
-      e.preventDefault();
-      const email = document.getElementById('emailInput').value;
-      localStorage.setItem('sesionActiva', 'true');
-      localStorage.setItem('usuarioNombre', email);
-      location.reload();
-    }
-
-    function abrirMenuUsuario() {
-      document.getElementById('menuUsuarioOverlay').classList.add('mostrar');
-    }
-    function cerrarMenuUsuario() {
-      document.getElementById('menuUsuarioOverlay').classList.remove('mostrar');
-    }
-    function cerrarMenuUsuarioFuera(e) {
-      if (e.target.id === 'menuUsuarioOverlay') cerrarMenuUsuario();
-    }
-
-    function editarNombreUsuario(e) {
-      e.preventDefault();
-      const nombreActual = localStorage.getItem('usuarioNombre') || '';
-      const nuevoNombre = prompt("Ingresa tu nuevo nombre de usuario:", nombreActual);
-      if (nuevoNombre && nuevoNombre.trim() !== "") {
-        localStorage.setItem('usuarioNombre', nuevoNombre.trim());
-        location.reload();
-      }
-    }
-
-    function abrirMenu() { document.getElementById('menuOverlay').classList.add('mostrar'); }
-    function cerrarMenu() { document.getElementById('menuOverlay').classList.remove('mostrar'); }
-    function cerrarMenuFuera(e) { if (e.target.id === 'menuOverlay') cerrarMenu(); }
-    
-    function cerrarSesion() {
-      localStorage.clear();
-      sessionStorage.clear();
-      window.location.replace('index.html');
-    }
-  </script>
-</body>
-</html>
+        }).join('
