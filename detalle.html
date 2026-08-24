@@ -40,7 +40,7 @@
 
     .mensaje-estado { text-align: center; color: var(--text-muted); padding: 40px; font-size: 1rem; }
 
-    /* MODAL DE SELECCIÓN DE PAGO */
+    /* MODAL DE SELECCIÓN DE PAGO Y PASARELA DE PRUEBA */
     .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); z-index: 99999; display: none; align-items: flex-end; }
     .modal-overlay.mostrar { display: flex; }
     .modal-drawer { background: #ffffff; border-top: 1px solid var(--card-border); border-top-left-radius: 20px; border-top-right-radius: 20px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 24px; }
@@ -52,6 +52,14 @@
     .opcion-icono { font-size: 1.5rem; }
     .opcion-texto h4 { margin: 0 0 2px 0; font-size: 1rem; color: var(--text); }
     .opcion-texto p { margin: 0; font-size: 0.82rem; color: var(--text-muted); }
+
+    /* ESTILOS PARA LA PANTALLA DE PAGO CON TARJETA (SIMULADOR) */
+    .form-tarjeta { display: none; }
+    .form-tarjeta.mostrar { display: block; }
+    .input-group { margin-bottom: 14px; text-align: left; }
+    .input-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px; color: var(--text); }
+    .input-group input { width: 100%; padding: 10px 12px; border: 1px solid var(--card-border); border-radius: 8px; font-size: 0.95rem; }
+    .fila-inputs { display: flex; gap: 10px; }
   </style>
 </head>
 <body onload="cargarDetalle()">
@@ -64,44 +72,86 @@
     </div>
   </div>
 
-  <!-- MODAL DE MÉTODOS DE PAGO -->
+  <!-- MODAL DE MÉTODOS DE PAGO / SIMULADOR -->
   <div class="modal-overlay" id="modalPago" onclick="cerrarModalFuera(event)">
     <div class="modal-drawer">
-      <div class="modal-header">
-        <h3 style="margin:0; font-size: 1.2rem;">Elige tu método de pago</h3>
-        <button class="modal-close" onclick="cerrarModal()">&times;</button>
+      
+      <!-- VISTA 1: SELECCIÓN DE MÉTODO -->
+      <div id="vistaSeleccion">
+        <div class="modal-header">
+          <h3 style="margin:0; font-size: 1.2rem;">Elige tu método de pago</h3>
+          <button class="modal-close" onclick="cerrarModal()">&times;</button>
+        </div>
+
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0; margin-bottom: 16px;">
+          Selecciona cómo deseas abonar tu suscripción de <strong id="nombreServicioModal">Servicio</strong>:
+        </p>
+
+        <!-- Opción Tarjeta (Abre simulador de prueba) -->
+        <button class="opcion-pago" onclick="mostrarFormularioTarjeta()">
+          <span class="opcion-icono">💳</span>
+          <div class="opcion-texto">
+            <h4>Tarjeta de Crédito / Débito (Prueba)</h4>
+            <p>Simulador de pago seguro inmediato</p>
+          </div>
+        </button>
+
+        <!-- Opción Transferencia -->
+        <button class="opcion-pago" onclick="procesarPago('Transferencia')">
+          <span class="opcion-icono">🏦</span>
+          <div class="opcion-texto">
+            <h4>Transferencia Bancaria / CBU / Alias</h4>
+            <p>Envía el comprobante para aprobación rápida</p>
+          </div>
+        </button>
+
+        <!-- Opción WhatsApp -->
+        <a id="linkWhatsapp" href="#" target="_blank" class="opcion-pago" style="background: #ecfdf5; border-color: #a7f3d0;">
+          <span class="opcion-icono">💬</span>
+          <div class="opcion-texto">
+            <h4 style="color: #065f46;">Contactar al Anfitrión por WhatsApp</h4>
+            <p style="color: #047857;">Coordina el pago y acceso directamente</p>
+          </div>
+        </a>
       </div>
 
-      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0; margin-bottom: 16px;">
-        Selecciona cómo deseas abonar tu suscripción de <strong id="nombreServicioModal">Servicio</strong>:
-      </p>
-
-      <!-- Opción Tarjeta -->
-      <button class="opcion-pago" onclick="procesarPago('Tarjeta')">
-        <span class="opcion-icono">💳</span>
-        <div class="opcion-texto">
-          <h4>Tarjeta de Crédito / Débito</h4>
-          <p>Pago seguro inmediato (Mercado Pago / Stripe)</p>
+      <!-- VISTA 2: SIMULADOR DE TARJETA (MERCADO PAGO TEST) -->
+      <div id="vistaTarjeta" class="form-tarjeta">
+        <div class="modal-header">
+          <h3 style="margin:0; font-size: 1.2rem;">Simulador de Tarjeta (Test)</h3>
+          <button class="modal-close" onclick="cerrarModal()">&times;</button>
         </div>
-      </button>
 
-      <!-- Opción Transferencia -->
-      <button class="opcion-pago" onclick="procesarPago('Transferencia')">
-        <span class="opcion-icono">🏦</span>
-        <div class="opcion-texto">
-          <h4>Transferencia Bancaria / CBU / Alias</h4>
-          <p>Envía el comprobante para aprobación rápida</p>
-        </div>
-      </button>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 16px;">
+          Ingresa cualquier dato ficticio para simular el cobro de prueba en entorno de desarrollo.
+        </p>
 
-      <!-- Opción WhatsApp -->
-      <a id="linkWhatsapp" href="#" target="_blank" class="opcion-pago" style="background: #ecfdf5; border-color: #a7f3d0;">
-        <span class="opcion-icono">💬</span>
-        <div class="opcion-texto">
-          <h4 style="color: #065f46;">Contactar al Anfitrión por WhatsApp</h4>
-          <p style="color: #047857;">Coordina el pago y acceso directamente</p>
+        <div class="input-group">
+          <label>Número de Tarjeta</label>
+          <input type="text" id="numTarjeta" placeholder="4500 1234 5678 9010" value="4500 0000 0000 0000">
         </div>
-      </a>
+
+        <div class="fila-inputs">
+          <div class="input-group">
+            <label>Vencimiento</label>
+            <input type="text" placeholder="MM/AA" value="12/28">
+          </div>
+          <div class="input-group">
+            <label>CVV / Cód. Seguridad</label>
+            <input type="text" placeholder="123" value="123">
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label>Nombre del Titular</label>
+          <input type="text" placeholder="Como figura en la tarjeta" value="Usuario de Prueba">
+        </div>
+
+        <button class="btn-pagar" style="margin-top: 10px;" onclick="procesarPago('Tarjeta')">Aprobar Pago de Prueba</button>
+        
+        <button style="width:100%; background:none; border:none; color:var(--text-muted); font-size:0.85rem; margin-top:12px; cursor:pointer;" onclick="volverASeleccion()">← Elegir otro medio de pago</button>
+      </div>
+
     </div>
   </div>
 
@@ -173,10 +223,8 @@
           </div>
         `;
 
-        // Configurar enlace de WhatsApp (puedes ajustar el texto o número según tus campos)
         document.getElementById('nombreServicioModal').innerText = datosActualesItem.servicio;
         const textoWs = encodeURIComponent(`Hola ${datosActualesItem.usuario || 'Anfitrión'}, quiero unirme a tu grupo de ${datosActualesItem.servicio} en Compartí.`);
-        // Si tuviéramos teléfono guardado lo usaríamos, por ahora abre WhatsApp para buscar al anfitrión o con mensaje predeterminado
         document.getElementById('linkWhatsapp').href = `https://wa.me/?text=${textoWs}`;
 
       } catch (err) {
@@ -187,7 +235,19 @@
 
     function abrirModalPago() {
       if (!datosActualesItem || datosActualesItem.cupos_disponibles <= 0) return;
+      document.getElementById('vistaSeleccion').style.display = 'block';
+      document.getElementById('vistaTarjeta').classList.remove('mostrar');
       document.getElementById('modalPago').classList.add('mostrar');
+    }
+
+    function mostrarFormularioTarjeta() {
+      document.getElementById('vistaSeleccion').style.display = 'none';
+      document.getElementById('vistaTarjeta').classList.add('mostrar');
+    }
+
+    function volverASeleccion() {
+      document.getElementById('vistaTarjeta').classList.remove('mostrar');
+      document.getElementById('vistaSeleccion').style.display = 'block';
     }
 
     function cerrarModal() {
@@ -204,7 +264,6 @@
       const nuevosCupos = datosActualesItem.cupos_disponibles - 1;
 
       try {
-        // Descontamos el cupo en Supabase al elegir pagar
         const res = await fetch(`${supabaseUrl}/rest/v1/suscripciones?servicio=eq.${encodeURIComponent(datosActualesItem.servicio)}`, {
           method: 'PATCH',
           headers: {
@@ -218,7 +277,7 @@
 
         if (res.ok) {
           if (metodo === 'Tarjeta') {
-            alert('¡Pago procesado con tarjeta exitosamente! Tu lugar ha sido reservado.');
+            alert('¡Pago de prueba con Tarjeta aprobado con éxito! Tu lugar ha sido reservado.');
           } else {
             alert('¡Reserva registrada! Sigue las instrucciones de transferencia para validar tu pago.');
           }
