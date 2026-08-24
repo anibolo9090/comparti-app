@@ -171,7 +171,7 @@
       }
     }
 
-    function mostrarSuscripciones(lista) {
+        function mostrarSuscripciones(lista) {
       const grid = document.getElementById('gridSuscripciones');
       grid.innerHTML = '';
       if (lista.length === 0) {
@@ -188,7 +188,7 @@
                 <h3 class="sub-title">${item.servicio}</h3>
                 <div class="sub-plan">${item.plan || 'Plan Estándar'}</div>
               </div>
-              <div class="sub-precio">$${item.precio?.toLocaleString('es-AR')}</div>
+              <div class="sub-precio">$${item.precio?.toLocaleString('es-AR') || '0'}</div>
             </div>
             <div class="badge-cupos">👤 Quedan ${item.cupos_disponibles} lugares</div>
           </div>
@@ -197,6 +197,7 @@
         grid.appendChild(card);
       });
     }
+
 
     function filtrar(categoria, elementoBtn) {
       document.querySelectorAll('.filtro-chip').forEach(btn => btn.classList.remove('active'));
