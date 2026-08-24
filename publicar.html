@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Publicar Cupo — Compartí</title>
+  <title>Publicar Grupo — Compartí</title>
 
   <style>
     :root { 
@@ -17,28 +17,27 @@
     * { box-sizing: border-box; }
     body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
     
-    .navbar { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(8px); border-bottom: 1px solid var(--card-border); padding: 12px 20px; position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; }
+    .navbar { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(8px); border-bottom: 1px solid var(--card-border); padding: 12px 20px; position: sticky; top: 0; z-index: 100; }
+    .navbar-inner { max-width: 800px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; position: relative; }
     .logo { font-size: 1.25rem; font-weight: 800; color: #60a5fa; text-decoration: none; }
     
-    .user-badge { font-size: 0.8rem; background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.4); padding: 5px 10px; border-radius: 20px; color: #93c5fd; display: flex; align-items: center; gap: 6px; cursor: pointer; }
-    .user-badge:hover { background: rgba(59, 130, 246, 0.3); }
+    .user-pill { background: rgba(59, 130, 246, 0.15); border: 1px solid var(--card-border); padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; color: #60a5fa; font-weight: 600; display: flex; align-items: center; gap: 6px; }
 
     .main-container { max-width: 600px; margin: 20px auto; padding: 0 16px; }
     
-    .form-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+    .form-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
     .form-title { font-size: 1.2rem; color: #60a5fa; margin-top: 0; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
 
-    .form-group { margin-bottom: 14px; text-align: left; }
-    .form-label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 5px; font-weight: 600; }
-    .form-input, .form-select, .form-textarea { width: 100%; background: #0f172a; border: 1px solid var(--card-border); padding: 10px 12px; border-radius: 10px; color: #fff; font-size: 0.9rem; }
-    .form-select { cursor: pointer; }
-    .form-textarea { resize: vertical; min-height: 70px; }
-    
-    .user-info-notice { background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); padding: 10px 12px; border-radius: 10px; font-size: 0.85rem; color: #93c5fd; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
-    .btn-edit-nick { background: none; border: none; color: #60a5fa; cursor: pointer; font-weight: 600; font-size: 0.8rem; text-decoration: underline; }
+    .user-status-box { background: #0f172a; border: 1px solid var(--card-border); padding: 12px; border-radius: 10px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; }
+    .btn-link-action { background: none; border: none; color: #60a5fa; cursor: pointer; font-size: 0.8rem; text-decoration: underline; padding: 0; }
 
-    .btn-submit { width: 100%; background: var(--primary); color: #fff; border: none; padding: 12px; border-radius: 10px; font-weight: 700; font-size: 1rem; cursor: pointer; margin-top: 10px; }
-    .btn-submit:hover { background: #2563eb; }
+    .form-group { margin-bottom: 14px; text-align: left; }
+    .form-label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px; font-weight: 500; }
+    .form-input, .form-select, .form-textarea { width: 100%; background: #0f172a; border: 1px solid var(--card-border); padding: 12px; border-radius: 8px; color: #fff; font-size: 1rem; }
+    .form-textarea { resize: vertical; min-height: 80px; }
+    
+    .btn-submit { width: 100%; background: var(--primary); color: #fff; border: none; padding: 14px; border-radius: 10px; font-weight: 700; font-size: 1rem; cursor: pointer; margin-top: 10px; transition: background 0.2s; }
+    .btn-submit:active { background: #1d4ed8; }
 
     /* Navegación inferior */
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 1000; }
@@ -50,55 +49,87 @@
 <body>
 
   <nav class="navbar">
-    <a href="index.html" class="logo">🤝 Compartí</a>
-    <div class="user-badge" id="navUserBadge" onclick="cambiarNicknamePrompt()">
-      👤 <span id="badgeNombre">Cargando...</span>
+    <div class="navbar-inner">
+      <a href="index.html" class="logo">🤝 Compartí</a>
+      <div class="user-pill" id="navUserPill">👤 Cargando...</div>
     </div>
   </nav>
 
   <div class="main-container">
-    <div class="form-box">
+    <div class="form-card">
       <h2 class="form-title">➕ Publicar un nuevo grupo</h2>
       
-      <div class="user-info-notice" id="userNotice">
-        <span>Publicando como: <b id="textNombrePublicacion">Cargando...</b></span>
-        <button class="btn-edit-nick" onclick="cambiarNicknamePrompt()">Cambiar apodo</button>
+      <div class="user-status-box">
+        <div>Publicando como: <strong id="pubNickname" style="color: #60a5fa;">Cargando...</strong></div>
+        <button class="btn-link-action" onclick="cambiarApodoPrompt()">Cambiar apodo</button>
       </div>
-      
-      <form onsubmit="publicarCupo(event)">
+
+      <form onsubmit="publicarOferta(event)">
         
-        <!-- Selección de plataforma -->
         <div class="form-group">
           <label class="form-label">Seleccioná la plataforma</label>
-          <select id="pubServicio" class="form-select" onchange="cambiarPlataforma()" required>
-            <option value="netflix">🎬 Netflix</option>
-            <option value="disney">🏰 Disney+</option>
-            <option value="spotify">🎧 Spotify</option>
-            <option value="chatgpt">🤖 ChatGPT Plus</option>
-            <option value="max">💜 Max</option>
-            <option value="prime">📦 Amazon Prime Video</option>
-            <option value="youtube">▶️ YouTube Premium</option>
-            <option value="crunchyroll">🍥 Crunchyroll</option>
-            <option value="nba">🏀 NBA League Pass</option>
-            <option value="paramount">⛰️ Paramount+</option>
-            <option value="vix">🔴 ViX Premium</option>
-            <option value="apple">🍎 Apple TV+</option>
-            <option value="canva">🎨 Canva Pro</option>
-            <option value="microsoft">🪟 Microsoft 365</option>
-          </select>
-        </div>
+          <select id="pubPlataforma" class="form-select" required onchange="actualizarPrecioSugerido()">
+            <optgroup label="🎬 Streaming de Video">
+              <option value="Netflix 4K">Netflix (4K / UHD)</option>
+              <option value="Netflix Estándar">Netflix (Estándar)</option>
+              <option value="Disney+ Premium">Disney+ (Premium)</option>
+              <option value="Max Platino">Max (Platino)</option>
+              <option value="Amazon Prime Video">Amazon Prime Video</option>
+              <option value="Paramount+">Paramount+</option>
+              <option value="Apple TV+">Apple TV+</option>
+              <option value="YouTube Premium">YouTube Premium</option>
+              <option value="Crunchyroll">Crunchyroll</option>
+              <option value="Universal+">Universal+</option>
+              <option value="VIX">ViX</option>
+              <option value="MUBI">MUBI</option>
+              <option value="AtresPlayer">AtresPlayer</option>
+              <option value="MegaGO">MegaGO</option>
+              <option value="VIKI Pass">VIKI Pass</option>
+            </optgroup>
+            
+            <optgroup label="🎧 Música y Audio">
+              <option value="Spotify Familiar">Spotify (Familiar)</option>
+              <option value="YouTube Music">YouTube Music</option>
+              <option value="Apple Music">Apple Music</option>
+              <option value="TIDAL">TIDAL</option>
+              <option value="Deezer">Deezer</option>
+              <option value="Amazon Music">Amazon Music</option>
+            </optgroup>
 
-        <!-- Selección del tipo de plan -->
-        <div class="form-group">
-          <label class="form-label">Tipo de Suscripción / Plan</label>
-          <select id="pubPlan" class="form-select" onchange="actualizarPrecioPlan()" required>
-            <!-- Dinámico -->
+            <optgroup label="🤖 Inteligencia Artificial">
+              <option value="ChatGPT Plus">ChatGPT Plus</option>
+              <option value="Gemini AI">Gemini Advanced</option>
+              <option value="Claude.ai">Claude.ai</option>
+              <option value="Perplexity">Perplexity Pro</option>
+            </optgroup>
+
+            <optgroup label="💻 Software y Productividad">
+              <option value="Canva Pro">Canva Pro</option>
+              <option value="Office 365">Microsoft Office 365</option>
+              <option value="Google One">Google One (Almacenamiento)</option>
+              <option value="Apple One">Apple One</option>
+              <option value="Dropbox">Dropbox</option>
+              <option value="Platzi">Platzi (Educación)</option>
+              <option value="Duolingo Plus">Duolingo Plus</option>
+            </optgroup>
+
+            <optgroup label="⚽ Deportes">
+              <option value="F1 TV">F1 TV Pro</option>
+              <option value="NBA League Pass">NBA League Pass</option>
+              <option value="DAZN">DAZN</option>
+            </optgroup>
           </select>
         </div>
 
         <div class="form-group">
           <label class="form-label">Lugares / Cupos disponibles</label>
-          <input type="number" id="pubCupos" class="form-input" min="1" max="6" value="3" required>
+          <select id="pubCupos" class="form-select">
+            <option value="1">1 lugar disponible</option>
+            <option value="2">2 lugares disponibles</option>
+            <option value="3" selected>3 lugares disponibles</option>
+            <option value="4">4 lugares disponibles</option>
+            <option value="5">5 lugares disponibles</option>
+          </select>
         </div>
 
         <div class="form-group">
@@ -108,7 +139,7 @@
 
         <div class="form-group">
           <label class="form-label">Notas adicionales o reglas del grupo (Opcional)</label>
-          <textarea id="pubNotas" class="form-textarea" placeholder="Ej: Perfil 3 libre, pago por transferencia antes del 10..."></textarea>
+          <textarea id="pubNotas" class="form-textarea" placeholder="Ej: Perfil libre, pago por transferencia antes del 10..."></textarea>
         </div>
 
         <button type="submit" class="btn-submit">Publicar Oferta</button>
@@ -124,152 +155,91 @@
   </div>
 
   <script>
-    const planesData = {
-      netflix: [
-        { name: 'Estándar (2 pantallas)', precio: 4500 },
-        { name: 'Premium (4 pantallas + Ultra HD)', precio: 6500 }
-      ],
-      disney: [
-        { name: 'Estándar', precio: 3000 },
-        { name: 'Premium', precio: 4000 }
-      ],
-      spotify: [
-        { name: 'Plan Familiar (Hasta 6 cuentas)', precio: 2000 },
-        { name: 'Plan Dúo (2 cuentas)', precio: 2500 }
-      ],
-      chatgpt: [
-        { name: 'ChatGPT Plus (Equipo compartido)', precio: 8000 }
-      ],
-      max: [
-        { name: 'Platino (4 dispositivos)', precio: 3500 },
-        { name: 'Básico con anuncios', precio: 2000 }
-      ],
-      prime: [
-        { name: 'Amazon Prime Video (Estándar)', precio: 2000 }
-      ],
-      youtube: [
-        { name: 'Familiar (Hasta 5 members)', precio: 2500 }
-      ],
-      crunchyroll: [
-        { name: 'Mega Fan (4 dispositivos)', precio: 1500 }
-      ],
-      nba: [
-        { name: 'NBA League Pass', precio: 7500 }
-      ],
-      paramount: [
-        { name: 'Paramount+ Estándar', precio: 1800 }
-      ],
-      vix: [
-        { name: 'ViX Premium', precio: 2000 }
-      ],
-      apple: [
-        { name: 'Apple TV+ (Familiar)', precio: 2200 }
-      ],
-      canva: [
-        { name: 'Canva Pro (Equipo)', precio: 1500 }
-      ],
-      microsoft: [
-        { name: 'Microsoft 365 (Familiar)', precio: 2000 }
-      ]
+    // Precios orientativos sugeridos por plataforma
+    const preciosSugeridos = {
+      'Netflix 4K': 6500,
+      'Netflix Estándar': 4500,
+      'Disney+ Premium': 4000,
+      'Max Platino': 3500,
+      'Amazon Prime Video': 2000,
+      'Paramount+': 2000,
+      'Apple TV+': 2500,
+      'YouTube Premium': 2500,
+      'Crunchyroll': 1500,
+      'Spotify Familiar': 2000,
+      'ChatGPT Plus': 8000,
+      'Canva Pro': 2000,
+      'F1 TV': 4000
     };
 
     window.onload = function() {
-      verificarSesionYConfigurarUsuario();
-      cambiarPlataforma();
+      chequearSesionPublicar();
+      actualizarPrecioSugerido();
     };
 
-    function verificarSesionYConfigurarUsuario() {
+    function chequearSesionPublicar() {
       const logueado = localStorage.getItem('usuarioLogueado');
-      const email = localStorage.getItem('usuarioEmail');
+      const nickname = localStorage.getItem('usuarioNickname');
 
-      if (logueado !== 'true' || !email) {
-        alert('Debes iniciar sesión para publicar una oferta.');
-        window.location.href = 'index.html';
-        return;
-      }
-
-      // Si el usuario todavía no tiene un nickname guardado, le ponemos la primera parte de su correo por defecto
-      let nickname = localStorage.getItem('usuarioNickname');
-      if (!nickname) {
-        nickname = email.split('@')[0];
-        localStorage.setItem('usuarioNickname', nickname);
-      }
-
-      actualizarVistaUsuario(nickname);
-    }
-
-    function actualizarVistaUsuario(nickname) {
-      document.getElementById('badgeNombre').innerText = nickname;
-      document.getElementById('textNombrePublicacion').innerText = nickname;
-    }
-
-    function cambiarNicknamePrompt() {
-      let nicknameActual = localStorage.getItem('usuarioNickname') || '';
-      let nuevoNickname = prompt('Escribe tu apodo o nombre de usuario para mostrar en tus publicaciones:', nicknameActual);
-      
-      if (nuevoNickname && nuevoNickname.trim() !== '') {
-        nuevoNickname = nuevoNickname.trim();
-        localStorage.setItem('usuarioNickname', nuevoNickname);
-        actualizarVistaUsuario(nuevoNickname);
-        alert('¡Apodo actualizado con éxito!');
+      if (logueado !== 'true' || !nickname) {
+        // Si no hay sesión, asignamos un usuario temporal para evitar que quede cargando indefinidamente
+        const userRandom = 'Usuario_' + Math.floor(Math.random() * 1000);
+        localStorage.setItem('usuarioNickname', userRandom);
+        localStorage.setItem('usuarioLogueado', 'true');
+        
+        document.getElementById('navUserPill').innerText = `👤 ${userRandom}`;
+        document.getElementById('pubNickname').innerText = userRandom;
+      } else {
+        document.getElementById('navUserPill').innerText = `👤 ${nickname}`;
+        document.getElementById('pubNickname').innerText = nickname;
       }
     }
 
-    function cambiarPlataforma() {
-      const selectServicio = document.getElementById('pubServicio').value;
-      const selectPlan = document.getElementById('pubPlan');
-      
-      selectPlan.innerHTML = '';
-
-      const planes = planesData[selectServicio] || [];
-      planes.forEach(p => {
-        const option = document.createElement('option');
-        option.value = p.name;
-        option.text = p.name;
-        option.setAttribute('data-precio', p.precio);
-        selectPlan.appendChild(option);
-      });
-
-      actualizarPrecioPlan();
+    function cambiarApodoPrompt() {
+      const nuevo = prompt("Ingresa tu nuevo apodo o nombre de usuario:");
+      if (nuevo && nuevo.trim() !== '') {
+        localStorage.setItem('usuarioNickname', nuevo.trim());
+        chequearSesionPublicar();
+      }
     }
 
-    function actualizarPrecioPlan() {
-      const selectPlan = document.getElementById('pubPlan');
+    function actualizarPrecioSugerido() {
+      const select = document.getElementById('pubPlataforma');
       const inputPrecio = document.getElementById('pubPrecio');
-      
-      const selectedOption = selectPlan.options[selectPlan.selectedIndex];
-      if (selectedOption) {
-        inputPrecio.value = selectedOption.getAttribute('data-precio');
+      const plataformaSeleccionada = select.value;
+
+      if (preciosSugeridos[plataformaSeleccionada]) {
+        inputPrecio.value = preciosSugeridos[plataformaSeleccionada];
+      } else {
+        inputPrecio.value = 3000; // Valor por defecto genérico
       }
     }
 
-    function publicarCupo(e) {
+    function publicarOferta(e) {
       e.preventDefault();
       
-      const selectServicio = document.getElementById('pubServicio');
-      const servicioNombre = selectServicio.options[selectServicio.selectedIndex].text;
-      const planNombre = document.getElementById('pubPlan').value;
-      
-      const cupos = document.getElementById('pubCupos'].value;
+      const plataforma = document.getElementById('pubPlataforma').value;
+      const cupos = document.getElementById('pubCupos').value;
       const precio = document.getElementById('pubPrecio').value;
       const notas = document.getElementById('pubNotas').value;
-      
-      const nicknameUsuario = localStorage.getItem('usuarioNickname') || localStorage.getItem('usuarioEmail') || 'Anónimo';
+      const duenio = localStorage.getItem('usuarioNickname') || 'Anónimo';
 
       const nuevaOferta = {
         id: Date.now(),
-        servicio: `${servicioNombre} - ${planNombre}`,
-        cupos: cupos,
-        precio: precio,
-        notas: notas,
-        usuarioCreador: nicknameUsuario
+        plataforma,
+        cupos,
+        precio,
+        notas,
+        duenio,
+        fecha: new Date().toLocaleDateString()
       };
 
-      let misOfertas = JSON.parse(localStorage.getItem('misOfertasGuardadas')) || [];
+      // Guardar en la lista de ofertas del localStorage
+      let misOfertas = JSON.parse(localStorage.getItem('misOfertasPublicadas') || '[]');
       misOfertas.push(nuevaOferta);
-      localStorage.setItem('misOfertasGuardadas', JSON.stringify(misOfertas));
+      localStorage.setItem('misOfertasPublicadas', JSON.stringify(misOfertas));
 
-      alert('¡Oferta publicada con éxito!');
+      alert('¡Grupo publicado con éxito!');
       window.location.href = 'mis-ofertas.html';
     }
   </script>
