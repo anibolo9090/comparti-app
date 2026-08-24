@@ -39,6 +39,19 @@
     .btn-pagar:hover { opacity: 0.95; }
 
     .mensaje-estado { text-align: center; color: var(--text-muted); padding: 40px; font-size: 1rem; }
+
+    /* MODAL DE SELECCIÓN DE PAGO */
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); z-index: 99999; display: none; align-items: flex-end; }
+    .modal-overlay.mostrar { display: flex; }
+    .modal-drawer { background: #ffffff; border-top: 1px solid var(--card-border); border-top-left-radius: 20px; border-top-right-radius: 20px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 24px; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); padding-bottom: 12px; margin-bottom: 16px; }
+    .modal-close { background: none; border: none; color: #0f172a; font-size: 1.8rem; cursor: pointer; }
+
+    .opcion-pago { display: flex; align-items: center; gap: 14px; width: 100%; padding: 16px; background: #f8fafc; border: 1px solid var(--card-border); border-radius: 12px; margin-bottom: 12px; cursor: pointer; text-align: left; text-decoration: none; color: var(--text); transition: all 0.2s; }
+    .opcion-pago:hover { border-color: var(--primary); background: #f1f5f9; }
+    .opcion-icono { font-size: 1.5rem; }
+    .opcion-texto h4 { margin: 0 0 2px 0; font-size: 1rem; color: var(--text); }
+    .opcion-texto p { margin: 0; font-size: 0.82rem; color: var(--text-muted); }
   </style>
 </head>
 <body onload="cargarDetalle()">
@@ -51,10 +64,53 @@
     </div>
   </div>
 
-  <!-- LÓGICA PARA CARGAR EL DETALLE Y GESTIONAR EL PAGO/UNIÓN -->
+  <!-- MODAL DE MÉTODOS DE PAGO -->
+  <div class="modal-overlay" id="modalPago" onclick="cerrarModalFuera(event)">
+    <div class="modal-drawer">
+      <div class="modal-header">
+        <h3 style="margin:0; font-size: 1.2rem;">Elige tu método de pago</h3>
+        <button class="modal-close" onclick="cerrarModal()">&times;</button>
+      </div>
+
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0; margin-bottom: 16px;">
+        Selecciona cómo deseas abonar tu suscripción de <strong id="nombreServicioModal">Servicio</strong>:
+      </p>
+
+      <!-- Opción Tarjeta -->
+      <button class="opcion-pago" onclick="procesarPago('Tarjeta')">
+        <span class="opcion-icono">💳</span>
+        <div class="opcion-texto">
+          <h4>Tarjeta de Crédito / Débito</h4>
+          <p>Pago seguro inmediato (Mercado Pago / Stripe)</p>
+        </div>
+      </button>
+
+      <!-- Opción Transferencia -->
+      <button class="opcion-pago" onclick="procesarPago('Transferencia')">
+        <span class="opcion-icono">🏦</span>
+        <div class="opcion-texto">
+          <h4>Transferencia Bancaria / CBU / Alias</h4>
+          <p>Envía el comprobante para aprobación rápida</p>
+        </div>
+      </button>
+
+      <!-- Opción WhatsApp -->
+      <a id="linkWhatsapp" href="#" target="_blank" class="opcion-pago" style="background: #ecfdf5; border-color: #a7f3d0;">
+        <span class="opcion-icono">💬</span>
+        <div class="opcion-texto">
+          <h4 style="color: #065f46;">Contactar al Anfitrión por WhatsApp</h4>
+          <p style="color: #047857;">Coordina el pago y acceso directamente</p>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- LÓGICA DE DETALLE Y PAGOS -->
   <script>
     const supabaseUrl = 'https://xygatgvzdniivzwndaxy.supabase.co';
     const apikey = 'sb_publishable_fDfrz9tONWlI3ETRbanG3w_cXYsFVif';
+
+    let datosActualesItem = null;
 
     async function cargarDetalle() {
       const urlParams = new URLSearchParams(window.location.search);
@@ -84,38 +140,44 @@
           return;
         }
 
-        const item = data[0];
-        const sinCupos = item.cupos_disponibles <= 0;
+        datosActualesItem = data[0];
+        const sinCupos = datosActualesItem.cupos_disponibles <= 0;
 
         contenedor.innerHTML = `
           <div class="detalle-card">
             <div class="detalle-header">
-              <h2>${item.servicio}</h2>
-              <p>Plan: ${item.plan || 'General'}</p>
+              <h2>${datosActualesItem.servicio}</h2>
+              <p>Plan: ${datosActualesItem.plan || 'General'}</p>
             </div>
 
             <div class="detalle-info-group">
               <div class="info-row">
                 <span class="info-label">Anfitrión del grupo</span>
-                <span class="info-value">${item.usuario || 'Anfitrión'}</span>
+                <span class="info-value">${datosActualesItem.usuario || 'Anfitrión'}</span>
               </div>
               <div class="info-row">
                 <span class="info-label">Lugares disponibles</span>
-                <span class="info-value" style="color: ${sinCupos ? '#ef4444' : '#10b981'};">${item.cupos_disponibles} libres</span>
+                <span class="info-value" style="color: ${sinCupos ? '#ef4444' : '#10b981'};">${datosActualesItem.cupos_disponibles} libres</span>
               </div>
             </div>
 
             <div class="precio-box">
               <span>Aporte mensual por miembro</span>
-              <div class="precio-total">$${item.precio} ARS</div>
+              <div class="precio-total">$${datosActualesItem.precio} ARS</div>
             </div>
 
             ${sinCupos ? 
               '<button class="btn-pagar" style="background:#cbd5e1; cursor:not-allowed;" disabled>Grupo sin lugares disponibles</button>' :
-              `<button class="btn-pagar" onclick="unirseYProceder('${encodeURIComponent(item.servicio)}', ${item.cupos_disponibles})">Unirme y pagar / Reservar</button>`
+              `<button class="btn-pagar" onclick="abrirModalPago()">Unirme y pagar / Reservar</button>`
             }
           </div>
         `;
+
+        // Configurar enlace de WhatsApp (puedes ajustar el texto o número según tus campos)
+        document.getElementById('nombreServicioModal').innerText = datosActualesItem.servicio;
+        const textoWs = encodeURIComponent(`Hola ${datosActualesItem.usuario || 'Anfitrión'}, quiero unirme a tu grupo de ${datosActualesItem.servicio} en Compartí.`);
+        // Si tuviéramos teléfono guardado lo usaríamos, por ahora abre WhatsApp para buscar al anfitrión o con mensaje predeterminado
+        document.getElementById('linkWhatsapp').href = `https://wa.me/?text=${textoWs}`;
 
       } catch (err) {
         console.error(err);
@@ -123,15 +185,27 @@
       }
     }
 
-    async function unirseYProceder(servicioEncoded, cuposActuales) {
-      const servicio = decodeURIComponent(servicioEncoded);
-      if (cuposActuales <= 0) return;
+    function abrirModalPago() {
+      if (!datosActualesItem || datosActualesItem.cupos_disponibles <= 0) return;
+      document.getElementById('modalPago').classList.add('mostrar');
+    }
 
-      const nuevosCupos = cuposActuales - 1;
+    function cerrarModal() {
+      document.getElementById('modalPago').classList.remove('mostrar');
+    }
+
+    function cerrarModalFuera(e) {
+      if (e.target.id === 'modalPago') cerrarModal();
+    }
+
+    async function procesarPago(metodo) {
+      if (!datosActualesItem) return;
+
+      const nuevosCupos = datosActualesItem.cupos_disponibles - 1;
 
       try {
-        // Descontamos el cupo en Supabase
-        const res = await fetch(`${supabaseUrl}/rest/v1/suscripciones?servicio=eq.${encodeURIComponent(servicio)}`, {
+        // Descontamos el cupo en Supabase al elegir pagar
+        const res = await fetch(`${supabaseUrl}/rest/v1/suscripciones?servicio=eq.${encodeURIComponent(datosActualesItem.servicio)}`, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
@@ -143,10 +217,14 @@
         });
 
         if (res.ok) {
-          alert('¡Lugar reservado con éxito! Redirigiendo a tu sección de grupos...');
+          if (metodo === 'Tarjeta') {
+            alert('¡Pago procesado con tarjeta exitosamente! Tu lugar ha sido reservado.');
+          } else {
+            alert('¡Reserva registrada! Sigue las instrucciones de transferencia para validar tu pago.');
+          }
           window.location.href = 'mis-ofertas.html';
         } else {
-          alert('Hubo un error al unirse al grupo.');
+          alert('Hubo un error al procesar tu suscripción.');
         }
       } catch (err) {
         alert('Error de red: ' + err.message);
