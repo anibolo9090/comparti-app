@@ -61,31 +61,6 @@
     .form-input, .form-select { width: 100%; background: #f8fafc; border: 1px solid var(--card-border); padding: 12px; border-radius: 10px; color: var(--text); font-size: 0.95rem; }
     .form-input:focus, .form-select:focus { outline: none; border-color: var(--primary); background: #ffffff; }
 
-    /* Categorías y grilla de plataformas estilo Lank */
-    .category-label { font-size: 0.9rem; font-weight: 700; color: var(--primary); margin: 16px 0 8px 0; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid var(--card-border); padding-bottom: 4px; }
-    .services-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-    
-    .service-option { 
-      background: #f8fafc; 
-      border: 1px solid var(--card-border); 
-      padding: 10px 12px; 
-      border-radius: 10px; 
-      font-size: 0.85rem; 
-      font-weight: 600; 
-      color: var(--text); 
-      cursor: pointer; 
-      text-align: left; 
-      display: flex; 
-      align-items: center; 
-      gap: 8px; 
-      transition: all 0.2s;
-    }
-    .service-option.selected { 
-      border-color: var(--primary); 
-      background: #e0e7ff; 
-      color: #312e81; 
-    }
-
     .btn-submit { width: 100%; background: var(--primary); color: #fff; border: none; padding: 14px; border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
 
     /* MENÚ DESPLEGABLE INFERIOR */
@@ -143,82 +118,73 @@
       <p class="form-subtitle">Compartí los espacios libres de tus cuentas y ahorrá dinero.</p>
 
       <form onsubmit="publicarServicio(event)">
+        
+        <!-- Selector de Plataforma -->
         <div class="form-group">
-          <label class="form-label">1. Selecciona el servicio</label>
-          <input type="hidden" id="pubServicio" required>
+          <label class="form-label">Selecciona el servicio</label>
+          <select id="pubServicio" class="form-select" onchange="actualizarPlanes()" required>
+            <option value="">-- Elige una plataforma --</option>
+            
+            <optgroup label="🍿 Streaming y Películas">
+              <option value="Netflix">Netflix</option>
+              <option value="Disney+">Disney+</option>
+              <option value="Max">Max</option>
+              <option value="Amazon Prime Video">Amazon Prime Video</option>
+              <option value="Paramount+">Paramount+</option>
+              <option value="Crunchyroll">Crunchyroll</option>
+              <option value="Apple TV+">Apple TV+</option>
+              <option value="DirecTV GO">DirecTV GO</option>
+              <option value="VIX">VIX</option>
+              <option value="MUBI">MUBI</option>
+            </optgroup>
 
-          <!-- Streaming y Películas -->
-          <div class="category-label">🍿 Streaming y Películas</div>
-          <div class="services-grid">
-            <div class="service-option" onclick="seleccionarServicio(this, 'Netflix')">🎬 Netflix</div>
-            <div class="service-option" onclick="seleccionarServicio(this, 'Disney+')">🏰 Disney+</div>
-            <div class="service-option" onclick="seleccionarServicio(this, 'Max')">💜 Max</div>
-            <div class="service-option" onclick="seleccionarServicio(this, 'Amazon Prime Video')">📦 Amazon Prime</div>
-            <div class="service-option" onclick="seleccionarServicio(this, 'Paramount+')">🏔️ Paramount+</div>
-            <div class="service-option" onclick="seleccionarServicio(this, 'Crunchyroll')">🍥 Crunchyroll</div>
-            <div class="service-option" onclick="seleccionarServicio(this, 'Apple TV+')">🍏 Apple TV+</div>
-            <div class="service-option" onclick="seleccionarServicio(this, 'DirecTV GO')">📺 DirecTV GO</div>
-            <div class="service-option" onclick="seleccionarServicio(this, 'VIX')">⚡ VIX</div>
-            <div class="service-option" onclick="seleccionarServicio(this, 'MUBI')">🎥 MUBI</div>
-          </div>
+            <optgroup label="🎵 Música">
+              <option value="Spotify">Spotify</option>
+              <option value="YouTube Premium">YouTube Premium</option>
+              <option value="Apple Music">Apple Music</option>
+              <option value="Tidal">Tidal</option>
+              <option value="Deezer">Deezer</option>
+              <option value="Amazon Music">Amazon Music</option>
+            </optgroup>
 
-          <!-- Música -->
-          <div class="category-label">🎵 Música</div>
-          <div class="services-grid">
-            <div class="service-option" onclick="seleccionarServicio(this, 'Spotify')">🎧 Spotify</div>
-            <div class="service-option" onclick="seleccionarServicio(this, 'YouTube Premium')">▶️ YouTube Premium</div>
-            <div class="service-option" onclick="seleccionarServicio(this, 'Apple Music')">🎵 Apple Music</div>
-            <div class="service-option" onclick="seleccionarServicio(this, 'Tidal')">🌊 Tidal</div>
-            <div class="service-option" onclick="seleccionarServicio(this, 'Deezer')">🎶 Deezer</div>
-            <div class="service-option" onclick="seleccionarServicio(this, 'Amazon Music')">🎼 Amazon Music</div>
-          </div>
+            <optgroup label="🤖 Inteligencia Artificial">
+              <option value="ChatGPT Plus">ChatGPT Plus</option>
+              <option value="Gemini AI">Gemini AI</option>
+              <option value="Claude.ai">Claude.ai</option>
+              <option value="Perplexity">Perplexity</option>
+            </optgroup>
 
-          <!-- Inteligencia Artificial -->
-          <div class="category-label">🤖 Inteligencia Artificial</div>
-          <div class="services-grid">
-            <div class="service-option" onclick="seleccionarServicio(this, 'ChatGPT Plus')">🤖 ChatGPT Plus</div>
-            <div class="service-option" onclick="seleccionarServicio(this, 'Gemini AI')">✨ Gemini AI</div>
-            <div class="service-option" onclick="seleccionarServicio(this, 'Claude.ai')">🧠 Claude.ai</div>
-            <div class="service-option" onclick="seleccionarServicio(this, 'Perplexity')">🔍 Perplexity</div>
-          </div>
+            <optgroup label="💻 Software y Herramientas">
+              <option value="Canva Pro">Canva Pro</option>
+              <option value="Microsoft 365">Microsoft 365</option>
+              <option value="Google One">Google One</option>
+              <option value="Apple One">Apple One</option>
+              <option value="Duolingo">Duolingo</option>
+            </optgroup>
 
-          <!-- Software y Productividad -->
-          <div class="category-label">💻 Software y Herramientas</div>
-          <div class="services-grid">
-            <div class="service-option" onclick="seleccionarServicio(this, 'Canva Pro')">🎨 Canva Pro</div>
-            <div class="service-option" onclick="seleccionarServicio(this, 'Microsoft 365')">📊 Microsoft 365</div>
-            <div class="service-option" onclick="seleccionarServicio(this, 'Google One')">☁️ Google One</div>
-            <div class="service-option" onclick="seleccionarServicio(this, 'Apple One')">🍎 Apple One</div>
-            <div class="service-option" onclick="seleccionarServicio(this, 'Duolingo')">🦉 Duolingo</div>
-          </div>
-
-          <!-- Deportes -->
-          <div class="category-label">⚽ Deportes</div>
-          <div class="services-grid">
-            <div class="service-option" onclick="seleccionarServicio(this, 'F1 TV Pro')">🏎️ F1 TV Pro</div>
-            <div class="service-option" onclick="seleccionarServicio(this, 'DAZN')">🥊 DAZN</div>
-            <div class="service-option" onclick="seleccionarServicio(this, 'NBA League Pass')">🏀 NBA League Pass</div>
-          </div>
+            <optgroup label="⚽ Deportes">
+              <option value="F1 TV Pro">F1 TV Pro</option>
+              <option value="DAZN">DAZN</option>
+              <option value="NBA League Pass">NBA League Pass</option>
+            </optgroup>
+          </select>
         </div>
 
-        <!-- Tipo de Plan -->
-        <div class="form-group" style="margin-top: 20px;">
-          <label class="form-label">2. Selecciona el tipo de plan</label>
+        <!-- Selector de Plan Dinámico -->
+        <div class="form-group">
+          <label class="form-label">Tipo de plan</label>
           <select id="pubPlan" class="form-select" required>
-            <option value="Estándar / Individual">Estándar / Individual</option>
-            <option value="Premium / 4K">Premium / 4K</option>
-            <option value="Familiar / Grupal">Familiar / Grupal</option>
-            <option value="Platino / Pro">Platino / Pro</option>
+            <option value="">Primero elige un servicio</option>
           </select>
         </div>
 
         <div class="form-group">
-          <label class="form-label">3. Lugares o perfiles disponibles</label>
+          <label class="form-label">Lugares o perfiles disponibles</label>
           <input type="number" id="pubLugares" class="form-input" min="1" max="6" value="3" required>
         </div>
 
         <div class="form-group">
-          <label class="form-label">4. Precio mensual por lugar ($ ARS)</label>
+          <label class="form-label">Precio mensual por lugar ($ ARS)</label>
           <input type="number" id="pubPrecio" class="form-input" placeholder="Ej: 4500" required>
         </div>
 
@@ -251,10 +217,64 @@
   </div>
 
   <script>
-    function seleccionarServicio(elemento, nombreServicio) {
-      document.querySelectorAll('.service-option').forEach(el => el.classList.remove('selected'));
-      elemento.classList.add('selected');
-      document.getElementById('pubServicio').value = nombreServicio;
+    // Mapeo de planes originales según el servicio seleccionado
+    const planesPorServicio = {
+      "Netflix": ["Estándar (con anuncios)", "Estándar", "Premium (4K)"],
+      "Disney+": ["Estándar", "Premium"],
+      "Max": ["Básico con anuncios", "Estándar", "Platino"],
+      "Amazon Prime Video": ["Prime Video (Estándar)"],
+      "Paramount+": ["Mensual Estándar"],
+      "Crunchyroll": ["Mega Fan", "Fan"],
+      "Apple TV+": ["Apple TV+ Individual / Familiar"],
+      "DirecTV GO": ["Plan Básico", "Plan Completo con Fútbol"],
+      "VIX": ["VIX Premium"],
+      "MUBI": ["MUBI Standard"],
+      
+      "Spotify": ["Individual", "Dúo", "Familiar"],
+      "YouTube Premium": ["Individual", "Familiar"],
+      "Apple Music": ["Individual", "Familiar"],
+      "Tidal": ["HiFi Individual", "HiFi Familiar"],
+      "Deezer": ["Premium", "Familiar"],
+      "Amazon Music": ["Unlimited Individual", "Unlimited Familiar"],
+
+      "ChatGPT Plus": ["ChatGPT Plus (Individual/Cuenta compartida)"],
+      "Gemini AI": ["Gemini Advanced (Google One)"],
+      "Claude.ai": ["Claude Pro"],
+      "Perplexity": ["Perplexity Pro"],
+
+      "Canva Pro": ["Canva Pro (Equipo / Perfil)"],
+      "Microsoft 365": ["Microsoft 365 Personal", "Microsoft 365 Familiar"],
+      "Google One": ["200 GB", "2 TB"],
+      "Apple One": ["Individual", "Familiar"],
+      "Duolingo": ["Super Duolingo Familiar"],
+
+      "F1 TV Pro": ["F1 TV Pro Anual/Mensual"],
+      "DAZN": ["DAZN Esencial", "DAZN Total"],
+      "NBA League Pass": ["NBA League Pass Mensual"]
+    };
+
+    function actualizarPlanes() {
+      const servicioSelect = document.getElementById('pubServicio').value;
+      const planSelect = document.getElementById('pubPlan');
+      
+      // Limpiar opciones anteriores
+      planSelect.innerHTML = '';
+
+      if (!servicioSelect || !planesPorServicio[servicioSelect]) {
+        let opt = document.createElement('option');
+        opt.value = "";
+        opt.innerText = "Primero elige un servicio";
+        planSelect.appendChild(opt);
+        return;
+      }
+
+      // Rellenar con los planes correspondientes
+      planesPorServicio[servicioSelect].forEach(plan => {
+        let opt = document.createElement('option');
+        opt.value = plan;
+        opt.innerText = plan;
+        planSelect.appendChild(opt);
+      });
     }
 
     function publicarServicio(e) {
@@ -263,11 +283,6 @@
       const plan = document.getElementById('pubPlan').value;
       const lugares = document.getElementById('pubLugares').value;
       const precio = document.getElementById('pubPrecio').value;
-
-      if (!servicio) {
-        alert('Por favor selecciona una plataforma de la lista.');
-        return;
-      }
 
       let misPublicaciones = JSON.parse(localStorage.getItem('misPublicaciones') || '[]');
       misPublicaciones.push({ servicio, plan, lugares, precio, fecha: new Date().toLocaleDateString() });
