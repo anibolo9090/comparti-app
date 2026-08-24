@@ -19,7 +19,7 @@
     
     .container { max-width: 800px; margin: 0 auto; padding: 16px; }
 
-    /* Cabecera de navegación superior (¿Qué quieres hacer?) */
+    /* Cabecera de navegación superior */
     .top-action-header { text-align: center; margin-bottom: 20px; }
     .top-action-header h2 { font-size: 1.4rem; color: var(--text); margin-bottom: 14px; }
 
@@ -58,8 +58,33 @@
 
     .form-group { margin-bottom: 16px; text-align: left; }
     .form-label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--text); margin-bottom: 6px; }
-    .form-input, .form-select { width: 100%; background: #f8fafc; border: 1px solid var(--card-border); padding: 12px; border-radius: 10px; color: var(--text); font-size: 0.95rem; }
-    .form-input:focus, .form-select:focus { outline: none; border-color: var(--primary); background: #ffffff; }
+    .form-input { width: 100%; background: #f8fafc; border: 1px solid var(--card-border); padding: 12px; border-radius: 10px; color: var(--text); font-size: 0.95rem; }
+    .form-input:focus { outline: none; border-color: var(--primary); background: #ffffff; }
+
+    /* Categorías y grilla de plataformas */
+    .category-label { font-size: 0.9rem; font-weight: 700; color: var(--primary); margin: 12px 0 6px 0; display: flex; align-items: center; gap: 6px; }
+    .services-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 10px; }
+    
+    .service-option { 
+      background: #f8fafc; 
+      border: 1px solid var(--card-border); 
+      padding: 10px 12px; 
+      border-radius: 10px; 
+      font-size: 0.85rem; 
+      font-weight: 600; 
+      color: var(--text); 
+      cursor: pointer; 
+      text-align: left; 
+      display: flex; 
+      align-items: center; 
+      gap: 8px; 
+      transition: all 0.2s;
+    }
+    .service-option.selected { 
+      border-color: var(--primary); 
+      background: #e0e7ff; 
+      color: #312e81; 
+    }
 
     .btn-submit { width: 100%; background: var(--primary); color: #fff; border: none; padding: 14px; border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
 
@@ -120,15 +145,32 @@
       <form onsubmit="publicarServicio(event)">
         <div class="form-group">
           <label class="form-label">Selecciona el servicio</label>
-          <select id="pubServicio" class="form-select" required>
-            <option value="">-- Elige una plataforma --</option>
-            <option value="Netflix">🎬 Netflix</option>
-            <option value="Disney+">🏰 Disney+</option>
-            <option value="Spotify">🎧 Spotify</option>
-            <option value="YouTube">▶️ YouTube Premium</option>
-            <option value="ChatGPT">🤖 ChatGPT</option>
-            <option value="Max">💜 Max</option>
-          </select>
+          <input type="hidden" id="pubServicio" required>
+
+          <!-- Categoría 1: Series y películas -->
+          <div class="category-label">🍿 Series y películas</div>
+          <div class="services-grid" data-cat="peliculas">
+            <div class="service-option" onclick="seleccionarServicio(this, 'Netflix')">🎬 Netflix</div>
+            <div class="service-option" onclick="seleccionarServicio(this, 'Disney+')">🏰 Disney+</div>
+            <div class="service-option" onclick="seleccionarServicio(this, 'Paramount+')">🏔️ Paramount+</div>
+            <div class="service-option" onclick="seleccionarServicio(this, 'DirecTV GO')">📺 DirecTV GO</div>
+            <div class="service-option" onclick="seleccionarServicio(this, 'Max')">💜 Max</div>
+            <div class="service-option" onclick="seleccionarServicio(this, 'Amazon Prime')">📦 Amazon Prime</div>
+          </div>
+
+          <!-- Categoría 2: Música -->
+          <div class="category-label">🎵 Música</div>
+          <div class="services-grid" data-cat="musica">
+            <div class="service-option" onclick="seleccionarServicio(this, 'Spotify')">🎧 Spotify</div>
+            <div class="service-option" onclick="seleccionarServicio(this, 'YouTube Premium')">▶️ YouTube Premium</div>
+          </div>
+
+          <!-- Categoría 3: Inteligencia Artificial -->
+          <div class="category-label">🤖 Inteligencia Artificial</div>
+          <div class="services-grid" data-cat="ia">
+            <div class="service-option" onclick="seleccionarServicio(this, 'ChatGPT')">🤖 ChatGPT</div>
+            <div class="service-option" onclick="seleccionarServicio(this, 'Claude.ai')">🧠 Claude.ai</div>
+          </div>
         </div>
 
         <div class="form-group">
@@ -170,13 +212,23 @@
   </div>
 
   <script>
+    function seleccionarServicio(elemento, nombreServicio) {
+      document.querySelectorAll('.service-option').forEach(el => el.classList.remove('selected'));
+      elemento.classList.add('selected');
+      document.getElementById('pubServicio').value = nombreServicio;
+    }
+
     function publicarServicio(e) {
       e.preventDefault();
       const servicio = document.getElementById('pubServicio').value;
       const lugares = document.getElementById('pubLugares').value;
       const precio = document.getElementById('pubPrecio').value;
 
-      // Guardar de manera temporal en localStorage para simular la publicación
+      if (!servicio) {
+        alert('Por favor selecciona una plataforma de la lista.');
+        return;
+      }
+
       let misPublicaciones = JSON.parse(localStorage.getItem('misPublicaciones') || '[]');
       misPublicaciones.push({ servicio, lugares, precio, fecha: new Date().toLocaleDateString() });
       localStorage.setItem('misPublicaciones', JSON.stringify(misPublicaciones));
