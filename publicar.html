@@ -36,11 +36,12 @@
     .form-input:focus, .form-select:focus { outline: none; border-color: var(--primary); background: #ffffff; }
 
     .seccion-titulo { font-size: 1.05rem; font-weight: 700; color: var(--text); margin: 24px 0 12px 0; border-top: 1px solid var(--card-border); padding-top: 16px; }
+    .aviso-seguridad { font-size: 0.8rem; color: #059669; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 10px; border-radius: 8px; margin-bottom: 15px; }
 
     .btn-submit { width: 100%; background: var(--primary); color: #fff; border: none; padding: 14px; border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
     .btn-submit:hover { background: #4338ca; }
 
-    /* MENÚ FLOTANTE MINIMALISTA SIN STICKERS */
+    /* MENÚ FLOTANTE MINIMALISTA */
     .menu-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); z-index: 99999; display: none; align-items: flex-end; backdrop-filter: blur(2px); }
     .menu-overlay.mostrar { display: flex; }
     
@@ -63,7 +64,7 @@
     .menu-item-logout { color: #dc2626; font-weight: 600; margin-top: 8px; border-top: 1px solid var(--card-border); border-bottom: none; }
     .menu-item-logout .arrow { color: #dc2626; }
 
-    /* Barra de navegación inferior (CON SUS ÍCONOS) */
+    /* Barra de navegación inferior */
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 9999; box-shadow: 0 -4px 10px rgba(0,0,0,0.03); }
     .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); text-decoration: none; font-size: 0.75rem; font-weight: 600; gap: 2px; cursor: pointer; background: none; border: none; }
     .nav-item.active { color: #4f46e5; }
@@ -77,12 +78,8 @@
     <div class="top-action-header">
       <h2>¿Qué quieres hacer?</h2>
       <div class="segmented-control">
-        <a href="publicar.html" class="segment-btn active">
-          Compartir
-        </a>
-        <a href="explorar.html" class="segment-btn">
-          Comprar
-        </a>
+        <a href="publicar.html" class="segment-btn active">Compartir</a>
+        <a href="explorar.html" class="segment-btn">Comprar</a>
       </div>
     </div>
 
@@ -159,6 +156,22 @@
           <input type="number" id="pubPrecio" class="form-input" placeholder="Ej: 4500" required>
         </div>
 
+        <!-- NUEVA SECCIÓN: DATOS DE ACCESO DE LA CUENTA -->
+        <div class="seccion-titulo">Credenciales de acceso a la cuenta</div>
+        <div class="aviso-seguridad">
+          🔒 Estos datos están protegidos y solo se revelarán al comprador una vez que el pago haya sido acreditado a través de la plataforma.
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Correo / Usuario de acceso</label>
+          <input type="text" id="pubEmailCuenta" class="form-input" placeholder="Ej. tu-correo@gmail.com" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Contraseña de la cuenta</label>
+          <input type="text" id="pubPassCuenta" class="form-input" placeholder="Contraseña de acceso" required>
+        </div>
+
         <!-- DATOS BANCARIOS DEL VENDEDOR -->
         <div class="seccion-titulo">Tus datos para recibir cobros</div>
 
@@ -232,7 +245,7 @@
 
   </div>
 
-  <!-- MENÚ FLOTANTE MINIMALISTA SIN STICKERS -->
+  <!-- MENÚ FLOTANTE -->
   <div class="menu-overlay" id="menuOverlay" onclick="cerrarMenuFuera(event)">
     <div class="menu-drawer">
       <div class="menu-header-top">
@@ -266,7 +279,7 @@
     </div>
   </div>
 
-  <!-- BARRA DE NAVEGACIÓN INFERIOR (CON SUS ÍCONOS) -->
+  <!-- BARRA DE NAVEGACIÓN INFERIOR -->
   <div class="bottom-nav">
     <a href="index.html" class="nav-item"><span class="icon">🏠</span><span>Inicio</span></a>
     <a href="billetera.html" class="nav-item"><span class="icon">💳</span><span>Billetera</span></a>
@@ -274,7 +287,6 @@
     <button class="nav-item" onclick="abrirMenu()"><span class="icon">☰</span><span>Menú</span></button>
   </div>
 
-  <!-- LÓGICA DE PLANES, SUPABASE Y CIERRE DE SESIÓN -->
   <script>
     const planesPorServicio = {
       "Netflix": ["Estándar (con anuncios)", "Estándar", "Premium (4K)"],
@@ -339,6 +351,12 @@
       const plan = document.getElementById('pubPlan').value;
       const lugares = parseInt(document.getElementById('pubLugares').value);
       const precio = parseFloat(document.getElementById('pubPrecio').value);
+      
+      // Nuevos campos de credenciales
+      const emailCuenta = document.getElementById('pubEmailCuenta').value;
+      const passCuenta = document.getElementById('pubPassCuenta').value;
+
+      // Datos de cobro
       const alias = document.getElementById('pubAlias').value;
       const cbu = document.getElementById('pubCbu').value;
       const banco = document.getElementById('pubBanco').value;
@@ -362,6 +380,10 @@
             cupos_totales: lugares,
             cupos_disponibles: lugares,
             usuario: 'Anibal Peralta',
+            vendedor_id: 'usuario_1', // Identificador del vendedor actual
+            email_cuenta: emailCuenta,
+            password_cuenta: passCuenta,
+            estado: 'disponible',
             alias: alias,
             cbu: cbu,
             banco: banco
@@ -369,7 +391,7 @@
         });
 
         if (res.ok) {
-          alert('¡Publicado con éxito en Supabase!');
+          alert('¡Publicación con credenciales guardada con éxito en Supabase!');
           window.location.href = 'explorar.html';
         } else {
           const errText = await res.text();
@@ -385,14 +407,10 @@
     function cerrarMenuFuera(e) { if (e.target.id === 'menuOverlay') cerrarMenu(); }
     
     function cerrarSesion() {
-      // 1. Limpiar completamente el almacenamiento local y de sesión
       localStorage.clear();
       sessionStorage.clear();
-      
-      // 2. Notificar y redirigir de forma estricta reemplazando el historial
       alert('Has cerrado sesión correctamente.');
       window.location.replace('index.html');
     }
   </script>
 </body>
-</html>
