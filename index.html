@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Inicio — Compartí</title>
+  <title>Compartí — Ahorrá en Suscripciones</title>
 
   <style>
     :root { 
@@ -19,37 +19,30 @@
     
     .container { max-width: 800px; margin: 0 auto; padding: 16px; }
 
-    /* CABECERA SUPERIOR CON PERFIL */
-    .header-main { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-top: 8px; }
-    .logo-area { font-size: 1.3rem; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 6px; text-decoration: none; }
+    /* ENCABEZADO SUPERIOR */
+    .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-top: 8px; }
+    .brand-logo { font-size: 1.25rem; font-weight: 800; color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 6px; }
     
-    .btn-user-pill { background: #e0e7ff; color: var(--primary); border: none; padding: 8px 16px; border-radius: 30px; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; gap: 6px; cursor: pointer; box-shadow: 0 2px 6px rgba(79, 70, 229, 0.15); }
+    .user-profile-pill { display: flex; align-items: center; gap: 8px; background: #ffffff; border: 1px solid var(--card-border); padding: 6px 14px; border-radius: 30px; font-size: 0.85rem; font-weight: 600; color: var(--text); box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
+    .user-profile-pill .avatar-dot { width: 8px; height: 8px; background: #16a34a; border-radius: 50%; }
 
-    .hero-section { text-align: center; margin-bottom: 24px; }
-    .hero-section h1 { font-size: 1.8rem; color: var(--text); margin-bottom: 6px; }
-    .hero-section p { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 20px; }
+    /* HERO SECTION */
+    .hero-section { text-align: center; padding: 20px 0 30px 0; }
+    .hero-title { font-size: 1.8rem; font-weight: 800; color: var(--text); margin-bottom: 8px; line-height: 1.2; }
+    .hero-subtitle { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 24px; }
 
-    .action-buttons { display: flex; gap: 12px; justify-content: center; margin-bottom: 24px; }
-    .btn-main { padding: 12px 24px; border-radius: 30px; font-weight: 700; font-size: 0.95rem; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
-    .btn-primary { background: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); border: none; }
-    .btn-secondary { background: #ffffff; color: var(--text); border: 1px solid var(--card-border); }
+    .hero-actions { display: flex; gap: 12px; justify-content: center; }
+    .btn-main { background: var(--primary); color: #fff; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 700; font-size: 0.95rem; cursor: pointer; text-decoration: none; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
+    .btn-secondary { background: #ffffff; color: var(--text); border: 1px solid var(--card-border); padding: 12px 24px; border-radius: 12px; font-weight: 700; font-size: 0.95rem; cursor: pointer; text-decoration: none; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+    .btn-main:hover { background: #4338ca; }
+    .btn-secondary:hover { background: #f1f5f9; }
 
-    /* CALCULADORA */
-    .calc-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-    .calc-title { text-align: center; font-size: 1.2rem; font-weight: 700; margin-bottom: 4px; }
-    .calc-subtitle { text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px; }
+    /* CALCULADORA / SECCIÓN INFORMATIVA */
+    .calc-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); text-align: center; margin-top: 10px; }
+    .calc-title { font-size: 1.15rem; font-weight: 700; margin-bottom: 6px; }
+    .calc-desc { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px; }
 
-    .calc-item { display: flex; align-items: center; justify-content: space-between; padding: 12px; background: #f8fafc; border: 1px solid var(--card-border); border-radius: 12px; margin-bottom: 10px; }
-    .calc-item-info { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 0.9rem; }
-    .calc-item-prices { text-align: right; }
-    .precio-actual { font-size: 1rem; font-weight: 700; color: #16a34a; }
-    .precio-tachado { font-size: 0.8rem; color: #dc2626; text-decoration: line-through; }
-
-    .calc-results { display: flex; justify-content: space-around; align-items: center; background: #f1f5f9; padding: 14px; border-radius: 12px; margin-top: 16px; text-align: center; font-size: 0.85rem; color: var(--text-muted); }
-    .calc-result-val { font-size: 1.1rem; font-weight: 800; color: var(--text); }
-    .calc-result-ahorro { font-size: 1.1rem; font-weight: 800; color: var(--primary); }
-
-    /* NUEVO DISEÑO DE MENÚ FLOTANTE (ESTILO LANK) */
+    /* MENÚ FLOTANTE MINIMALISTA SIN STICKERS */
     .menu-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); z-index: 99999; display: none; align-items: flex-end; backdrop-filter: blur(2px); }
     .menu-overlay.mostrar { display: flex; }
     
@@ -64,17 +57,15 @@
     .menu-title { font-size: 1.35rem; font-weight: 700; color: var(--text); margin: 0; }
     .menu-close { background: #f1f5f9; border: none; width: 36px; height: 36px; border-radius: 50%; color: #0f172a; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 
-    /* Estilo de los links limpios con flecha */
     .menu-list { display: flex; flex-direction: column; }
-    .menu-item-clean { display: flex; align-items: center; justify-content: space-between; padding: 16px 4px; color: var(--text); text-decoration: none; font-size: 1.05rem; font-weight: 500; border-bottom: 1px solid #f1f5f9; transition: background 0.2s; }
+    .menu-item-clean { display: flex; align-items: center; justify-content: space-between; padding: 16px 4px; color: var(--text); text-decoration: none; font-size: 1.05rem; font-weight: 500; border-bottom: 1px solid #f1f5f9; }
     .menu-item-clean:last-child { border-bottom: none; }
     .menu-item-clean .arrow { color: #94a3b8; font-size: 1.2rem; font-weight: bold; }
 
-    /* Estilo especial para cerrar sesión */
     .menu-item-logout { color: #dc2626; font-weight: 600; margin-top: 8px; border-top: 1px solid var(--card-border); border-bottom: none; }
     .menu-item-logout .arrow { color: #dc2626; }
 
-    /* Barra de navegación inferior */
+    /* BARRA DE NAVEGACIÓN INFERIOR */
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 9999; box-shadow: 0 -4px 10px rgba(0,0,0,0.03); }
     .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); text-decoration: none; font-size: 0.75rem; font-weight: 600; gap: 2px; cursor: pointer; background: none; border: none; }
     .nav-item.active { color: #4f46e5; }
@@ -85,109 +76,56 @@
 
   <div class="container">
     
-    <!-- CABECERA CON BOTÓN DE PERFIL VINCULADO AL MENÚ -->
-    <header class="header-main">
-      <a href="index.html" class="logo-area">🤝 Compartí</a>
-      <button class="btn-user-pill" onclick="abrirMenu()">
-        <span>👤</span> Aníbal Peralta
-      </button>
-    </header>
-
-    <div class="hero-section">
-      <h1>Ahorrá en suscripciones</h1>
-      <p>Compartí cuentas de forma segura y protegida.</p>
+    <!-- ENCABEZADO CON EL NOMBRE DE USUARIO (DธNAMICO) -->
+    <div class="top-bar">
+      <a href="index.html" class="brand-logo">⚡ Compartí</a>
       
-      <div class="action-buttons">
-        <a href="explorar.html" class="btn-main btn-primary">Explorar Grupos</a>
-        <a href="publicar.html" class="btn-main btn-secondary">Publicar</a>
+      <!-- Este contenedor se ocultará automáticamente si se cierra sesión -->
+      <div id="usuarioLogueadoContainer" class="user-profile-pill">
+        <span class="avatar-dot"></span>
+        <span id="nombreUsuarioTexto">Aníbal Peralta</span>
       </div>
     </div>
 
-    <!-- CALCULADORA DE AHORRO -->
-    <div class="calc-box">
-      <div class="calc-title">Calculadora de Ahorro</div>
-      <div class="calc-subtitle">Selecciona los servicios que usas:</div>
+    <!-- SECCIÓN PRINCIPAL -->
+    <div class="hero-section">
+      <h1 class="hero-title">Ahorrá en suscripciones</h1>
+      <p class="hero-subtitle">Compartí cuentas de forma segura y protegida con otras personas.</p>
 
-      <div class="calc-item">
-        <div class="calc-item-info">
-          <input type="checkbox" onchange="calcularAhorro()" data-precio-full="21000" data-precio-comparti="4500" checked>
-          <span>🎬 Netflix (Estándar)</span>
-        </div>
-        <div class="calc-item-prices">
-          <div class="precio-actual">$4,500</div>
-          <div class="precio-tachado">$21,000</div>
-        </div>
+      <div class="hero-actions">
+        <a href="explorar.html" class="btn-main">Explorar Grupos</a>
+        <a href="publicar.html" class="btn-secondary">Publicar</a>
       </div>
+    </div>
 
-      <div class="calc-item">
-        <div class="calc-item-info">
-          <input type="checkbox" onchange="calcularAhorro()" data-precio-full="18400" data-precio-comparti="4000" checked>
-          <span>🏰 Disney+ (Premium)</span>
-        </div>
-        <div class="calc-item-prices">
-          <div class="precio-actual">$4,000</div>
-          <div class="precio-tachado">$18,400</div>
-        </div>
-      </div>
-
-      <div class="calc-item">
-        <div class="calc-item-info">
-          <input type="checkbox" onchange="calcularAhorro()" data-precio-full="7500" data-precio-comparti="2000" checked>
-          <span>🎧 Spotify (Familiar)</span>
-        </div>
-        <div class="calc-item-prices">
-          <div class="precio-actual">$2,000</div>
-          <div class="precio-tachado">$7,500</div>
-        </div>
-      </div>
-
-      <div class="calc-item">
-        <div class="calc-item-info">
-          <input type="checkbox" onchange="calcularAhorro()" data-precio-full="32000" data-precio-comparti="8000" checked>
-          <span>🤖 ChatGPT Plus</span>
-        </div>
-        <div class="calc-item-prices">
-          <div class="precio-actual">$8,000</div>
-          <div class="precio-tachado">$32,000</div>
-        </div>
-      </div>
-
-      <div class="calc-results">
-        <div>
-          Oficial<br><span id="totalFull" class="calc-result-val">$0</span>
-        </div>
-        <div>➡️</div>
-        <div>
-          En Compartí<br><span id="totalComparti" class="calc-result-val">$0</span>
-        </div>
-        <div>=</div>
-        <div>
-          Ahorro<br><span id="totalAhorro" class="calc-result-ahorro">$0</span>
-        </div>
-      </div>
+    <!-- TARJETA INFORMATIVA -->
+    <div class="calc-card">
+      <h3 class="calc-title">Calculadora de Ahorro</h3>
+      <p class="calc-desc">Seleccioná los servicios que usas y descubrí cuánto dinero puedes conservar cada mes.</p>
+      <button class="btn-secondary" onclick="alert('Próximamente disponible')">Probar calculadora</button>
     </div>
 
   </div>
 
-  <!-- MENÚ FLOTANTE ESTILO MINIMALISTA -->
+  <!-- MENÚ FLOTANTE MINIMALISTA SIN STICKERS -->
   <div class="menu-overlay" id="menuOverlay" onclick="cerrarMenuFuera(event)">
     <div class="menu-drawer">
       <div class="menu-header-top">
-        <h3 class="menu-title">Menú</h3>
+        <h3 class="menu-title">Menú Principal</h3>
         <button class="menu-close" onclick="cerrarMenu()">&times;</button>
       </div>
       
       <div class="menu-list">
         <a href="explorar.html" class="menu-item-clean">
-          <span>Explorar Grupos</span>
+          <span>Comprar una suscripción</span>
           <span class="arrow">›</span>
         </a>
         <a href="publicar.html" class="menu-item-clean">
-          <span>Publicar Suscripción</span>
+          <span>Compartir una suscripción</span>
           <span class="arrow">›</span>
         </a>
         <a href="mis-ofertas.html" class="menu-item-clean">
-          <span>Mis Suscripciones / Perfil</span>
+          <span>Mis Suscripciones / Grupos</span>
           <span class="arrow">›</span>
         </a>
         <a href="billetera.html" class="menu-item-clean">
@@ -195,7 +133,6 @@
           <span class="arrow">›</span>
         </a>
         
-        <!-- Opción de cerrar sesión estilizada -->
         <a href="#" onclick="cerrarSesion()" class="menu-item-clean menu-item-logout">
           <span>Cerrar sesión</span>
           <span class="arrow">›</span>
@@ -213,34 +150,30 @@
   </div>
 
   <script>
-    function calcularAhorro() {
-      const checkboxes = document.querySelectorAll('.calc-box input[type="checkbox"]');
-      let sumaFull = 0;
-      let sumaComparti = 0;
-
-      checkboxes.forEach(chk => {
-        if (chk.checked) {
-          sumaFull += parseFloat(chk.getAttribute('data-precio-full'));
-          sumaComparti += parseFloat(chk.getAttribute('data-precio-comparti'));
+    // Validar estado de sesión al cargar la página index.html
+    document.addEventListener("DOMContentLoaded", () => {
+      const contenedorUsuario = document.getElementById('usuarioLogueadoContainer');
+      
+      // Si el localStorage está completamente limpio (porque se hizo clic en Cerrar sesión)
+      if (localStorage.length === 0) {
+        if (contenedorUsuario) {
+          contenedorUsuario.style.display = 'none'; // Oculta el nombre de usuario arriba
         }
-      });
-
-      const ahorro = sumaFull - sumaComparti;
-
-      document.getElementById('totalFull').innerText = '$' + sumaFull.toLocaleString('es-AR');
-      document.getElementById('totalComparti').innerText = '$' + sumaComparti.toLocaleString('es-AR');
-      document.getElementById('totalAhorro').innerText = '$' + ahorro.toLocaleString('es-AR');
-    }
-
-    calcularAhorro();
+      }
+    });
 
     function abrirMenu() { document.getElementById('menuOverlay').classList.add('mostrar'); }
     function cerrarMenu() { document.getElementById('menuOverlay').classList.remove('mostrar'); }
     function cerrarMenuFuera(e) { if (e.target.id === 'menuOverlay') cerrarMenu(); }
-
+    
     function cerrarSesion() {
+      // 1. Limpiar completamente el almacenamiento local
+      localStorage.clear();
+      sessionStorage.clear();
+      
+      // 2. Notificar y redirigir
       alert('Has cerrado sesión correctamente.');
-      window.location.href = 'index.html';
+      window.location.replace('index.html');
     }
   </script>
 </body>
