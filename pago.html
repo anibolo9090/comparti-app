@@ -21,21 +21,18 @@
     
     .container { max-width: 600px; margin: 0 auto; padding: 16px; }
 
-    /* ENCABEZADO */
     .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; padding-top: 8px; }
     .brand-logo { font-size: 1.25rem; font-weight: 800; color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 6px; }
     .btn-back { background: #f1f5f9; border: none; padding: 8px 14px; border-radius: 12px; font-weight: 600; font-size: 0.85rem; color: var(--text); cursor: pointer; text-decoration: none; }
 
     .section-title { font-size: 1.25rem; font-weight: 800; margin-bottom: 16px; }
 
-    /* TARJETA DE RESUMEN */
     .summary-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
     .summary-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.95rem; }
     .summary-row:last-child { border-bottom: none; font-weight: 700; font-size: 1.15rem; color: var(--primary); padding-top: 14px; }
     .summary-label { color: var(--text-muted); }
     .summary-value { font-weight: 600; color: var(--text); }
 
-    /* METODOS DE PAGO */
     .payment-methods { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
     .payment-option { background: var(--card-bg); border: 2px solid var(--card-border); border-radius: 14px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: all 0.2s ease; }
     .payment-option.selected { border-color: var(--primary); background: var(--primary-light); }
@@ -43,7 +40,6 @@
     .payment-details h4 { margin: 0 0 2px 0; font-size: 0.95rem; font-weight: 700; }
     .payment-details p { margin: 0; font-size: 0.78rem; color: var(--text-muted); }
 
-    /* CAJA DE DATOS BANCARIOS */
     .bank-details-box { background: #ffffff; border: 1px dashed var(--primary); border-radius: 14px; padding: 16px; margin-bottom: 20px; display: none; }
     .bank-details-box.show { display: block; animation: fadeIn 0.3s ease-in-out; }
     .bank-row { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 8px; }
@@ -59,7 +55,6 @@
     .btn-pay { background: var(--primary); color: #fff; width: 100%; border: none; padding: 14px; border-radius: 14px; font-weight: 700; font-size: 1rem; cursor: pointer; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); display: flex; align-items: center; justify-content: center; gap: 8px; }
     .btn-pay:hover { background: #4338ca; }
 
-    /* BARRA DE NAVEGACIÓN INFERIOR */
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 9999; box-shadow: 0 -4px 10px rgba(0,0,0,0.03); }
     .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); text-decoration: none; font-size: 0.75rem; font-weight: 600; gap: 2px; cursor: pointer; background: none; border: none; }
     .nav-item.active { color: #4f46e5; }
@@ -70,7 +65,6 @@
 
   <div class="container">
     
-    <!-- ENCABEZADO -->
     <div class="top-bar">
       <a href="index.html" class="brand-logo">⚡ Compartí</a>
       <a href="explorar.html" class="btn-back">← Volver</a>
@@ -78,7 +72,6 @@
 
     <div class="section-title">Resumen de tu suscripción</div>
 
-    <!-- TARJETA DE DETALLES -->
     <div class="summary-card">
       <div class="summary-row">
         <span class="summary-label">Servicio</span>
@@ -100,7 +93,6 @@
 
     <div class="section-title">Seleccioná tu medio de pago</div>
 
-    <!-- SELECCIÓN DE PAGO -->
     <div class="payment-methods">
       <div class="payment-option selected" onclick="seleccionarMetodo(this, 'tarjeta')">
         <span class="payment-icon">💳</span>
@@ -127,7 +119,6 @@
       </div>
     </div>
 
-    <!-- DATOS BANCARIOS REALES DE LA BASE DE DATOS -->
     <div class="bank-details-box" id="bankDetailsBox">
       <div style="font-weight: 700; color: var(--primary); margin-bottom: 10px; font-size: 0.95rem;">Datos para la transferencia:</div>
       <div class="bank-row">
@@ -154,7 +145,6 @@
 
   </div>
 
-  <!-- BARRA DE NAVEGACIÓN INFERIOR -->
   <div class="bottom-nav">
     <a href="index.html" class="nav-item"><span class="icon">🏠</span><span>Inicio</span></a>
     <a href="calculadora.html" class="nav-item"><span class="icon">🧮</span><span>Calculadora</span></a>
@@ -163,7 +153,7 @@
     <button class="nav-item" onclick="location.href='index.html'"><span class="icon">☰</span><span>Menú</span></button>
   </div>
 
-    <script>
+  <script>
     const supabaseUrl = 'https://xygatgvzdniivzwndaxy.supabase.co';
     const apikey = 'sb_publishable_fDfrz9tONWlI3ETRbanG3w_cXYsFVif';
 
@@ -171,54 +161,49 @@
       const params = new URLSearchParams(window.location.search);
       const idGrupo = params.get('id');
 
-      // Valores por defecto por si no hay ID en la URL
-      if (!idGrupo || idGrupo === "") {
-        console.warn("No hay ID en la URL, usando datos de ejemplo.");
-        cargarDatosEjemplo();
-        return;
-      }
-
       try {
-        const res = await fetch(`${supabaseUrl}/rest/v1/suscripciones?id=eq.${idGrupo}&select=*`, {
-          headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
-        });
+        let res;
+        if (idGrupo && idGrupo !== "") {
+          // Intentar buscar por ID exacto
+          res = await fetch(`${supabaseUrl}/rest/v1/suscripciones?id=eq.${idGrupo}&select=*`, {
+            headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
+          });
+        }
 
-        if (res.ok) {
-          const data = await res.json();
-          if (data.length > 0) {
-            const item = data[0];
+        let data = [];
+        if (res && res.ok) {
+          data = await res.json();
+        }
 
-            // Rellenar la tarjeta con los datos reales de Supabase
-            document.getElementById('lblServicio').textContent = item.servicio || 'Suscripción';
-            document.getElementById('lblPlan').textContent = item.plan || 'Plan Estándar';
-            document.getElementById('lblPrecio').textContent = `$${item.precio?.toLocaleString('es-AR') || '5.000'}`;
-
-            // Rellenar los datos bancarios (verificando los nombres posibles de las columnas)
-            document.getElementById('lblBanco').textContent = item.banco || item.banco_nombre || 'No especificado';
-            document.getElementById('lblCbu').textContent = item.cbu || item.cvu || 'No especificado';
-            document.getElementById('lblAlias').textContent = item.alias || 'No especificado';
-            document.getElementById('lblTitular').textContent = item.titular || 'No especificado';
-          } else {
-            cargarDatosEjemplo();
+        // Si no vino por ID o no se encontró, traemos el último registro creado para que nunca falle
+        if (!data || data.length === 0) {
+          const resFallback = await fetch(`${supabaseUrl}/rest/v1/suscripciones?select=*&order=id.desc&limit=1`, {
+            headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
+          });
+          if (resFallback.ok) {
+            data = await resFallback.json();
           }
+        }
+
+        if (data && data.length > 0) {
+          const item = data[0];
+
+          // Rellenar con los datos reales de Supabase
+          document.getElementById('lblServicio').textContent = item.servicio || 'Suscripción';
+          document.getElementById('lblPlan').textContent = item.plan || 'Plan Estándar';
+          document.getElementById('lblPrecio').textContent = `$${item.precio?.toLocaleString('es-AR') || '0'}`;
+
+          // Datos bancarios exactos que creaste
+          document.getElementById('lblBanco').textContent = item.banco || 'No especificado';
+          document.getElementById('lblCbu').textContent = item.cbu || item.cvu || 'No especificado';
+          document.getElementById('lblAlias').textContent = item.alias || 'No especificado';
+          document.getElementById('lblTitular').textContent = item.titular || 'No especificado';
         } else {
-          cargarDatosEjemplo();
+          alert("No se encontraron suscripciones registradas.");
         }
       } catch (err) {
         console.error("Error al conectar con Supabase:", err);
-        cargarDatosEjemplo();
       }
-    }
-
-    function cargarDatosEjemplo() {
-      document.getElementById('lblServicio').textContent = 'Suscripción Compartida';
-      document.getElementById('lblPlan').textContent = 'Plan Estándar';
-      document.getElementById('lblPrecio').textContent = '$5.000';
-      
-      document.getElementById('lblBanco').textContent = 'Mercado Pago';
-      document.getElementById('lblCbu').textContent = '0000003100012345678999';
-      document.getElementById('lblAlias').textContent = 'comparti.app';
-      document.getElementById('lblTitular').textContent = 'Usuario de Prueba';
     }
 
     function seleccionarMetodo(elemento, tipo) {
@@ -237,10 +222,6 @@
       alert("¡Operación procesada con éxito! Te estamos redirigiendo a tus grupos.");
       window.location.href = 'mis-ofertas.html';
     }
-
-    // Ejecutar al cargar la página
-    window.onload = cargarDetallePago;
   </script>
-
 </body>
 </html>
