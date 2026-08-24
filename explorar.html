@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Explorar Grupos — Compartí</title>
+  <title>Explorar / Comprar — Compartí</title>
 
   <style>
     :root { 
@@ -26,11 +26,16 @@
     .segment-btn { background: transparent; border: none; padding: 10px 24px; border-radius: 30px; font-weight: 700; font-size: 0.9rem; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 6px; text-decoration: none; }
     .segment-btn.active { background: #4f46e5; color: #fff; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
 
-    .card-list { display: flex; flex-direction: column; gap: 12px; }
-    .group-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 16px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-    .group-info h4 { margin: 0 0 4px 0; font-size: 1rem; color: var(--text); }
-    .group-info p { margin: 0; font-size: 0.85rem; color: var(--text-muted); }
-    .btn-join { background: var(--primary); color: #fff; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; cursor: pointer; box-shadow: 0 2px 6px rgba(79, 70, 229, 0.2); }
+    /* Estilos para las tarjetas de suscripciones */
+    .grid-ofertas { display: flex; flex-direction: column; gap: 12px; }
+    .card-oferta { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; justify-content: space-between; align-items: center; }
+    .oferta-info h4 { margin: 0 0 4px 0; font-size: 1.1rem; color: var(--text); }
+    .oferta-info p { margin: 0; font-size: 0.85rem; color: var(--text-muted); }
+    .oferta-precio { text-align: right; }
+    .precio-valor { font-size: 1.15rem; font-weight: 700; color: var(--primary); display: block; }
+    .precio-cupos { font-size: 0.75rem; color: var(--text-muted); }
+    .btn-unirse { background: var(--primary); color: #fff; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer; margin-top: 8px; }
+    .sin-resultados { text-align: center; color: var(--text-muted); padding: 40px 0; font-size: 0.95rem; }
 
     /* MENÚ DESPLEGABLE INFERIOR */
     .menu-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); z-index: 99999; display: none; align-items: flex-end; }
@@ -41,7 +46,7 @@
     .menu-item-link { display: flex; align-items: center; gap: 10px; padding: 12px; background: #f8fafc; border: 1px solid var(--card-border); border-radius: 8px; color: #4f46e5; text-decoration: none; margin-bottom: 8px; font-weight: 600; font-size: 0.95rem; }
 
     /* Barra de navegación inferior */
-    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 9999; box-shadow: 0 -4px 10px rgba(0,0,0,0.03); }
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 9999; box-shadow: -4px 10px rgba(0,0,0,0.03); }
     .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); text-decoration: none; font-size: 0.75rem; font-weight: 600; gap: 2px; cursor: pointer; background: none; border: none; }
     .nav-item.active { color: #4f46e5; }
     .nav-item .icon { font-size: 1.2rem; }
@@ -63,30 +68,11 @@
       </div>
     </div>
 
-    <div class="card-list">
-      <div class="group-card">
-        <div class="group-info">
-          <h4>🎬 Netflix Premium (4K)</h4>
-          <p>Organizador: Carlos M. • 2 lugares • $4.500/mes</p>
-        </div>
-        <button class="btn-join" onclick="alert('Te uniste al grupo de Netflix con éxito')">Unirme</button>
-      </div>
-
-      <div class="group-card">
-        <div class="group-info">
-          <h4>🏰 Disney+ Estándar</h4>
-          <p>Organizador: Lucía R. • 1 lugar • $3.200/mes</p>
-        </div>
-        <button class="btn-join" onclick="alert('Te uniste al grupo de Disney+ con éxito')">Unirme</button>
-      </div>
-
-      <div class="group-card">
-        <div class="group-info">
-          <h4>🎧 Spotify Familiar</h4>
-          <p>Organizador: Marcos P. • 3 lugares • $2.000/mes</p>
-        </div>
-        <button class="btn-join" onclick="alert('Te uniste al grupo de Spotify con éxito')">Unirme</button>
-      </div>
+    <h3 style="font-size: 1.15rem; margin-bottom: 12px;">Suscripciones disponibles</h3>
+    
+    <!-- Contenedor donde se cargarán las ofertas dinámicamente -->
+    <div id="contenedorOfertas" class="grid-ofertas">
+      <div class="sin-resultados">Cargando publicaciones...</div>
     </div>
 
   </div>
@@ -105,7 +91,7 @@
     </div>
   </div>
 
-  <!-- BARRA DE NAVEGACIÓN INFERIOR (Apunta a billetera.html) -->
+  <!-- BARRA DE NAVEGACIÓN INFERIOR -->
   <div class="bottom-nav">
     <a href="index.html" class="nav-item"><span class="icon">🏠</span><span>Inicio</span></a>
     <a href="billetera.html" class="nav-item"><span class="icon">💳</span><span>Billetera</span></a>
@@ -113,10 +99,64 @@
     <button class="nav-item" onclick="abrirMenu()"><span class="icon">☰</span><span>Menú</span></button>
   </div>
 
-  <script>
-    function abrirMenu() { document.getElementById('menuOverlay').classList.add('mostrar'); }
-    function cerrarMenu() { document.getElementById('menuOverlay').classList.remove('mostrar'); }
-    function cerrarMenuFuera(e) { if (e.target.id === 'menuOverlay') cerrarMenu(); }
+  <!-- SUPABASE Y LÓGICA DE CARGA -->
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+    const SUPABASE_URL = 'https://xygatgvzdniivzwndaxy.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh5Z2F0Z3Z6ZDniaXZ6d25kYXh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc0MDU1MTcsImV4cCI6MjEwMjk4MTUxN30.oSoJcTxCw69F0AXmVVw5LFeF0HjdCSwHd_yOH4HwbS8';
+
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    async function cargarOfertas() {
+      const contenedor = document.getElementById('contenedorOfertas');
+      
+      const { data, error } = await supabase
+        .from('suscripciones')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error al cargar ofertas:', error);
+        contenedor.innerHTML = `<div class="sin-resultados">Error al cargar las suscripciones.</div>`;
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        contenedor.innerHTML = `<div class="sin-resultados">No hay suscripciones publicadas todavía. ¡Sé el primero en compartir una!</div>`;
+        return;
+      }
+
+      contenedor.innerHTML = '';
+      data.forEach(item => {
+        const tarjeta = document.createElement('div');
+        tarjeta.className = 'card-oferta';
+        tarjeta.innerHTML = `
+          <div class="oferta-info">
+            <h4>${item.servicio}</h4>
+            <p>Plan: ${item.plan}</p>
+            <p style="font-size:0.75rem; color:#64748b; margin-top:2px;">Organizador: ${item.usuario || 'Anónimo'}</p>
+          </div>
+          <div class="oferta-precio">
+            <span class="precio-valor">$${item.precio}</span>
+            <span class="precio-cupos">${item.cupos_disponibles} cupos libres</span>
+            <button class="btn-unirse" onclick="unirseServicio('${item.id}')">Unirme</button>
+          </div>
+        `;
+        contenedor.appendChild(tarjeta);
+      });
+    }
+
+    window.unirseServicio = function(id) {
+      alert(`Pronto te conectarás al flujo de pago para unirte a este grupo (ID: ${id})`);
+    }
+
+    window.abrirMenu = function() { document.getElementById('menuOverlay').classList.add('mostrar'); }
+    window.cerrarMenu = function() { document.getElementById('menuOverlay').classList.remove('mostrar'); }
+    window.cerrarMenuFuera = function(e) { if (e.target.id === 'menuOverlay') cerrarMenu(); }
+
+    // Ejecutar al cargar la página
+    cargarOfertas();
   </script>
 </body>
 </html>
