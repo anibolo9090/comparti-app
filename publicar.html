@@ -163,7 +163,7 @@
 
   <!-- BARRA DE NAVEGACIÓN INFERIOR -->
   <div class="bottom-nav">
-    <a href="index.html" class="nav-item"><span class="icon">🏠</span><span>Inicio</span></a>
+    <a href="index.html" class="nav-item"><span class="icon">🏠</span><span>Inicio</span><span>Inicio</span></a>
     <a href="billetera.html" class="nav-item"><span class="icon">💳</span><span>Billetera</span></a>
     <a href="mis-ofertas.html" class="nav-item"><span class="icon">👤</span><span>Mi perfil</span></a>
     <button class="nav-item" onclick="abrirMenu()"><span class="icon">☰</span><span>Menú</span></button>
@@ -235,8 +235,8 @@
     }
 
     window.publicarServicio = async function(e) {
-        window.publicarServicio = async function(e) {
       e.preventDefault();
+      
       const servicio = document.getElementById('pubServicio').value;
       const plan = document.getElementById('pubPlan').value;
       const lugares = parseInt(document.getElementById('pubLugares').value);
@@ -256,15 +256,13 @@
         ]);
 
       if (error) {
-        console.error('Error detallado de Supabase:', error);
-        // Esto te mostrará el error exacto en una alerta para saber qué falla
-        alert('Error: ' + JSON.stringify(error));
+        console.error('Error detallado:', error);
+        alert('DETALLE DEL ERROR: ' + error.message);
       } else {
-        alert(`¡Tu servicio de ${servicio} (${plan}) fue publicado con éxito!`);
+        alert(`¡Publicado con éxito en Supabase!`);
         window.location.href = 'explorar.html';
       }
     }
-
 
     window.abrirMenu = function() { document.getElementById('menuOverlay').classList.add('mostrar'); }
     window.cerrarMenu = function() { document.getElementById('menuOverlay').classList.remove('mostrar'); }
