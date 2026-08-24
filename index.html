@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Compartí — Ahorrá compartiendo tus cuentas</title>
 
+  <!-- SDK oficial de Google Sign-In -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
   <style>
     :root { 
       --primary: #3b82f6; 
@@ -69,10 +72,16 @@
     .modal-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; width: 100%; max-width: 380px; padding: 24px; position: relative; text-align: center; }
     .modal-close { position: absolute; top: 14px; right: 16px; background: none; border: none; color: var(--text-muted); font-size: 1.6rem; cursor: pointer; padding: 4px 8px; }
     
+    .auth-divider { display: flex; align-items: center; text-align: center; margin: 16px 0; color: var(--text-muted); font-size: 0.75rem; }
+    .auth-divider::before, .auth-divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--card-border); }
+    .auth-divider span { padding: 0 10px; }
+
     .form-group { margin-bottom: 12px; text-align: left; }
     .form-label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px; }
-    .form-input { width: 100%; background: #0f172a; border: 1px solid var(--card-border); padding: 12px; border-radius: 8px; color: #fff; font-size: 1rem; } /* Fuente de 16px evita zoom automático en iOS */
+    .form-input { width: 100%; background: #0f172a; border: 1px solid var(--card-border); padding: 12px; border-radius: 8px; color: #fff; font-size: 1rem; }
     .btn-submit { width: 100%; background: var(--primary); color: #fff; border: none; padding: 12px; border-radius: 8px; font-weight: 700; font-size: 0.95rem; cursor: pointer; margin-top: 8px; }
+
+    #googleBtnContainer { display: flex; justify-content: center; margin-top: 10px; min-height: 40px; width: 100%; }
 
     /* Navegación inferior */
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 1000; }
@@ -87,7 +96,6 @@
     <div class="navbar-inner">
       <a href="index.html" class="logo">🤝 Compartí</a>
       <div style="position: relative;">
-        <!-- Botón con alerta de prueba incorporada para verificar respuesta táctil -->
         <button class="btn-login-nav" id="navAuthBtn" onclick="clickBotonPrincipal()">Ingresar</button>
         <div class="user-menu" id="userMenu">
           <div class="user-menu-item" style="color: #60a5fa; font-weight: bold;" id="userEmailDisplay">Cuenta</div>
@@ -139,8 +147,13 @@
     <div class="modal-box">
       <button class="modal-close" onclick="cerrarModal()">&times;</button>
       
-      <h3 style="margin-top:0; color:#60a5fa;">Iniciar Sesión / Registro</h3>
-      <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom: 16px;">Ingresa con tu email y elige tu apodo</p>
+      <h3 style="margin-top:0; color:#60a5fa;">Iniciar Sesión</h3>
+      <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom: 16px;">Accedé con Google o con tu email y apodo</p>
+      
+      <!-- Contenedor del Botón de Google -->
+      <div id="googleBtnContainer"></div>
+
+      <div class="auth-divider"><span>o con email y apodo</span></div>
 
       <form onsubmit="realizarLogin(event)">
         <div class="form-group">
@@ -207,7 +220,67 @@
       renderizarCalculadora();
       chequearSesionNavbar();
       actualizarBadgeKyc();
+      inicializarGoogleAuth();
     };
+
+    function inicializarGoogleAuth() {
+      if (typeof google !== 'undefined') {
+        try {
+          google.accounts.id.initialize({
+            client_id: '572281007707-5k25l8rvq23sj6lh7h1f0u4speips678.apps.googleusercontent.com',
+            callback: manejarRespuestaGoogle
+          });
+        } catch (e) {
+          console.error("Error Google Auth:", e);
+        }
+      }
+    }
+
+    function renderizarBotonGoogle() {
+      const container = document.getElementById('googleBtnContainer');
+      if (container && typeof google !== 'undefined') {
+        container.innerHTML = '';
+        try {
+          google.accounts.id.renderButton(
+            container,
+            { theme: 'outline', size: 'large', width: '300', text: 'continue_with', locale: 'es' }
+          );
+        } catch (e) {
+          console.error("Error render Google:", e);
+        }
+      }
+    }
+
+    function parseJwt(token) {
+      try {
+        let base64Url = token.split('.')[1];
+        let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        let jsonPayload = decodeURIComponent(atob(base64).split('').map(c => {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload);
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function manejarRespuestaGoogle(response) {
+      const responsePayload = parseJwt(response.credential);
+      if (responsePayload) {
+        const email = responsePayload.email;
+        const name = responsePayload.name || email.split('@')[0];
+        
+        localStorage.setItem('usuarioEmail', email);
+        localStorage.setItem('usuarioNickname', name);
+        localStorage.setItem('usuarioLogueado', 'true');
+        
+        cerrarModal();
+        chequearSesionNavbar();
+        alert(`¡Bienvenido, ${name}!`);
+      } else {
+        alert('Error al procesar las credenciales de Google.');
+      }
+    }
 
     function renderizarCalculadora() {
       const contenedor = document.getElementById('serviceList');
@@ -283,6 +356,8 @@
       } else {
         const modal = document.getElementById('authModal');
         modal.style.display = 'flex';
+        // Renderizamos el botón de Google con un pequeño respiro de tiempo para asegurar que se dibuje bien
+        setTimeout(renderizarBotonGoogle, 150);
       }
     }
 
@@ -322,7 +397,9 @@
       if (logueado !== 'true') {
         alert('Debes iniciar sesión primero.');
         document.getElementById('userMenu').style.display = 'none';
-        document.getElementById('authModal').style.display = 'flex';
+        const modal = document.getElementById('authModal');
+        modal.style.display = 'flex';
+        setTimeout(renderizarBotonGoogle, 150);
         return;
       }
       document.getElementById('userMenu').style.display = 'none';
