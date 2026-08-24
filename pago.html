@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Compartí — Confirmar Pago</title>
+
+  <style>
+    :root { 
+      --primary: #4f46e5; 
+      --primary-light: #e0e7ff;
+      --bg: #f8fafc; 
+      --card-bg: #ffffff; 
+      --card-border: #e2e8f0; 
+      --text: #0f172a; 
+      --text-muted: #64748b; 
+      --success: #16a34a;
+    }
+    * { box-sizing: border-box; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
+    
+    .container { max-width: 600px; margin: 0 auto; padding: 16px; }
+
+    /* ENCABEZADO */
+    .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; padding-top: 8px; }
+    .brand-logo { font-size: 1.25rem; font-weight: 800; color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 6px; }
+    .btn-back { background: #f1f5f9; border: none; padding: 8px 14px; border-radius: 12px; font-weight: 600; font-size: 0.85rem; color: var(--text); cursor: pointer; text-decoration: none; }
+
+    .section-title { font-size: 1.25rem; font-weight: 800; margin-bottom: 16px; }
+
+    /* TARJETA DE RESUMEN */
+    .summary-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+    .summary-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.95rem; }
+    .summary-row:last-child { border-bottom: none; font-weight: 700; font-size: 1.15rem; color: var(--primary); padding-top: 14px; }
+    .summary-label { color: var(--text-muted); }
+    .summary-value { font-weight: 600; color: var(--text); }
+
+    /* METODOS DE PAGO */
+    .payment-methods { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+    .payment-option { background: var(--card-bg); border: 2px solid var(--card-border); border-radius: 14px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: all 0.2s ease; }
+    .payment-option.selected { border-color: var(--primary); background: var(--primary-light); }
+    .payment-icon { font-size: 1.5rem; }
+    .payment-details h4 { margin: 0 0 2px 0; font-size: 0.95rem; font-weight: 700; }
+    .payment-details p { margin: 0; font-size: 0.78rem; color: var(--text-muted); }
+
+    .btn-pay { background: var(--primary); color: #fff; width: 100%; border: none; padding: 14px; border-radius: 14px; font-weight: 700; font-size: 1rem; cursor: pointer; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .btn-pay:hover { background: #4338ca; }
+
+    /* BARRA DE NAVEGACIÓN INFERIOR */
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 9999; box-shadow: 0 -4px 10px rgba(0,0,0,0.03); }
+    .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); text-decoration: none; font-size: 0.75rem; font-weight: 600; gap: 2px; cursor: pointer; background: none; border: none; }
+    .nav-item.active { color: #4f46e5; }
+    .nav-item .icon { font-size: 1.2rem; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- ENCABEZADO -->
+    <div class="top-bar">
+      <a href="index.html" class="brand-logo">⚡ Compartí</a>
+      <a href="explorar.html" class="btn-back">← Volver</a>
+    </div>
+
+    <div class="section-title">Resumen de tu suscripción</div>
+
+    <!-- TARJETA DE DETALLES -->
+    <div class="summary-card">
+      <div class="summary-row">
+        <span class="summary-label">Servicio</span>
+        <span class="summary-value" id="lblServicio">Cargando...</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">Plan / Tipo</span>
+        <span class="summary-value" id="lblPlan">Cargando...</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">Lugar disponible</span>
+        <span class="summary-value" style="color: var(--success);">1 de 1 mes</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">Total a pagar</span>
+        <span class="summary-value" id="lblPrecio">$0</span>
+      </div>
+    </div>
+
+    <div class="section-title">Seleccioná tu medio de pago</div>
+
+    <!-- SELECCIÓN DE PAGO -->
+    <div class="payment-methods">
+      <div class="payment-option selected" onclick="seleccionarMetodo(this)">
+        <span class="payment-icon">💳</span>
+        <div class="payment-details">
+          <h4>Tarjeta de Crédito / Débito</h4>
+          <p>Acreditación instantánea y segura</p>
+        </div>
+      </div>
+
+      <div class="payment-option" onclick="seleccionarMetodo(this)">
+        <span class="payment-icon">📱</span>
+        <div class="payment-details">
+          <h4>Mercado Pago / Dinero en cuenta</h4>
+          <p>Pagá con tu billetera virtual favorita</p>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-pay" onclick="procesarPago()">
+      <span>🔒 Confirmar y Pagar</span>
+    </button>
+
+  </div>
+
+  <!-- BARRA DE NAVEGACIÓN INFERIOR -->
+  <div class="bottom-nav">
+    <a href="index.html" class="nav-item"><span class="icon">🏠</span><span>Inicio</span></a>
+    <a href="calculadora.html" class="nav-item"><span class="icon">🧮</span><span>Calculadora</span></a>
+    <a href="billetera.html" class="nav-item"><span class="icon">💳</span><span>Billetera</span></a>
+    <a href="mis-ofertas.html" class="nav-item"><span class="icon">👤</span><span>Mi perfil</span></a>
+    <button class="nav-item" onclick="location.href='index.html'"><span class="icon">☰</span><span>Menú</span></button>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      // Capturar los parámetros enviados por URL desde explorar.html
+      const params = new URLSearchParams(window.location.search);
+      const idGrupo = params.get('id');
+
+      // Simulación de datos según el ID (puedes ajustarlo o conectarlo a tu lógica)
+      const datosGrupos = {
+        'netflix': { nombre: 'Netflix', plan: 'Estándar', precio: '$5.000' },
+        'prime': { nombre: 'Amazon Prime Video', plan: 'Prime Video (Estándar)', precio: '$6.000' },
+        'disney': { nombre: 'Disney+', plan: 'Premium', precio: '$6.500' }
+      };
+
+      // Si viene un ID específico, lo buscamos o mostramos valores por defecto
+      const info = datosGrupos[idGrupo] || { nombre: 'Suscripción Compartida', plan: 'Plan Estándar', precio: '$5.000' };
+
+      document.getElementById('lblServicio').textContent = info.nombre;
+      document.getElementById('lblPlan').textContent = info.plan;
+      document.getElementById('lblPrecio').textContent = info.precio;
+    });
+
+    function seleccionarMetodo(elemento) {
+      document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('selected'));
+      elemento.classList.add('selected');
+    }
+
+    function procesarPago() {
+      alert("¡Pago simulado con éxito! Te estamos redirigiendo a tus grupos.");
+      window.location.href = 'mis-ofertas.html';
+    }
+  </script>
+</body>
+</html>
