@@ -26,6 +26,9 @@
     .user-profile-pill { display: flex; align-items: center; gap: 8px; background: #ffffff; border: 1px solid var(--card-border); padding: 6px 14px; border-radius: 30px; font-size: 0.85rem; font-weight: 600; color: var(--text); box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
     .user-profile-pill .avatar-dot { width: 8px; height: 8px; background: #16a34a; border-radius: 50%; }
 
+    .btn-login-small { background: var(--primary); color: #fff; padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; text-decoration: none; box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2); }
+    .btn-login-small:hover { background: #4338ca; }
+
     /* HERO SECTION */
     .hero-section { text-align: center; padding: 20px 0 30px 0; }
     .hero-title { font-size: 1.8rem; font-weight: 800; color: var(--text); margin-bottom: 8px; line-height: 1.2; }
@@ -37,10 +40,16 @@
     .btn-main:hover { background: #4338ca; }
     .btn-secondary:hover { background: #f1f5f9; }
 
-    /* CALCULADORA / SECCIÓN INFORMATIVA */
-    .calc-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); text-align: center; margin-top: 10px; }
-    .calc-title { font-size: 1.15rem; font-weight: 700; margin-bottom: 6px; }
+    /* CALCULADORA DE AHORRO (ORIGINAL) */
+    .calc-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); margin-top: 10px; }
+    .calc-title { font-size: 1.15rem; font-weight: 700; color: var(--text); margin-bottom: 6px; }
     .calc-desc { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px; }
+    .service-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-bottom: 16px; }
+    .service-chip { background: #f8fafc; border: 1px solid var(--card-border); padding: 10px; border-radius: 10px; font-size: 0.85rem; font-weight: 600; cursor: pointer; text-align: center; transition: all 0.2s; }
+    .service-chip.selected { background: #e0e7ff; border-color: var(--primary); color: var(--primary); }
+    .calc-result-box { background: #f8fafc; border-radius: 12px; padding: 14px; text-align: center; border: 1px solid var(--card-border); }
+    .calc-result-text { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px; }
+    .calc-result-amount { font-size: 1.4rem; font-weight: 800; color: var(--primary); }
 
     /* MENÚ FLOTANTE MINIMALISTA SIN STICKERS */
     .menu-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); z-index: 99999; display: none; align-items: flex-end; backdrop-filter: blur(2px); }
@@ -76,14 +85,17 @@
 
   <div class="container">
     
-    <!-- ENCABEZADO CON EL NOMBRE DE USUARIO (DธNAMICO) -->
+    <!-- ENCABEZADO SUPERIOR -->
     <div class="top-bar">
       <a href="index.html" class="brand-logo">⚡ Compartí</a>
       
-      <!-- Este contenedor se ocultará automáticamente si se cierra sesión -->
-      <div id="usuarioLogueadoContainer" class="user-profile-pill">
-        <span class="avatar-dot"></span>
-        <span id="nombreUsuarioTexto">Aníbal Peralta</span>
+      <!-- CONTENEDOR DINÁMICO SUPERIOR -->
+      <div id="contenedorHeaderDerecha">
+        <!-- Si hay sesión se muestra esto por defecto (o JavaScript lo cambia si está cerrado) -->
+        <div id="usuarioLogueadoContainer" class="user-profile-pill">
+          <span class="avatar-dot"></span>
+          <span>Aníbal Peralta</span>
+        </div>
       </div>
     </div>
 
@@ -98,11 +110,22 @@
       </div>
     </div>
 
-    <!-- TARJETA INFORMATIVA -->
+    <!-- CALCULADORA DE AHORRO ORIGINAL -->
     <div class="calc-card">
       <h3 class="calc-title">Calculadora de Ahorro</h3>
-      <p class="calc-desc">Seleccioná los servicios que usas y descubrí cuánto dinero puedes conservar cada mes.</p>
-      <button class="btn-secondary" onclick="alert('Próximamente disponible')">Probar calculadora</button>
+      <p class="calc-desc">Seleccioná los servicios que usas:</p>
+      
+      <div class="service-grid">
+        <div class="service-chip" onclick="toggleServicio(this, 4500)">Netflix</div>
+        <div class="service-chip" onclick="toggleServicio(this, 2200)">Spotify</div>
+        <div class="service-chip" onclick="toggleServicio(this, 3000)">Disney+</div>
+        <div class="service-chip" onclick="toggleServicio(this, 2800)">Max</div>
+      </div>
+
+      <div class="calc-result-box">
+        <div class="calc-result-text">Tu ahorro estimado mensual</div>
+        <div class="calc-result-amount" id="totalAhorro">$ 0 ARS</div>
+      </div>
     </div>
 
   </div>
@@ -150,28 +173,37 @@
   </div>
 
   <script>
-    // Validar estado de sesión al cargar la página index.html
+    // Validar estado de sesión al cargar index.html
     document.addEventListener("DOMContentLoaded", () => {
-      const contenedorUsuario = document.getElementById('usuarioLogueadoContainer');
+      const contenedorDerecha = document.getElementById('contenedorHeaderDerecha');
       
-      // Si el localStorage está completamente limpio (porque se hizo clic en Cerrar sesión)
+      // Si el localStorage está limpio (se cerró sesión), cambiamos el perfil por el botón de Iniciar Sesión
       if (localStorage.length === 0) {
-        if (contenedorUsuario) {
-          contenedorUsuario.style.display = 'none'; // Oculta el nombre de usuario arriba
+        if (contenedorDerecha) {
+          contenedorDerecha.innerHTML = `<a href="login.html" class="btn-login-small">Iniciar sesión</a>`;
         }
       }
     });
+
+    // Lógica de la calculadora de ahorro original
+    let ahorroTotal = 0;
+    function toggleServicio(el, precio) {
+      el.classList.toggle('selected');
+      if (el.classList.contains('selected')) {
+        ahorroTotal += precio;
+      } else {
+        ahorroTotal -= precio;
+      }
+      document.getElementById('totalAhorro').innerText = `$ ${ahorroTotal.toLocaleString('es-AR')} ARS`;
+    }
 
     function abrirMenu() { document.getElementById('menuOverlay').classList.add('mostrar'); }
     function cerrarMenu() { document.getElementById('menuOverlay').classList.remove('mostrar'); }
     function cerrarMenuFuera(e) { if (e.target.id === 'menuOverlay') cerrarMenu(); }
     
     function cerrarSesion() {
-      // 1. Limpiar completamente el almacenamiento local
       localStorage.clear();
       sessionStorage.clear();
-      
-      // 2. Notificar y redirigir
       alert('Has cerrado sesión correctamente.');
       window.location.replace('index.html');
     }
