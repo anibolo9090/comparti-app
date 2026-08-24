@@ -259,38 +259,69 @@
       document.getElementById('modalPago').style.display = 'none';
     }
 
-    async function procesarPago(metodo) {
+        async function procesarPago(metodo) {
       cerrarModal();
-      alert(`Redirigiendo a ${metodo} para procesar el pago de $${montoSeleccionado.toLocaleString('es-AR')}...`);
+      alert(`Procesando pago con ${metodo} por $${montoSeleccionado.toLocaleString('es-AR')}...`);
 
-      // Simulamos la acreditación exitosa tras el pago
       try {
+        // 1. Primero consultamos si el usuario ya tiene un registro en la tabla
         let res = await fetch(`${supabaseUrl}/rest/v1/billetera?usuario_id=eq.${usuarioActual}&select=*`, {
           headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
         });
         let data = await res.json();
-        let saldoViejo = (data && data.length > 0) ? parseFloat(data[0].saldo) || 0 : 0;
+        
+        let saldoViejo = 0;
+        let existeRegistro = false;
+
+        if (data && data.length > 0) {
+          saldoViejo = parseFloat(data[0].saldo) || 0;
+          existeRegistro = true;
+        }
+
         let nuevoSaldo = saldoViejo + montoSeleccionado;
 
-        let updateRes = await fetch(`${supabaseUrl}/rest/v1/billetera?usuario_id=eq.${usuarioActual}`, {
-          method: 'PATCH',
-          headers: {
-            'apikey': apikey,
-            'Authorization': 'Bearer ' + apikey,
-            'Content-Type': 'application/json',
-            'Prefer': 'return=representation'
-          },
-          body: JSON.stringify({ saldo: nuevoSaldo, actualizado_at: new Date() })
-        });
+        let updateRes;
 
-        if (updateRes.ok) {
+        if (existeRegistro) {
+          // 2A. Si ya existe, hacemos un PATCH para actualizar
+          updateRes = await fetch(`${supabaseUrl}/rest/v1/billetera?usuario_id=eq.${usuarioActual}`, {
+            method: 'PATCH',
+            headers: {
+              'apikey': apikey,
+              'Authorization': 'Bearer ' + apikey,
+              'Content-Type': 'application/json',
+              'Prefer': 'return=minimal'
+            },
+            body: JSON.stringify({ saldo: nuevoSaldo, actualizado_at: new Date() })
+          });
+        } else {
+          // 2B. Si por alguna razón no existía, lo creamos con POST
+          updateRes = await fetch(`${supabaseUrl}/rest/v1/billetera`, {
+            method: 'POST',
+            headers: {
+              'apikey': apikey,
+              'Authorization': 'Bearer ' + apikey,
+              'Content-Type': 'application/json',
+              'Prefer': 'return=minimal'
+            },
+            body: JSON.stringify({ usuario_id: usuarioActual, saldo: nuevoSaldo })
+          });
+        }
+
+        if (updateRes.ok || updateRes.status === 204) {
           alert(`¡Pago aprobado con éxito! Se acreditaron $${montoSeleccionado.toLocaleString('es-AR')} en tu billetera.`);
-          obtenerSaldo();
+          // Esperamos medio segundo para que Supabase procese el cambio y refrescamos
+          setTimeout(obtenerSaldo, 500);
+        } else {
+          let errText = await updateRes.text();
+          console.error("Error del servidor:", errText);
+          alert("Hubo un error al actualizar el saldo en la base de datos.");
         }
       } catch (err) {
         console.error("Error al procesar acreditación:", err);
       }
     }
+
 
     window.onload = obtenerSaldo;
   </script>
