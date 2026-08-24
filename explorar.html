@@ -101,7 +101,7 @@
     <button class="nav-item" onclick="abrirMenu()"><span class="icon">☰</span><span>Menú</span></button>
   </div>
 
-  <!-- LÓGICA DE CARGA Y UNIRSE USANDO EL NOMBRE DEL SERVICIO -->
+  <!-- LÓGICA DE CARGA Y UNIRSE -->
   <script>
     const supabaseUrl = 'https://xygatgvzdniivzwndaxy.supabase.co';
     const apikey = 'sb_publishable_fDfrz9tONWlI3ETRbanG3w_cXYsFVif';
@@ -135,7 +135,6 @@
           card.className = 'card-suscripcion';
           
           const sinCupos = item.cupos_disponibles <= 0;
-          // Codificamos el nombre del servicio para pasarlo seguro en la función
           const servicioNombre = encodeURIComponent(item.servicio);
 
           card.innerHTML = `
@@ -171,7 +170,6 @@
       const nuevosCupos = cuposActuales - 1;
 
       try {
-        // Actualizamos usando el nombre del servicio como clave primaria
         const res = await fetch(`${supabaseUrl}/rest/v1/suscripciones?servicio=eq.${encodeURIComponent(servicio)}`, {
           method: 'PATCH',
           headers: {
@@ -186,8 +184,8 @@
         });
 
         if (res.ok) {
-          alert('¡Te has unido con éxito al grupo! Se ha reservado tu lugar.');
-          cargarSuscripciones(); 
+          alert('¡Te has unido con éxito al grupo! Redirigiendo a tus suscripciones...');
+          window.location.href = 'mis-ofertas.html'; 
         } else {
           const errText = await res.text();
           alert('Error al unirse: ' + errText);
