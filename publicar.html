@@ -17,8 +17,11 @@
     * { box-sizing: border-box; }
     body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
     
-    .navbar { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(8px); border-bottom: 1px solid var(--card-border); padding: 12px 20px; position: sticky; top: 0; z-index: 100; text-align: center; }
+    .navbar { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(8px); border-bottom: 1px solid var(--card-border); padding: 12px 20px; position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; }
     .logo { font-size: 1.25rem; font-weight: 800; color: #60a5fa; text-decoration: none; }
+    
+    .user-badge { font-size: 0.8rem; background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.4); padding: 5px 10px; border-radius: 20px; color: #93c5fd; display: flex; align-items: center; gap: 6px; cursor: pointer; }
+    .user-badge:hover { background: rgba(59, 130, 246, 0.3); }
 
     .main-container { max-width: 600px; margin: 20px auto; padding: 0 16px; }
     
@@ -31,7 +34,8 @@
     .form-select { cursor: pointer; }
     .form-textarea { resize: vertical; min-height: 70px; }
     
-    .user-info-notice { background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); padding: 10px 12px; border-radius: 10px; font-size: 0.85rem; color: #93c5fd; margin-bottom: 16px; }
+    .user-info-notice { background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); padding: 10px 12px; border-radius: 10px; font-size: 0.85rem; color: #93c5fd; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+    .btn-edit-nick { background: none; border: none; color: #60a5fa; cursor: pointer; font-weight: 600; font-size: 0.8rem; text-decoration: underline; }
 
     .btn-submit { width: 100%; background: var(--primary); color: #fff; border: none; padding: 12px; border-radius: 10px; font-weight: 700; font-size: 1rem; cursor: pointer; margin-top: 10px; }
     .btn-submit:hover { background: #2563eb; }
@@ -47,6 +51,9 @@
 
   <nav class="navbar">
     <a href="index.html" class="logo">🤝 Compartí</a>
+    <div class="user-badge" id="navUserBadge" onclick="cambiarNicknamePrompt()">
+      👤 <span id="badgeNombre">Cargando...</span>
+    </div>
   </nav>
 
   <div class="main-container">
@@ -54,7 +61,8 @@
       <h2 class="form-title">➕ Publicar un nuevo grupo</h2>
       
       <div class="user-info-notice" id="userNotice">
-        Publicando como: <b>Cargando...</b>
+        <span>Publicando como: <b id="textNombrePublicacion">Cargando...</b></span>
+        <button class="btn-edit-nick" onclick="cambiarNicknamePrompt()">Cambiar apodo</button>
       </div>
       
       <form onsubmit="publicarCupo(event)">
@@ -140,7 +148,7 @@
         { name: 'Amazon Prime Video (Estándar)', precio: 2000 }
       ],
       youtube: [
-        { name: 'Familiar (Hasta 5 miembros)', precio: 2500 }
+        { name: 'Familiar (Hasta 5 members)', precio: 2500 }
       ],
       crunchyroll: [
         { name: 'Mega Fan (4 dispositivos)', precio: 1500 }
@@ -166,14 +174,13 @@
     };
 
     window.onload = function() {
-      verificarSesionYMostrarEmail();
+      verificarSesionYConfigurarUsuario();
       cambiarPlataforma();
     };
 
-    function verificarSesionYMostrarEmail() {
+    function verificarSesionYConfigurarUsuario() {
       const logueado = localStorage.getItem('usuarioLogueado');
       const email = localStorage.getItem('usuarioEmail');
-      const notice = document.getElementById('userNotice');
 
       if (logueado !== 'true' || !email) {
         alert('Debes iniciar sesión para publicar una oferta.');
@@ -181,7 +188,31 @@
         return;
       }
 
-      notice.innerHTML = `Publicando como: <b>${email}</b>`;
+      // Si el usuario todavía no tiene un nickname guardado, le ponemos la primera parte de su correo por defecto
+      let nickname = localStorage.getItem('usuarioNickname');
+      if (!nickname) {
+        nickname = email.split('@')[0];
+        localStorage.setItem('usuarioNickname', nickname);
+      }
+
+      actualizarVistaUsuario(nickname);
+    }
+
+    function actualizarVistaUsuario(nickname) {
+      document.getElementById('badgeNombre').innerText = nickname;
+      document.getElementById('textNombrePublicacion').innerText = nickname;
+    }
+
+    function cambiarNicknamePrompt() {
+      let nicknameActual = localStorage.getItem('usuarioNickname') || '';
+      let nuevoNickname = prompt('Escribe tu apodo o nombre de usuario para mostrar en tus publicaciones:', nicknameActual);
+      
+      if (nuevoNickname && nuevoNickname.trim() !== '') {
+        nuevoNickname = nuevoNickname.trim();
+        localStorage.setItem('usuarioNickname', nuevoNickname);
+        actualizarVistaUsuario(nuevoNickname);
+        alert('¡Apodo actualizado con éxito!');
+      }
     }
 
     function cambiarPlataforma() {
@@ -219,9 +250,11 @@
       const servicioNombre = selectServicio.options[selectServicio.selectedIndex].text;
       const planNombre = document.getElementById('pubPlan').value;
       
-      const cupos = document.getElementById('pubCupos').value;
+      const cupos = document.getElementById('pubCupos'].value;
       const precio = document.getElementById('pubPrecio').value;
       const notas = document.getElementById('pubNotas').value;
+      
+      const nicknameUsuario = localStorage.getItem('usuarioNickname') || localStorage.getItem('usuarioEmail') || 'Anónimo';
 
       const nuevaOferta = {
         id: Date.now(),
@@ -229,7 +262,7 @@
         cupos: cupos,
         precio: precio,
         notas: notas,
-        usuarioCreador: localStorage.getItem('usuarioEmail') || 'Anónimo'
+        usuarioCreador: nicknameUsuario
       };
 
       let misOfertas = JSON.parse(localStorage.getItem('misOfertasGuardadas')) || [];
