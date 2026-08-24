@@ -192,7 +192,8 @@
             </div>
             <div class="badge-cupos">👤 Quedan ${item.cupos_disponibles} lugares</div>
           </div>
-          <a href="pago.html?id=${item.id || item.uuid || item.codigo}" class="btn-comprar">Comprar lugar</a>
+          <a href="pago.html?id=${item.id || 1}" class="btn-comprar">Comprar lugar</a>
+
 
         `;
         grid.appendChild(card);
