@@ -161,7 +161,7 @@
     </div>
   </div>
 
-  <!-- BARRA DE NAVEGACIÓN INFERIOR (Apunta a billetera.html) -->
+  <!-- BARRA DE NAVEGACIÓN INFERIOR -->
   <div class="bottom-nav">
     <a href="index.html" class="nav-item"><span class="icon">🏠</span><span>Inicio</span></a>
     <a href="billetera.html" class="nav-item"><span class="icon">💳</span><span>Billetera</span></a>
@@ -169,7 +169,16 @@
     <button class="nav-item" onclick="abrirMenu()"><span class="icon">☰</span><span>Menú</span></button>
   </div>
 
-  <script>
+  <!-- SUPABASE Y LÓGICA DE ENVÍO -->
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+    // REEMPLAZA ESTAS DOS LÍNEAS CON TUS CREDENCIALES DE SUPABASE (Project Settings > API)
+    const SUPABASE_URL = 'TÚ_SUPABASE_URL';
+    const SUPABASE_ANON_KEY = 'TÚ_SUPABASE_ANON_KEY';
+
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
     const planesPorServicio = {
       "Netflix": ["Estándar (con anuncios)", "Estándar", "Premium (4K)"],
       "Disney+": ["Estándar", "Premium"],
@@ -205,7 +214,7 @@
       "NBA League Pass": ["NBA League Pass Mensual"]
     };
 
-    function actualizarPlanes() {
+    window.actualizarPlanes = function() {
       const servicioSelect = document.getElementById('pubServicio').value;
       const planSelect = document.getElementById('pubPlan');
       planSelect.innerHTML = '';
@@ -226,24 +235,38 @@
       });
     }
 
-    function publicarServicio(e) {
+    window.publicarServicio = async function(e) {
       e.preventDefault();
       const servicio = document.getElementById('pubServicio').value;
       const plan = document.getElementById('pubPlan').value;
-      const lugares = document.getElementById('pubLugares').value;
-      const precio = document.getElementById('pubPrecio').value;
+      const lugares = parseInt(document.getElementById('pubLugares').value);
+      const precio = parseFloat(document.getElementById('pubPrecio').value);
 
-      let misPublicaciones = JSON.parse(localStorage.getItem('misPublicaciones') || '[]');
-      misPublicaciones.push({ servicio, plan, lugares, precio, fecha: new Date().toLocaleDateString() });
-      localStorage.setItem('misPublicaciones', JSON.stringify(misPublicaciones));
+      const { data, error } = await supabase
+        .from('suscripciones')
+        .insert([
+          { 
+            servicio: servicio, 
+            plan: plan, 
+            precio: precio, 
+            cupos_totales: lugares, 
+            cupos_disponibles: lugares, 
+            usuario: 'Anibal Peralta' 
+          }
+        ]);
 
-      alert(`¡Tu servicio de ${servicio} (${plan}) fue publicado con éxito!`);
-      window.location.href = 'mis-ofertas.html';
+      if (error) {
+        console.error('Error al guardar en Supabase:', error);
+        alert('Hubo un error al publicar en la base de datos.');
+      } else {
+        alert(`¡Tu servicio de ${servicio} (${plan}) fue publicado con éxito en Supabase!`);
+        window.location.href = 'mis-ofertas.html';
+      }
     }
 
-    function abrirMenu() { document.getElementById('menuOverlay').classList.add('mostrar'); }
-    function cerrarMenu() { document.getElementById('menuOverlay').classList.remove('mostrar'); }
-    function cerrarMenuFuera(e) { if (e.target.id === 'menuOverlay') cerrarMenu(); }
+    window.abrirMenu = function() { document.getElementById('menuOverlay').classList.add('mostrar'); }
+    window.cerrarMenu = function() { document.getElementById('menuOverlay').classList.remove('mostrar'); }
+    window.cerrarMenuFuera = function(e) { if (e.target.id === 'menuOverlay') cerrarMenu(); }
   </script>
 </body>
 </html>
