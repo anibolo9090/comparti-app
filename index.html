@@ -26,7 +26,7 @@
     .user-profile-pill { display: flex; align-items: center; gap: 8px; background: #ffffff; border: 1px solid var(--card-border); padding: 6px 14px; border-radius: 30px; font-size: 0.85rem; font-weight: 600; color: var(--text); box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
     .user-profile-pill .avatar-dot { width: 8px; height: 8px; background: #16a34a; border-radius: 50%; }
 
-    .btn-login-small { background: var(--primary); color: #fff; padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; text-decoration: none; box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2); }
+    .btn-login-small { background: var(--primary); color: #fff; padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; text-decoration: none; box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2); border: none; cursor: pointer; }
     .btn-login-small:hover { background: #4338ca; }
 
     /* HERO SECTION */
@@ -56,6 +56,21 @@
     .calc-result-box { background: #f8fafc; border-radius: 12px; padding: 14px; text-align: center; border: 1px solid var(--card-border); }
     .calc-result-text { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px; }
     .calc-result-amount { font-size: 1.4rem; font-weight: 800; color: var(--primary); }
+
+    /* MODAL DE LOGIN / REGISTRO */
+    .auth-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); z-index: 999999; display: none; align-items: flex-end; backdrop-filter: blur(2px); }
+    .auth-overlay.mostrar { display: flex; }
+    .auth-drawer { background: #ffffff; border-top-left-radius: 24px; border-top-right-radius: 24px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 24px 20px; box-shadow: 0 -10px 25px rgba(0,0,0,0.1); animation: slideUp 0.3s ease-out; }
+
+    .form-group { margin-bottom: 16px; text-align: left; }
+    .form-label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    .form-input { width: 100%; background: #f8fafc; border: 1px solid var(--card-border); padding: 12px; border-radius: 10px; color: var(--text); font-size: 0.95rem; }
+    .form-input:focus { outline: none; border-color: var(--primary); background: #ffffff; }
+    
+    .divider { display: flex; align-items: center; text-align: center; color: var(--text-muted); font-size: 0.8rem; margin: 16px 0; }
+    .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--card-border); }
+    .divider::before { margin-right: .5em; }
+    .divider::after { margin-left: .5em; }
 
     /* MENÚ FLOTANTE MINIMALISTA */
     .menu-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); z-index: 99999; display: none; align-items: flex-end; backdrop-filter: blur(2px); }
@@ -95,7 +110,7 @@
     <div class="top-bar">
       <a href="index.html" class="brand-logo">⚡ Compartí</a>
       
-      <!-- CONTENEDOR DINÁMICO (Mantiene Google / Sesión) -->
+      <!-- CONTENEDOR DINÁMICO -->
       <div id="contenedorHeaderDerecha">
         <div id="usuarioLogueadoContainer" class="user-profile-pill">
           <span class="avatar-dot"></span>
@@ -118,7 +133,7 @@
     <!-- BLOQUE DE INICIO CON GOOGLE (ORIGINAL) -->
     <div class="google-login-box">
       <h3>¿Querés empezar a compartir?</h3>
-      <button class="btn-google" onclick="alert('Función de Google Login activa')">
+      <button class="btn-google" onclick="abrirAuthModal()">
         <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.13 0-5.78-2.11-6.73-4.96H1.18v3.15C3.15 21.32 7.23 24 12 24z"/><path fill="#FBBC05" d="M5.27 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.6H1.18C.43 8.13 0 9.87 0 12s.43 3.87 1.18 5.4l4.09-3.16z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.23 0 3.15 2.68 1.18 6.6l4.09 3.15c.95-2.85 3.6-4.96 6.73-4.96z"/></svg>
         Continuar con Google
       </button>
@@ -142,6 +157,36 @@
       </div>
     </div>
 
+  </div>
+
+  <!-- MODAL DE INICIO DE SESIÓN / REGISTRO -->
+  <div class="auth-overlay" id="authModal" onclick="cerrarAuthFuera(event)">
+    <div class="auth-drawer">
+      <div class="menu-header-top">
+        <h3 class="menu-title" id="authTitulo">Iniciar sesión / Registrarse</h3>
+        <button class="menu-close" onclick="cerrarAuthModal()">&times;</button>
+      </div>
+
+      <!-- Botón Google dentro del modal -->
+      <button class="btn-google" style="width: 100%; max-width: 100%; margin-bottom: 12px;" onclick="simularLogin('Google')">
+        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.13 0-5.78-2.11-6.73-4.96H1.18v3.15C3.15 21.32 7.23 24 12 24z"/><path fill="#FBBC05" d="M5.27 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.6H1.18C.43 8.13 0 9.87 0 12s.43 3.87 1.18 5.4l4.09-3.16z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.23 0 3.15 2.68 1.18 6.6l4.09 3.15c.95-2.85 3.6-4.96 6.73-4.96z"/></svg>
+        Continuar con Google
+      </button>
+
+      <div class="divider">o con correo electrónico</div>
+
+      <form onsubmit="realizarLoginEmail(event)">
+        <div class="form-group">
+          <label class="form-label">Correo electrónico</label>
+          <input type="email" id="emailInput" class="form-input" placeholder="tu@email.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Contraseña</label>
+          <input type="password" id="passInput" class="form-input" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn-main" style="width: 100%;">Ingresar / Registrarse</button>
+      </form>
+    </div>
   </div>
 
   <!-- MENÚ FLOTANTE MINIMALISTA -->
@@ -187,16 +232,39 @@
   </div>
 
   <script>
-    // Validar estado de sesión al cargar index.html (Solo cambia el botón si se cerró sesión)
+    // Validar estado de sesión al cargar index.html
     document.addEventListener("DOMContentLoaded", () => {
       const contenedorDerecha = document.getElementById('contenedorHeaderDerecha');
       
       if (localStorage.length === 0) {
         if (contenedorDerecha) {
-          contenedorDerecha.innerHTML = `<a href="#" onclick="alert('Inicia sesión con Google abajo')" class="btn-login-small">Iniciar sesión</a>`;
+          contenedorDerecha.innerHTML = `<button onclick="abrirAuthModal()" class="btn-login-small">Iniciar sesión</button>`;
         }
       }
     });
+
+    // Control del Modal de Autenticación
+    function abrirAuthModal() {
+      document.getElementById('authModal').classList.add('mostrar');
+    }
+    function cerrarAuthModal() {
+      document.getElementById('authModal').classList.remove('mostrar');
+    }
+    function cerrarAuthFuera(e) {
+      if (e.target.id === 'authModal') cerrarAuthModal();
+    }
+
+    // Simular el inicio de sesión exitoso y guardar datos para activar el estado
+    function simularLogin(metodo) {
+      localStorage.setItem('sesionActiva', 'true');
+      alert(`¡Sesión iniciada con éxito (${metodo})!`);
+      location.reload();
+    }
+
+    function realizarLoginEmail(e) {
+      e.preventDefault();
+      simularLogin('Correo');
+    }
 
     // Lógica de la calculadora de ahorro original
     let ahorroTotal = 0;
