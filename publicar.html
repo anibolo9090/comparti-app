@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Publicar Suscripción — Compartí</title>
+  <title>Publicar / Compartir — Compartí</title>
 
   <style>
     :root { 
@@ -17,7 +17,7 @@
     * { box-sizing: border-box; }
     body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
     
-    .container { max-width: 600px; margin: 0 auto; padding: 16px; }
+    .container { max-width: 800px; margin: 0 auto; padding: 16px; }
 
     .top-action-header { text-align: center; margin-bottom: 20px; }
     .top-action-header h2 { font-size: 1.4rem; color: var(--text); margin-bottom: 14px; }
@@ -26,19 +26,21 @@
     .segment-btn { background: transparent; border: none; padding: 10px 24px; border-radius: 30px; font-weight: 700; font-size: 0.9rem; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 6px; text-decoration: none; }
     .segment-btn.active { background: #4f46e5; color: #fff; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
 
-    .form-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 24px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-    .form-group { margin-bottom: 18px; }
-    .form-group label { display: block; font-size: 0.85rem; font-weight: 700; color: var(--text); margin-bottom: 6px; }
-    .form-control { width: 100%; padding: 12px 14px; border: 1px solid var(--card-border); border-radius: 10px; font-size: 0.95rem; background: #f8fafc; color: var(--text); transition: all 0.2s; }
-    .form-control:focus { outline: none; border-color: var(--primary); background: #ffffff; box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); }
+    .form-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+    .form-title { font-size: 1.15rem; font-weight: 700; color: var(--text); margin-top: 0; margin-bottom: 6px; }
+    .form-subtitle { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px; }
 
-    .help-text { font-size: 0.75rem; color: var(--text-muted); margin-top: 5px; display: block; }
+    .form-group { margin-bottom: 16px; text-align: left; }
+    .form-label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    .form-input, .form-select { width: 100%; background: #f8fafc; border: 1px solid var(--card-border); padding: 12px; border-radius: 10px; color: var(--text); font-size: 0.95rem; }
+    .form-input:focus, .form-select:focus { outline: none; border-color: var(--primary); background: #ffffff; }
 
-    .btn-submit { width: 100%; background: var(--primary); color: #fff; border: none; padding: 14px; border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); margin-top: 10px; transition: background 0.2s; }
+    .seccion-titulo { font-size: 1.05rem; font-weight: 700; color: var(--text); margin: 24px 0 12px 0; border-top: 1px solid var(--card-border); padding-top: 16px; }
+
+    .btn-submit { width: 100%; background: var(--primary); color: #fff; border: none; padding: 14px; border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
     .btn-submit:hover { background: #4338ca; }
-    .btn-submit:disabled { background: #94a3b8; cursor: not-allowed; box-shadow: none; }
 
-    /* MENÚ FLOTANTE MINIMALISTA */
+    /* MENÚ FLOTANTE MINIMALISTA (ESTILO NUEVO CON FLECHITAS) */
     .menu-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); z-index: 99999; display: none; align-items: flex-end; backdrop-filter: blur(2px); }
     .menu-overlay.mostrar { display: flex; }
     
@@ -84,79 +86,175 @@
       </div>
     </div>
 
-    <div class="form-card">
-      <form id="formPublicar" onsubmit="publicarSuscripcion(event)">
+    <div class="form-box">
+      <h3 class="form-title">Publicar una suscripción</h3>
+      <p class="form-subtitle">Compartí los espacios libres de tus cuentas y ahorrá dinero.</p>
+
+      <form onsubmit="publicarServicio(event)">
         
         <div class="form-group">
-          <label for="servicio">Servicio digital</label>
-          <select id="servicio" class="form-control" required>
-            <option value="">Selecciona un servicio</option>
-            <option value="Netflix">Netflix</option>
-            <option value="Disney+">Disney+</option>
-            <option value="Spotify">Spotify</option>
-            <option value="Max">Max</option>
-            <option value="ChatGPT Plus">ChatGPT Plus</option>
-            <option value="YouTube Premium">YouTube Premium</option>
-            <option value="Amazon Prime">Amazon Prime</option>
-            <option value="Crunchyroll">Crunchyroll</option>
-            <option value="Paramount+">Paramount+</option>
+          <label class="form-label">Selecciona el servicio</label>
+          <select id="pubServicio" class="form-select" onchange="actualizarPlanes()" required>
+            <option value="">-- Elige una plataforma --</option>
+            
+            <optgroup label="🍿 Streaming y Películas">
+              <option value="Netflix">Netflix</option>
+              <option value="Disney+">Disney+</option>
+              <option value="Max">Max</option>
+              <option value="Amazon Prime Video">Amazon Prime Video</option>
+              <option value="Paramount+">Paramount+</option>
+              <option value="Crunchyroll">Crunchyroll</option>
+              <option value="Apple TV+">Apple TV+</option>
+              <option value="DirecTV GO">DirecTV GO</option>
+              <option value="VIX">VIX</option>
+              <option value="MUBI">MUBI</option>
+            </optgroup>
+
+            <optgroup label="🎵 Música">
+              <option value="Spotify">Spotify</option>
+              <option value="YouTube Premium">YouTube Premium</option>
+              <option value="Apple Music">Apple Music</option>
+              <option value="Tidal">Tidal</option>
+              <option value="Deezer">Deezer</option>
+              <option value="Amazon Music">Amazon Music</option>
+            </optgroup>
+
+            <optgroup label="🤖 Inteligencia Artificial">
+              <option value="ChatGPT Plus">ChatGPT Plus</option>
+              <option value="Gemini AI">Gemini AI</option>
+              <option value="Claude.ai">Claude.ai</option>
+              <option value="Perplexity">Perplexity</option>
+            </optgroup>
+
+            <optgroup label="💻 Software y Herramientas">
+              <option value="Canva Pro">Canva Pro</option>
+              <option value="Microsoft 365">Microsoft 365</option>
+              <option value="Google One">Google One</option>
+              <option value="Apple One">Apple One</option>
+              <option value="Duolingo">Duolingo</option>
+            </optgroup>
+
+            <optgroup label="⚽ Deportes">
+              <option value="F1 TV Pro">F1 TV Pro</option>
+              <option value="DAZN">DAZN</option>
+              <option value="NBA League Pass">NBA League Pass</option>
+            </optgroup>
           </select>
-          <span class="help-text">Elige la plataforma oficial de streaming o herramienta que deseas compartir con otros usuarios.</span>
         </div>
 
         <div class="form-group">
-          <label for="plan">Tipo de Plan contratado</label>
-          <input type="text" id="plan" class="form-control" placeholder="Ej: Plan Familiar / Estándar 4K" required>
-          <span class="help-text">Especifica las características del plan para darle mayor confianza a los compradores.</span>
+          <label class="form-label">Tipo de plan</label>
+          <select id="pubPlan" class="form-select" required>
+            <option value="">Primero elige un servicio</option>
+          </select>
         </div>
 
         <div class="form-group">
-          <label for="precio">Precio mensual por integrante ($ ARS)</label>
-          <input type="number" id="precio" class="form-control" placeholder="Ej: 4500" min="100" required>
-          <span class="help-text">Indica el monto exacto que pagará cada persona que se sume a tu grupo cada mes.</span>
+          <label class="form-label">Lugares o perfiles disponibles</label>
+          <input type="number" id="pubLugares" class="form-input" min="1" max="6" value="3" required>
         </div>
 
         <div class="form-group">
-          <label for="cupos">Lugares totales disponibles</label>
-          <input type="number" id="cupos" class="form-control" value="3" min="1" max="10" required>
-          <span class="help-text">Cantidad de perfiles o accesos libres que estás dispuesto a ceder en tu cuenta.</span>
+          <label class="form-label">Precio mensual por lugar ($ ARS)</label>
+          <input type="number" id="pubPrecio" class="form-input" placeholder="Ej: 4500" required>
+        </div>
+
+        <!-- DATOS BANCARIOS DEL VENDEDOR -->
+        <div class="seccion-titulo">Tus datos para recibir cobros 🏦</div>
+
+        <div class="form-group">
+          <label class="form-label">Alias de Mercado Pago / Billetera</label>
+          <input type="text" id="pubAlias" class="form-input" placeholder="Ej. anibal.mp" required>
         </div>
 
         <div class="form-group">
-          <label for="email_cuenta">Correo electrónico de acceso (Opcional)</label>
-          <input type="email" id="email_cuenta" class="form-control" placeholder="tucuenta@email.com">
-          <span class="help-text">Este dato se mantendrá seguro y solo se revelará al comprador tras confirmarse el pago.</span>
+          <label class="form-label">CBU / CVU (22 dígitos)</label>
+          <input type="text" id="pubCbu" class="form-input" placeholder="Ej. 0000003100012345678990" required>
         </div>
 
-        <button type="submit" class="btn-submit">Publicar Suscripción</button>
+        <div class="form-group">
+          <label class="form-label">Banco o Billetera</label>
+          <select id="pubBanco" class="form-select" required>
+            <option value="">-- Selecciona tu Banco o Billetera --</option>
+            <optgroup label="🚀 Billeteras Virtuales">
+              <option value="Mercado Pago">Mercado Pago</option>
+              <option value="Ualá">Ualá</option>
+              <option value="Naranja X">Naranja X</option>
+              <option value="Personal Pay">Personal Pay</option>
+              <option value="MODO">MODO</option>
+              <option value="Cuenta DNI">Cuenta DNI</option>
+              <option value="BCO (Belo)">Belo</option>
+              <option value="Satoshi Tango">Satoshi Tango</option>
+            </optgroup>
+            <optgroup label="🏦 Bancos Tradicionales">
+              <option value="Banco Galicia">Banco Galicia</option>
+              <option value="Banco Nación (BNA+)">Banco Nación (BNA+)</option>
+              <option value="Banco Santander">Banco Santander</option>
+              <option value="BBVA Argentina">BBVA Argentina</option>
+              <option value="Banco Macro">Banco Macro</option>
+              <option value="Brubank">Brubank</option>
+              <option value="Banco Provincia">Banco Provincia</option>
+              <option value="Banco Ciudad">Banco Ciudad</option>
+              <option value="Banco Patagonia">Banco Patagonia</option>
+              <option value="Banco Hipotecario">Banco Hipotecario</option>
+              <option value="HSBC Argentina">HSBC Argentina</option>
+              <option value="ICBC Argentina">ICBC Argentina</option>
+              <option value="Banco Credicoop">Banco Credicoop</option>
+              <option value="Banco Supervielle">Banco Supervielle</option>
+              <option value="Banco Comafi">Banco Comafi</option>
+              <option value="Nuevo Banco de Santa Fe">Nuevo Banco de Santa Fe</option>
+              <option value="Nuevo Banco de Córdoba">Nuevo Banco de Córdoba</option>
+              <option value="Banco San Juan">Banco San Juan</option>
+              <option value="Banco Columbia">Banco Columbia</option>
+              <option value="Banco Julio">Banco Julio</option>
+              <option value="Banco Roela">Banco Roela</option>
+              <option value="Banco CMF">Banco CMF</option>
+              <option value="Banco Masventas">Banco Masventas</option>
+              <option value="Banco de Tierra del Fuego">Banco de Tierra del Fuego</option>
+              <option value="Banco de la Pampa">Banco de la Pampa</option>
+              <option value="Banco del Chubut">Banco del Chubut</option>
+              <option value="Banco de Santa Cruz">Banco de Santa Cruz</option>
+              <option value="Banco de la Provincia de Neuquén">Banco de la Provincia de Neuquén</option>
+              <option value="Banco de Formosa">Banco de Formosa</option>
+              <option value="Banco de Corrientes">Banco de Corrientes</option>
+              <option value="Banco Municipal de Rosario">Banco Municipal de Rosario</option>
+              <option value="Banco Itaú (Macro BMA)">Banco Itaú / Macro BMA</option>
+              <option value="BACS Credito y Securitizacion">BACS</option>
+              <option value="Banco Voii">Banco Voii</option>
+              <option value="Reba (Banco del Sol)">Reba (Banco del Sol)</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <button type="submit" class="btn-submit">Publicar cuenta</button>
       </form>
     </div>
 
   </div>
 
-  <!-- MENÚ FLOTANTE MINIMALISTA -->
+  <!-- MENÚ FLOTANTE MINIMALISTA (ESTILO NUEVO CON FLECHITAS) -->
   <div class="menu-overlay" id="menuOverlay" onclick="cerrarMenuFuera(event)">
     <div class="menu-drawer">
       <div class="menu-header-top">
-        <h3 class="menu-title">Menú</h3>
+        <h3 class="menu-title">Menú Principal</h3>
         <button class="menu-close" onclick="cerrarMenu()">&times;</button>
       </div>
       
       <div class="menu-list">
         <a href="explorar.html" class="menu-item-clean">
-          <span>Explorar Grupos</span>
+          <span>➕ Comprar una suscripción</span>
           <span class="arrow">›</span>
         </a>
         <a href="publicar.html" class="menu-item-clean">
-          <span>Publicar Suscripción</span>
+          <span>📤 Compartir una suscripción</span>
           <span class="arrow">›</span>
         </a>
         <a href="mis-ofertas.html" class="menu-item-clean">
-          <span>Mis Suscripciones / Perfil</span>
+          <span>💳 Mis Suscripciones / Grupos</span>
           <span class="arrow">›</span>
         </a>
         <a href="billetera.html" class="menu-item-clean">
-          <span>Billetera</span>
+          <span>👛 Billetera</span>
           <span class="arrow">›</span>
         </a>
         
@@ -176,77 +274,115 @@
     <button class="nav-item" onclick="abrirMenu()"><span class="icon">☰</span><span>Menú</span></button>
   </div>
 
+  <!-- LÓGICA DE PLANES Y SUPABASE -->
   <script>
-    const supabaseUrl = 'https://xygatgvzdniivzwndaxy.supabase.co';
-    const apikey = 'sb_publishable_fDfrz9tONWlI3ETRbanG3w_cXYsFVif';
+    const planesPorServicio = {
+      "Netflix": ["Estándar (con anuncios)", "Estándar", "Premium (4K)"],
+      "Disney+": ["Estándar", "Premium"],
+      "Max": ["Básico con anuncios", "Estándar", "Platino"],
+      "Amazon Prime Video": ["Prime Video (Estándar)"],
+      "Paramount+": ["Mensual Estándar"],
+      "Crunchyroll": ["Mega Fan", "Fan"],
+      "Apple TV+": ["Apple TV+ Individual / Familiar"],
+      "DirecTV GO": ["Plan Básico", "Plan Completo con Fútbol"],
+      "VIX": ["VIX Premium"],
+      "MUBI": ["MUBI Standard"],
+      
+      "Spotify": ["Individual", "Dúo", "Familiar"],
+      "YouTube Premium": ["Individual", "Familiar"],
+      "Apple Music": ["Individual", "Familiar"],
+      "Tidal": ["HiFi Individual", "HiFi Familiar"],
+      "Deezer": ["Premium", "Familiar"],
+      "Amazon Music": ["Unlimited Individual", "Unlimited Familiar"],
 
-    async function publicarSuscripcion(e) {
+      "ChatGPT Plus": ["ChatGPT Plus (Individual/Cuenta compartida)"],
+      "Gemini AI": ["Gemini Advanced (Google One)"],
+      "Claude.ai": ["Claude Pro"],
+      "Perplexity": ["Perplexity Pro"],
+
+      "Canva Pro": ["Canva Pro (Equipo / Perfil)"],
+      "Microsoft 365": ["Microsoft 365 Personal", "Microsoft 365 Familiar"],
+      "Google One": ["200 GB", "2 TB"],
+      "Apple One": ["Individual", "Familiar"],
+      "Duolingo": ["Super Duolingo Familiar"],
+
+      "F1 TV Pro": ["F1 TV Pro Anual/Mensual"],
+      "DAZN": ["DAZN Esencial", "DAZN Total"],
+      "NBA League Pass": ["NBA League Pass Mensual"]
+    };
+
+    function actualizarPlanes() {
+      const servicioSelect = document.getElementById('pubServicio').value;
+      const planSelect = document.getElementById('pubPlan');
+      planSelect.innerHTML = '';
+
+      if (!servicioSelect || !planesPorServicio[servicioSelect]) {
+        let opt = document.createElement('option');
+        opt.value = "";
+        opt.innerText = "Primero elige un servicio";
+        planSelect.appendChild(opt);
+        return;
+      }
+
+      planesPorServicio[servicioSelect].forEach(plan => {
+        let opt = document.createElement('option');
+        opt.value = plan;
+        opt.innerText = plan;
+        planSelect.appendChild(opt);
+      });
+    }
+
+    async function publicarServicio(e) {
       e.preventDefault();
       
-      const servicio = document.getElementById('servicio').value;
-      const plan = document.getElementById('plan').value;
-      const precio = parseFloat(document.getElementById('precio').value);
-      const cupos = parseInt(document.getElementById('cupos').value);
-      const emailCuenta = document.getElementById('email_cuenta').value;
+      const servicio = document.getElementById('pubServicio').value;
+      const plan = document.getElementById('pubPlan').value;
+      const lugares = parseInt(document.getElementById('pubLugares').value);
+      const precio = parseFloat(document.getElementById('pubPrecio').value);
+      const alias = document.getElementById('pubAlias').value;
+      const cbu = document.getElementById('pubCbu').value;
+      const banco = document.getElementById('pubBanco').value;
 
-      const nuevaSuscripcion = {
-        servicio: servicio,
-        plan: plan,
-        precio: precio,
-        cupos_disponibles: cupos,
-        cupos_totales: cupos,
-        email_cuenta: emailCuenta || null,
-        usuario: 'Aníbal Peralta'
-      };
-
-      const btnSubmit = document.querySelector('.btn-submit');
+      const supabaseUrl = 'https://xygatgvzdniivzwndaxy.supabase.co';
+      const apikey = 'sb_publishable_fDfrz9tONWlI3ETRbanG3w_cXYsFVif';
 
       try {
-        btnSubmit.innerText = 'Publicando suscripción...';
-        btnSubmit.disabled = true;
-
         const res = await fetch(`${supabaseUrl}/rest/v1/suscripciones`, {
           method: 'POST',
           headers: {
+            'Content-Type': 'application/json',
             'apikey': apikey,
             'Authorization': 'Bearer ' + apikey,
-            'Content-Type': 'application/json',
-            'Prefer': 'return=representation'
+            'Prefer': 'return=minimal'
           },
-          body: JSON.stringify(nuevaSuscripcion)
+          body: JSON.stringify({
+            servicio: servicio,
+            plan: plan,
+            precio: precio,
+            cupos_totales: lugares,
+            cupos_disponibles: lugares,
+            usuario: 'Anibal Peralta',
+            alias: alias,
+            cbu: cbu,
+            banco: banco
+          })
         });
 
         if (res.ok) {
-          alert('¡Suscripción publicada con éxito en la plataforma!');
-          window.location.href = 'mis-ofertas.html';
+          alert('¡Publicado con éxito en Supabase!');
+          window.location.href = 'explorar.html';
         } else {
-          const errorData = await res.json();
-          console.error('Error detallado de Supabase:', errorData);
-          alert('Hubo un problema al registrar la suscripción en la base de datos.');
-          btnSubmit.innerText = 'Publicar Suscripción';
-          btnSubmit.disabled = false;
+          const errText = await res.text();
+          alert('Error de servidor: ' + errText);
         }
       } catch (err) {
-        console.error('Error de red:', err);
-        alert('Error de conexión con el servidor. Por favor, verifica tu red.');
-        btnSubmit.innerText = 'Publicar Suscripción';
-        btnSubmit.disabled = false;
+        alert('Error de red: ' + err.message);
       }
     }
 
-    function abrirMenu() { 
-      document.getElementById('menuOverlay').classList.add('mostrar'); 
-    }
-    
-    function cerrarMenu() { 
-      document.getElementById('menuOverlay').classList.remove('mostrar'); 
-    }
-    
-    function cerrarMenuFuera(e) { 
-      if (e.target.id === 'menuOverlay') {
-        cerrarMenu(); 
-      }
-    }
+    function abrirMenu() { document.getElementById('menuOverlay').classList.add('mostrar'); }
+    function cerrarMenu() { document.getElementById('menuOverlay').classList.remove('mostrar'); }
+    function cerrarMenuFuera(e) { if (e.target.id === 'menuOverlay') cerrarMenu(); }
     
     function cerrarSesion() {
       alert('Has cerrado sesión correctamente.');
