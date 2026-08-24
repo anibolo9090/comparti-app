@@ -21,13 +21,13 @@
     .navbar-inner { max-width: 800px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; position: relative; }
     .logo { font-size: 1.25rem; font-weight: 800; color: #60a5fa; text-decoration: none; }
     
-    .btn-login-nav { background: #2563eb; color: #fff; border: none; padding: 6px 14px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer; }
-    .btn-login-nav:hover { background: #1d4ed8; }
+    .btn-login-nav { background: #2563eb; color: #fff; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; cursor: pointer; }
+    .btn-login-nav:active { background: #1d4ed8; transform: scale(0.95); }
 
     /* Menú usuario */
     .user-menu { display: none; position: absolute; right: 0; top: 45px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; width: 220px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 300; overflow: hidden; }
-    .user-menu-item { padding: 10px 14px; font-size: 0.85rem; color: var(--text); display: block; text-decoration: none; border-bottom: 1px solid var(--card-border); cursor: pointer; }
-    .user-menu-item:hover { background: rgba(59, 130, 246, 0.1); }
+    .user-menu-item { padding: 12px 14px; font-size: 0.9rem; color: var(--text); display: block; text-decoration: none; border-bottom: 1px solid var(--card-border); cursor: pointer; }
+    .user-menu-item:active { background: rgba(59, 130, 246, 0.2); }
     .user-menu-item.logout { color: #f87171; border-bottom: none; }
 
     /* Insignia de verificado */
@@ -50,11 +50,11 @@
     .calc-subtitle { font-size: 0.8rem; color: var(--text-muted); text-align: center; margin-bottom: 12px; }
 
     .service-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; max-height: 260px; overflow-y: auto; padding-right: 4px; }
-    .service-item { display: flex; justify-content: space-between; align-items: center; background: #0f172a; border: 1px solid var(--card-border); padding: 8px 12px; border-radius: 10px; cursor: pointer; }
+    .service-item { display: flex; justify-content: space-between; align-items: center; background: #0f172a; border: 1px solid var(--card-border); padding: 10px 12px; border-radius: 10px; cursor: pointer; }
     .service-item.selected { border-color: var(--primary); background: rgba(59, 130, 246, 0.08); }
     
     .service-info { display: flex; align-items: center; gap: 8px; }
-    .service-checkbox { width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer; }
+    .service-checkbox { width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer; }
     .service-name { font-weight: 600; font-size: 0.85rem; }
 
     .service-cost-tag { text-align: right; }
@@ -65,14 +65,14 @@
     .summary-block div:first-child { font-size: 0.7rem; color: var(--text-muted); margin-bottom: 2px; }
 
     /* Modales */
-    .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.85); z-index: 2000; justify-content: center; align-items: center; padding: 16px; }
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.85); z-index: 9999; justify-content: center; align-items: center; padding: 16px; }
     .modal-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; width: 100%; max-width: 380px; padding: 24px; position: relative; text-align: center; }
-    .modal-close { position: absolute; top: 14px; right: 16px; background: none; border: none; color: var(--text-muted); font-size: 1.4rem; cursor: pointer; }
+    .modal-close { position: absolute; top: 14px; right: 16px; background: none; border: none; color: var(--text-muted); font-size: 1.6rem; cursor: pointer; padding: 4px 8px; }
     
     .form-group { margin-bottom: 12px; text-align: left; }
     .form-label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px; }
-    .form-input { width: 100%; background: #0f172a; border: 1px solid var(--card-border); padding: 10px; border-radius: 8px; color: #fff; font-size: 0.9rem; }
-    .btn-submit { width: 100%; background: var(--primary); color: #fff; border: none; padding: 10px; border-radius: 8px; font-weight: 700; cursor: pointer; margin-top: 8px; }
+    .form-input { width: 100%; background: #0f172a; border: 1px solid var(--card-border); padding: 12px; border-radius: 8px; color: #fff; font-size: 1rem; } /* Fuente de 16px evita zoom automático en iOS */
+    .btn-submit { width: 100%; background: var(--primary); color: #fff; border: none; padding: 12px; border-radius: 8px; font-weight: 700; font-size: 0.95rem; cursor: pointer; margin-top: 8px; }
 
     /* Navegación inferior */
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 1000; }
@@ -87,6 +87,7 @@
     <div class="navbar-inner">
       <a href="index.html" class="logo">🤝 Compartí</a>
       <div style="position: relative;">
+        <!-- Botón con alerta de prueba incorporada para verificar respuesta táctil -->
         <button class="btn-login-nav" id="navAuthBtn" onclick="clickBotonPrincipal()">Ingresar</button>
         <div class="user-menu" id="userMenu">
           <div class="user-menu-item" style="color: #60a5fa; font-weight: bold;" id="userEmailDisplay">Cuenta</div>
@@ -155,14 +156,14 @@
     </div>
   </div>
 
-  <!-- MODAL DE KYC / VERIFICACIÓN DE IDENTIDAD -->
+  <!-- MODAL DE KYC -->
   <div class="modal-overlay" id="kycModal">
     <div class="modal-box">
       <button class="modal-close" onclick="cerrarModalKyc()">&times;</button>
       
       <h3 style="margin-top:0; color:#60a5fa;">Verificación de Identidad (KYC)</h3>
       <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom: 16px;">
-        Este proceso es opcional pero te otorga una insignia de confianza en tus publicaciones y grupos.
+        Este proceso es opcional pero te otorga una insignia de confianza.
       </p>
 
       <form onsubmit="enviarKyc(event)">
@@ -280,7 +281,8 @@
         const menu = document.getElementById('userMenu');
         menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
       } else {
-        document.getElementById('authModal').style.display = 'flex';
+        const modal = document.getElementById('authModal');
+        modal.style.display = 'flex';
       }
     }
 
@@ -300,7 +302,7 @@
         
         cerrarModal();
         chequearSesionNavbar();
-        alert(`¡Bienvenido, ${nickname}! Sesión iniciada correctamente.`);
+        alert(`¡Bienvenido, ${nickname}!`);
       }
     }
 
@@ -315,11 +317,10 @@
       alert('Sesión cerrada.');
     }
 
-    // --- FUNCIONES KYC ---
     function abrirModalKyc() {
       const logueado = localStorage.getItem('usuarioLogueado');
       if (logueado !== 'true') {
-        alert('Debes iniciar sesión primero para verificar tu cuenta.');
+        alert('Debes iniciar sesión primero.');
         document.getElementById('userMenu').style.display = 'none';
         document.getElementById('authModal').style.display = 'flex';
         return;
@@ -337,7 +338,7 @@
       localStorage.setItem('usuarioKyc', 'verificado');
       cerrarModalKyc();
       actualizarBadgeKyc();
-      alert('¡Verificación KYC enviada con éxito! Tu perfil ahora cuenta con la insignia de verificado.');
+      alert('¡Verificación enviada con éxito!');
     }
 
     function actualizarBadgeKyc() {
