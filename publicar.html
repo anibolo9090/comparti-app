@@ -31,6 +31,8 @@
     .form-select { cursor: pointer; }
     .form-textarea { resize: vertical; min-height: 70px; }
     
+    .user-info-notice { background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); padding: 10px 12px; border-radius: 10px; font-size: 0.85rem; color: #93c5fd; margin-bottom: 16px; }
+
     .btn-submit { width: 100%; background: var(--primary); color: #fff; border: none; padding: 12px; border-radius: 10px; font-weight: 700; font-size: 1rem; cursor: pointer; margin-top: 10px; }
     .btn-submit:hover { background: #2563eb; }
 
@@ -50,6 +52,10 @@
   <div class="main-container">
     <div class="form-box">
       <h2 class="form-title">➕ Publicar un nuevo grupo</h2>
+      
+      <div class="user-info-notice" id="userNotice">
+        Publicando como: <b>Cargando...</b>
+      </div>
       
       <form onsubmit="publicarCupo(event)">
         
@@ -74,7 +80,7 @@
           </select>
         </div>
 
-        <!-- Selección del tipo de plan dinámico -->
+        <!-- Selección del tipo de plan -->
         <div class="form-group">
           <label class="form-label">Tipo de Suscripción / Plan</label>
           <select id="pubPlan" class="form-select" onchange="actualizarPrecioPlan()" required>
@@ -90,16 +96,6 @@
         <div class="form-group">
           <label class="form-label">Precio mensual por persona (ARS)</label>
           <input type="number" id="pubPrecio" class="form-input" required placeholder="Ej: 4500">
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Correo o Usuario de la cuenta a compartir</label>
-          <input type="text" id="pubEmailCuenta" class="form-input" required placeholder="correo@ejemplo.com o usuario">
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Contraseña de acceso</label>
-          <input type="text" id="pubPassCuenta" class="form-input" required placeholder="Contraseña del servicio">
         </div>
 
         <div class="form-group">
@@ -150,7 +146,7 @@
         { name: 'Mega Fan (4 dispositivos)', precio: 1500 }
       ],
       nba: [
-        { name: 'NBA League Pass (Anual/Mensual)', precio: 7500 }
+        { name: 'NBA League Pass', precio: 7500 }
       ],
       paramount: [
         { name: 'Paramount+ Estándar', precio: 1800 }
@@ -170,8 +166,23 @@
     };
 
     window.onload = function() {
+      verificarSesionYMostrarEmail();
       cambiarPlataforma();
     };
+
+    function verificarSesionYMostrarEmail() {
+      const logueado = localStorage.getItem('usuarioLogueado');
+      const email = localStorage.getItem('usuarioEmail');
+      const notice = document.getElementById('userNotice');
+
+      if (logueado !== 'true' || !email) {
+        alert('Debes iniciar sesión para publicar una oferta.');
+        window.location.href = 'index.html';
+        return;
+      }
+
+      notice.innerHTML = `Publicando como: <b>${email}</b>`;
+    }
 
     function cambiarPlataforma() {
       const selectServicio = document.getElementById('pubServicio').value;
@@ -204,21 +215,12 @@
     function publicarCupo(e) {
       e.preventDefault();
       
-      const logueado = localStorage.getItem('usuarioLogueado');
-      if (logueado !== 'true') {
-        alert('Debes iniciar sesión para publicar una oferta.');
-        window.location.href = 'index.html';
-        return;
-      }
-
       const selectServicio = document.getElementById('pubServicio');
       const servicioNombre = selectServicio.options[selectServicio.selectedIndex].text;
       const planNombre = document.getElementById('pubPlan').value;
       
       const cupos = document.getElementById('pubCupos').value;
       const precio = document.getElementById('pubPrecio').value;
-      const emailCuenta = document.getElementById('pubEmailCuenta').value;
-      const passCuenta = document.getElementById('pubPassCuenta').value;
       const notas = document.getElementById('pubNotas').value;
 
       const nuevaOferta = {
@@ -226,8 +228,6 @@
         servicio: `${servicioNombre} - ${planNombre}`,
         cupos: cupos,
         precio: precio,
-        emailCuenta: emailCuenta,
-        passCuenta: passCuenta,
         notas: notas,
         usuarioCreador: localStorage.getItem('usuarioEmail') || 'Anónimo'
       };
