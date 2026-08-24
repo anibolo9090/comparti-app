@@ -3,78 +3,270 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Publicar — Compartí</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <title>Publicar / Compartir — Compartí</title>
+
   <style>
-    body { font-family: system-ui, sans-serif; background: #f8fafc; color: #0f172a; padding: 20px; }
-    .box { background: #fff; padding: 20px; border-radius: 12px; max-width: 500px; margin: 0 auto; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-    input, select { width: 100%; padding: 10px; margin-bottom: 12px; border: 1px solid #cbd5e1; border-radius: 8px; }
-    button { width: 100%; background: #4f46e5; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+    :root { 
+      --primary: #4f46e5; 
+      --bg: #f8fafc; 
+      --card-bg: #ffffff; 
+      --card-border: #e2e8f0; 
+      --text: #0f172a; 
+      --text-muted: #64748b; 
+    }
+    * { box-sizing: border-box; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
+    
+    .container { max-width: 800px; margin: 0 auto; padding: 16px; }
+
+    .top-action-header { text-align: center; margin-bottom: 20px; }
+    .top-action-header h2 { font-size: 1.4rem; color: var(--text); margin-bottom: 14px; }
+
+    .segmented-control { display: inline-flex; background: #edf2f7; padding: 4px; border-radius: 40px; gap: 4px; border: 1px solid var(--card-border); }
+    .segment-btn { background: transparent; border: none; padding: 10px 24px; border-radius: 30px; font-weight: 700; font-size: 0.9rem; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 6px; text-decoration: none; }
+    .segment-btn.active { background: #4f46e5; color: #fff; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
+
+    .form-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+    .form-title { font-size: 1.15rem; font-weight: 700; color: var(--text); margin-top: 0; margin-bottom: 6px; }
+    .form-subtitle { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px; }
+
+    .form-group { margin-bottom: 16px; text-align: left; }
+    .form-label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    .form-input, .form-select { width: 100%; background: #f8fafc; border: 1px solid var(--card-border); padding: 12px; border-radius: 10px; color: var(--text); font-size: 0.95rem; }
+    .form-input:focus, .form-select:focus { outline: none; border-color: var(--primary); background: #ffffff; }
+
+    .btn-submit { width: 100%; background: var(--primary); color: #fff; border: none; padding: 14px; border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
+
+    /* MENÚ DESPLEGABLE INFERIOR */
+    .menu-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); z-index: 99999; display: none; align-items: flex-end; }
+    .menu-overlay.mostrar { display: flex; }
+    .menu-drawer { background: #ffffff; border-top: 1px solid var(--card-border); border-top-left-radius: 20px; border-top-right-radius: 20px; width: 100%; max-height: 85vh; overflow-y: auto; padding: 20px; }
+    .menu-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); padding-bottom: 10px; margin-bottom: 10px; }
+    .menu-close { background: none; border: none; color: #0f172a; font-size: 1.8rem; cursor: pointer; }
+    .menu-item-link { display: flex; align-items: center; gap: 10px; padding: 12px; background: #f8fafc; border: 1px solid var(--card-border); border-radius: 8px; color: #4f46e5; text-decoration: none; margin-bottom: 8px; font-weight: 600; font-size: 0.95rem; }
+
+    /* Barra de navegación inferior */
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 9999; box-shadow: 0 -4px 10px rgba(0,0,0,0.03); }
+    .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); text-decoration: none; font-size: 0.75rem; font-weight: 600; gap: 2px; cursor: pointer; background: none; border: none; }
+    .nav-item.active { color: #4f46e5; }
+    .nav-item .icon { font-size: 1.2rem; }
   </style>
 </head>
 <body>
-  <div class="box">
-    <h2>Publicar Suscripción</h2>
-    <form onsubmit="enviarDatos(event)">
-      <label>Servicio:</label>
-      <select id="s">
-        <option value="Netflix">Netflix</option>
-        <option value="Disney+">Disney+</option>
-        <option value="Spotify">Spotify</option>
-      </select>
 
-      <label>Plan:</label>
-      <input type="text" id="p" value="Estándar" required>
+  <div class="container">
+    
+    <div class="top-action-header">
+      <h2>¿Qué quieres hacer?</h2>
+      <div class="segmented-control">
+        <a href="publicar.html" class="segment-btn active">
+          <span>📤</span> Compartir
+        </a>
+        <a href="explorar.html" class="segment-btn">
+          <span>➕</span> Comprar
+        </a>
+      </div>
+    </div>
 
-      <label>Lugares:</label>
-      <input type="number" id="l" value="3" required>
+    <div class="form-box">
+      <h3 class="form-title">Publicar una suscripción</h3>
+      <p class="form-subtitle">Compartí los espacios libres de tus cuentas y ahorrá dinero.</p>
 
-      <label>Precio ($ ARS):</label>
-      <input type="number" id="pr" value="5000" required>
+      <form onsubmit="publicarServicio(event)">
+        
+        <div class="form-group">
+          <label class="form-label">Selecciona el servicio</label>
+          <select id="pubServicio" class="form-select" onchange="actualizarPlanes()" required>
+            <option value="">-- Elige una plataforma --</option>
+            
+            <optgroup label="🍿 Streaming y Películas">
+              <option value="Netflix">Netflix</option>
+              <option value="Disney+">Disney+</option>
+              <option value="Max">Max</option>
+              <option value="Amazon Prime Video">Amazon Prime Video</option>
+              <option value="Paramount+">Paramount+</option>
+              <option value="Crunchyroll">Crunchyroll</option>
+              <option value="Apple TV+">Apple TV+</option>
+              <option value="DirecTV GO">DirecTV GO</option>
+              <option value="VIX">VIX</option>
+              <option value="MUBI">MUBI</option>
+            </optgroup>
 
-      <button type="submit">Guardar en Supabase</button>
-    </form>
+            <optgroup label="🎵 Música">
+              <option value="Spotify">Spotify</option>
+              <option value="YouTube Premium">YouTube Premium</option>
+              <option value="Apple Music">Apple Music</option>
+              <option value="Tidal">Tidal</option>
+              <option value="Deezer">Deezer</option>
+              <option value="Amazon Music">Amazon Music</option>
+            </optgroup>
+
+            <optgroup label="🤖 Inteligencia Artificial">
+              <option value="ChatGPT Plus">ChatGPT Plus</option>
+              <option value="Gemini AI">Gemini AI</option>
+              <option value="Claude.ai">Claude.ai</option>
+              <option value="Perplexity">Perplexity</option>
+            </optgroup>
+
+            <optgroup label="💻 Software y Herramientas">
+              <option value="Canva Pro">Canva Pro</option>
+              <option value="Microsoft 365">Microsoft 365</option>
+              <option value="Google One">Google One</option>
+              <option value="Apple One">Apple One</option>
+              <option value="Duolingo">Duolingo</option>
+            </optgroup>
+
+            <optgroup label="⚽ Deportes">
+              <option value="F1 TV Pro">F1 TV Pro</option>
+              <option value="DAZN">DAZN</option>
+              <option value="NBA League Pass">NBA League Pass</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Tipo de plan</label>
+          <select id="pubPlan" class="form-select" required>
+            <option value="">Primero elige un servicio</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Lugares o perfiles disponibles</label>
+          <input type="number" id="pubLugares" class="form-input" min="1" max="6" value="3" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Precio mensual por lugar ($ ARS)</label>
+          <input type="number" id="pubPrecio" class="form-input" placeholder="Ej: 4500" required>
+        </div>
+
+        <button type="submit" class="btn-submit">Publicar cuenta</button>
+      </form>
+    </div>
+
   </div>
 
-  <script>
-    // URL limpia SIN /rest/v1/ al final
-    const supabaseUrl = 'https://xygatgvzdniivzwndaxy.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh5Z2F0Z3Z6ZG5paXZ6d25kYXh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc0MDU1MTcsImV4cCI6MjEwMjk4MTUxN30.oSoJcTxCw69F0AXmVVw5LFeF0HjdCSwHd_yOH4HwbS8';
-    
-    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+  <!-- MENÚ DESPLEGABLE INFERIOR -->
+  <div class="menu-overlay" id="menuOverlay" onclick="cerrarMenuFuera(event)">
+    <div class="menu-drawer">
+      <div class="menu-header">
+        <h3 style="margin:0; color:#0f172a;">Menú Principal</h3>
+        <button class="menu-close" onclick="cerrarMenu()">&times;</button>
+      </div>
+      <a href="explorar.html" class="menu-item-link"><span>➕</span> Comprar una suscripción</a>
+      <a href="publicar.html" class="menu-item-link"><span>📤</span> Compartir una suscripción</a>
+      <a href="mis-ofertas.html" class="menu-item-link"><span>💳</span> Mis Suscripciones / Grupos</a>
+      <div class="menu-item-link" onclick="cerrarMenu()" style="justify-content:center; background:#f1f5f9; margin-top: 10px; cursor:pointer;">Cerrar menú</div>
+    </div>
+  </div>
 
-    async function enviarDatos(e) {
+  <!-- BARRA DE NAVEGACIÓN INFERIOR -->
+  <div class="bottom-nav">
+    <a href="index.html" class="nav-item"><span class="icon">🏠</span><span>Inicio</span></a>
+    <a href="billetera.html" class="nav-item"><span class="icon">💳</span><span>Billetera</span></a>
+    <a href="mis-ofertas.html" class="nav-item"><span class="icon">👤</span><span>Mi perfil</span></a>
+    <button class="nav-item" onclick="abrirMenu()"><span class="icon">☰</span><span>Menú</span></button>
+  </div>
+
+  <!-- SUPABASE Y LÓGICA DE ENVÍO -->
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+    const SUPABASE_URL = 'https://xygatgvzdniivzwndaxy.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh5Z2F0Z3Z6ZDniaXZ6d25kYXh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc0MDU1MTcsImV4cCI6MjEwMjk4MTUxN30.oSoJcTxCw69F0AXmVVw5LFeF0HjdCSwHd_yOH4HwbS8';
+
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const planesPorServicio = {
+      "Netflix": ["Estándar (con anuncios)", "Estándar", "Premium (4K)"],
+      "Disney+": ["Estándar", "Premium"],
+      "Max": ["Básico con anuncios", "Estándar", "Platino"],
+      "Amazon Prime Video": ["Prime Video (Estándar)"],
+      "Paramount+": ["Mensual Estándar"],
+      "Crunchyroll": ["Mega Fan", "Fan"],
+      "Apple TV+": ["Apple TV+ Individual / Familiar"],
+      "DirecTV GO": ["Plan Básico", "Plan Completo con Fútbol"],
+      "VIX": ["VIX Premium"],
+      "MUBI": ["MUBI Standard"],
+      
+      "Spotify": ["Individual", "Dúo", "Familiar"],
+      "YouTube Premium": ["Individual", "Familiar"],
+      "Apple Music": ["Individual", "Familiar"],
+      "Tidal": ["HiFi Individual", "HiFi Familiar"],
+      "Deezer": ["Premium", "Familiar"],
+      "Amazon Music": ["Unlimited Individual", "Unlimited Familiar"],
+
+      "ChatGPT Plus": ["ChatGPT Plus (Individual/Cuenta compartida)"],
+      "Gemini AI": ["Gemini Advanced (Google One)"],
+      "Claude.ai": ["Claude Pro"],
+      "Perplexity": ["Perplexity Pro"],
+
+      "Canva Pro": ["Canva Pro (Equipo / Perfil)"],
+      "Microsoft 365": ["Microsoft 365 Personal", "Microsoft 365 Familiar"],
+      "Google One": ["200 GB", "2 TB"],
+      "Apple One": ["Individual", "Familiar"],
+      "Duolingo": ["Super Duolingo Familiar"],
+
+      "F1 TV Pro": ["F1 TV Pro Anual/Mensual"],
+      "DAZN": ["DAZN Esencial", "DAZN Total"],
+      "NBA League Pass": ["NBA League Pass Mensual"]
+    };
+
+    window.actualizarPlanes = function() {
+      const servicioSelect = document.getElementById('pubServicio').value;
+      const planSelect = document.getElementById('pubPlan');
+      planSelect.innerHTML = '';
+
+      if (!servicioSelect || !planesPorServicio[servicioSelect]) {
+        let opt = document.createElement('option');
+        opt.value = "";
+        opt.innerText = "Primero elige un servicio";
+        planSelect.appendChild(opt);
+        return;
+      }
+
+      planesPorServicio[servicioSelect].forEach(plan => {
+        let opt = document.createElement('option');
+        opt.value = plan;
+        opt.innerText = plan;
+        planSelect.appendChild(opt);
+      });
+    }
+
+    window.publicarServicio = async function(e) {
       e.preventDefault();
       
-      const servicio = document.getElementById('s').value;
-      const plan = document.getElementById('p').value;
-      const cupos = parseInt(document.getElementById('l').value);
-      const precio = parseFloat(document.getElementById('pr').value);
+      const servicio = document.getElementById('pubServicio').value;
+      const plan = document.getElementById('pubPlan').value;
+      const lugares = parseInt(document.getElementById('pubLugares').value);
+      const precio = parseFloat(document.getElementById('pubPrecio').value);
 
-      try {
-        const { data, error } = await supabaseClient
-          .from('suscripciones')
-          .insert([
-            { 
-              servicio: servicio, 
-              plan: plan, 
-              precio: precio, 
-              cupos_totales: cupos, 
-              cupos_disponibles: cupos, 
-              usuario: 'Anibal Peralta' 
-            }
-          ]);
+      const { data, error } = await supabase
+        .from('suscripciones')
+        .insert([
+          { 
+            servicio: servicio, 
+            plan: plan, 
+            precio: precio, 
+            cupos_totales: lugares, 
+            cupos_disponibles: lugares, 
+            usuario: 'Anibal Peralta' 
+          }
+        ]);
 
-        if (error) {
-          alert('Error de Supabase: ' + error.message);
-        } else {
-          alert('¡Guardado con éxito en la base de datos!');
-          window.location.href = 'explorar.html';
-        }
-      } catch (err) {
-        alert('Error inesperado: ' + err.message);
+      if (error) {
+        console.error('Error detallado:', error);
+        alert('DETALLE DEL ERROR: ' + error.message);
+      } else {
+        alert(`¡Publicado con éxito en Supabase!`);
+        window.location.href = 'explorar.html';
       }
     }
+
+    window.abrirMenu = function() { document.getElementById('menuOverlay').classList.add('mostrar'); }
+    window.cerrarMenu = function() { document.getElementById('menuOverlay').classList.remove('mostrar'); }
+    window.cerrarMenuFuera = function(e) { if (e.target.id === 'menuOverlay') cerrarMenu(); }
   </script>
 </body>
 </html>
