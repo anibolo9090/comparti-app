@@ -26,19 +26,23 @@
     .segment-btn { background: transparent; border: none; padding: 10px 24px; border-radius: 30px; font-weight: 700; font-size: 0.9rem; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 6px; text-decoration: none; }
     .segment-btn.active { background: #4f46e5; color: #fff; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
 
-    .section-title { font-size: 1.15rem; font-weight: 700; color: var(--text); margin-bottom: 14px; }
+    /* FILTROS Y TARJETAS */
+    .filtros-box { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 16px; }
+    .filtro-chip { background: #ffffff; border: 1px solid var(--card-border); padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); cursor: pointer; white-space: nowrap; }
+    .filtro-chip.active { background: var(--primary); color: #fff; border-color: var(--primary); }
 
-    /* Tarjetas de suscripciones */
-    .grid-suscripciones { display: grid; gap: 12px; }
-    .card-suscripcion { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; justify-content: space-between; align-items: center; }
-    .card-info h4 { margin: 0 0 4px 0; font-size: 1.05rem; color: var(--text); }
-    .card-info p { margin: 0; font-size: 0.85rem; color: var(--text-muted); }
-    .card-price { text-align: right; }
-    .card-price .price { font-size: 1.1rem; font-weight: 700; color: var(--primary); display: block; }
-    .card-price .spots { font-size: 0.75rem; color: var(--text-muted); }
-    .btn-comprar { background: var(--primary); color: #fff; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer; margin-top: 8px; display: inline-block; text-decoration: none; }
+    .card-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+    @media(min-width: 600px) { .card-grid { grid-template-columns: 1fr 1fr; } }
 
-    .mensaje-estado { text-align: center; color: var(--text-muted); padding: 30px; font-size: 0.95rem; }
+    .sub-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 18px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: space-between; }
+    .sub-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+    .sub-title { font-size: 1.1rem; font-weight: 700; color: var(--text); margin: 0; }
+    .sub-plan { font-size: 0.85rem; color: var(--text-muted); margin-top: 2px; }
+    .sub-precio { font-size: 1.25rem; font-weight: 800; color: var(--primary); }
+    
+    .badge-cupos { display: inline-block; background: #e0e7ff; color: #3730a3; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; margin-bottom: 12px; }
+    
+    .btn-comprar { width: 100%; background: var(--primary); color: #fff; border: none; padding: 10px; border-radius: 10px; font-weight: 700; font-size: 0.9rem; cursor: pointer; text-align: center; text-decoration: none; display: block; }
 
     /* MENÚ DESPLEGABLE INFERIOR */
     .menu-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); z-index: 99999; display: none; align-items: flex-end; }
@@ -71,15 +75,24 @@
       </div>
     </div>
 
-    <div class="section-title">Suscripciones disponibles</div>
+    <!-- FILTROS RÁPIDOS -->
+    <div class="filtros-box">
+      <button class="filtro-chip active" onclick="filtrar('todos', this)">Todos</button>
+      <button class="filtro-chip" onclick="filtrar('Netflix', this)">Netflix</button>
+      <button class="filtro-chip" onclick="filtrar('Spotify', this)">Spotify</button>
+      <button class="filtro-chip" onclick="filtrar('Disney+', this)">Disney+</button>
+      <button class="filtro-chip" onclick="filtrar('Max', this)">Max</button>
+      <button class="filtro-chip" onclick="filtrar('ChatGPT Plus', this)">ChatGPT</button>
+    </div>
 
-    <div id="contenedorLista" class="grid-suscripciones">
-      <div class="mensaje-estado">Cargando publicaciones...</div>
+    <!-- CONTENEDOR DE TARJETAS -->
+    <div id="gridSuscripciones" class="card-grid">
+      <p style="text-align: center; color: var(--text-muted); grid-column: span 2;">Cargando suscripciones disponibles...</p>
     </div>
 
   </div>
 
-  <!-- MENÚ DESPLEGABLE INFERIOR -->
+  <!-- MENÚ DESPLEGABLE INFERIOR CON CERRAR SESIÓN -->
   <div class="menu-overlay" id="menuOverlay" onclick="cerrarMenuFuera(event)">
     <div class="menu-drawer">
       <div class="menu-header">
@@ -89,6 +102,12 @@
       <a href="explorar.html" class="menu-item-link"><span>➕</span> Comprar una suscripción</a>
       <a href="publicar.html" class="menu-item-link"><span>📤</span> Compartir una suscripción</a>
       <a href="mis-ofertas.html" class="menu-item-link"><span>💳</span> Mis Suscripciones / Grupos</a>
+      
+      <!-- Botón de Cerrar Sesión -->
+      <a href="#" onclick="cerrarSesion()" class="menu-item-link" style="background: #fef2f2; color: #dc2626; border-color: #fecaca;">
+        <span>🚪</span> Cerrar Sesión
+      </a>
+
       <div class="menu-item-link" onclick="cerrarMenu()" style="justify-content:center; background:#f1f5f9; margin-top: 10px; cursor:pointer;">Cerrar menú</div>
     </div>
   </div>
@@ -101,67 +120,81 @@
     <button class="nav-item" onclick="abrirMenu()"><span class="icon">☰</span><span>Menú</span></button>
   </div>
 
-  <!-- LÓGICA DE CARGA -->
   <script>
+    let todasLasSuscripciones = [];
+
     const supabaseUrl = 'https://xygatgvzdniivzwndaxy.supabase.co';
     const apikey = 'sb_publishable_fDfrz9tONWlI3ETRbanG3w_cXYsFVif';
 
     async function cargarSuscripciones() {
-      const contenedor = document.getElementById('contenedorLista');
-
       try {
         const res = await fetch(`${supabaseUrl}/rest/v1/suscripciones?select=*`, {
-          method: 'GET',
           headers: {
             'apikey': apikey,
             'Authorization': 'Bearer ' + apikey
           }
         });
-
-        if (!res.ok) {
-          throw new Error('No se pudo conectar con el servidor');
+        
+        if (res.ok) {
+          todasLasSuscripciones = await res.json();
+          mostrarSuscripciones(todasLasSuscripciones);
+        } else {
+          document.getElementById('gridSuscripciones').innerHTML = '<p style="text-align:center; color:red; grid-column:span 2;">Error al cargar las ofertas.</p>';
         }
-
-        const data = await res.json();
-
-        if (!data || data.length === 0) {
-          contenedor.innerHTML = '<div class="mensaje-estado">No hay suscripciones publicadas todavía. ¡Sé el primero en compartir una!</div>';
-          return;
-        }
-
-        contenedor.innerHTML = '';
-        data.forEach(item => {
-          const card = document.createElement('div');
-          card.className = 'card-suscripcion';
-          
-          const sinCupos = item.cupos_disponibles <= 0;
-          const servicioEncoded = encodeURIComponent(item.servicio);
-
-          card.innerHTML = `
-            <div class="card-info">
-              <h4>${item.servicio}</h4>
-              <p>${item.plan || 'Plan general'} • Por ${item.usuario || 'Anfitrión'}</p>
-              <a href="detalle.html?servicio=${servicioEncoded}" class="btn-comprar" ${sinCupos ? 'style="background:#cbd5e1; pointer-events:none;"' : ''}>
-                ${sinCupos ? 'Sin lugares' : 'Unirme'}
-              </a>
-            </div>
-            <div class="card-price">
-              <span class="price">$${item.precio} ARS</span>
-              <span class="spots">${item.cupos_disponibles} lugares libres</span>
-            </div>
-          `;
-          contenedor.appendChild(card);
-        });
-
       } catch (err) {
-        console.error(err);
-        contenedor.innerHTML = '<div class="mensaje-estado">Error al cargar las suscripciones.</div>';
+        document.getElementById('gridSuscripciones').innerHTML = '<p style="text-align:center; color:red; grid-column:span 2;">Error de conexión con la base de datos.</p>';
+      }
+    }
+
+    function mostrarSuscripciones(lista) {
+      const grid = document.getElementById('gridSuscripciones');
+      grid.innerHTML = '';
+
+      if (lista.length === 0) {
+        grid.innerHTML = '<p style="text-align:center; color:var(--text-muted); grid-column:span 2;">No hay suscripciones disponibles por el momento.</p>';
+        return;
+      }
+
+      lista.forEach(item => {
+        let card = document.createElement('div');
+        card.className = 'sub-card';
+        card.innerHTML = `
+          <div>
+            <div class="sub-header">
+              <div>
+                <h3 class="sub-title">${item.servicio}</h3>
+                <div class="sub-plan">${item.plan || 'Plan Estándar'}</div>
+              </div>
+              <div class="sub-precio">$${item.precio?.toLocaleString('es-AR')}</div>
+            </div>
+            <div class="badge-cupos">👤 Quedan ${item.cupos_disponibles} lugares</div>
+          </div>
+          <a href="pago.html?id=${item.id}" class="btn-comprar">Comprar lugar</a>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function filtrar(categoria, elementoBtn) {
+      document.querySelectorAll('.filtro-chip').forEach(btn => btn.classList.remove('active'));
+      elementoBtn.classList.add('active');
+
+      if (categoria === 'todos') {
+        mostrarSuscripciones(todasLasSuscripciones);
+      } else {
+        const filtradas = todasLasSuscripciones.filter(item => item.servicio.toLowerCase().includes(categoria.toLowerCase()));
+        mostrarSuscripciones(filtradas);
       }
     }
 
     function abrirMenu() { document.getElementById('menuOverlay').classList.add('mostrar'); }
     function cerrarMenu() { document.getElementById('menuOverlay').classList.remove('mostrar'); }
     function cerrarMenuFuera(e) { if (e.target.id === 'menuOverlay') cerrarMenu(); }
+
+    function cerrarSesion() {
+      alert('Has cerrado sesión correctamente.');
+      window.location.href = 'index.html';
+    }
   </script>
 </body>
 </html>
