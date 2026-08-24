@@ -3,165 +3,170 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Compartí — Mis Grupos y Ingresos</title>
+  <title>Mi Perfil y Suscripciones — Compartí</title>
+
   <style>
     :root { 
-      --primary: #3b82f6; 
-      --bg: #0f172a; 
-      --card-bg: #1e293b; 
-      --card-border: #334155; 
-      --text: #f8fafc; 
-      --text-muted: #94a3b8; 
+      --primary: #4f46e5; 
+      --bg: #f8fafc; 
+      --card-bg: #ffffff; 
+      --card-border: #e2e8f0; 
+      --text: #0f172a; 
+      --text-muted: #64748b; 
     }
     * { box-sizing: border-box; }
     body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
     
-    .navbar { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(8px); border-bottom: 1px solid var(--card-border); padding: 12px 20px; position: sticky; top: 0; z-index: 100; }
-    .navbar-inner { max-width: 800px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
-    .logo { font-size: 1.25rem; font-weight: 800; color: #60a5fa; text-decoration: none; }
-    .btn-login-nav { background: #2563eb; color: #fff; border: none; padding: 6px 14px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer; }
+    .container { max-width: 800px; margin: 0 auto; padding: 16px; }
 
-    .main-container { max-width: 800px; margin: 20px auto; padding: 0 16px; }
-    .section-title { font-size: 1.2rem; color: #60a5fa; margin-bottom: 14px; }
+    /* Cabecera de Perfil */
+    .profile-header { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 20px; text-align: center; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+    .profile-avatar { width: 70px; height: 70px; background: #e0e7ff; color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin: 0 auto 10px auto; font-weight: 700; }
+    .profile-name { font-size: 1.2rem; font-weight: 700; margin: 0 0 4px 0; color: var(--text); }
+    .profile-email { font-size: 0.85rem; color: var(--text-muted); margin: 0; }
 
-    .my-offer-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
-    .my-offer-info h3 { margin: 0 0 4px 0; font-size: 1rem; color: #fff; }
-    .my-offer-info p { margin: 0 0 6px 0; font-size: 0.8rem; color: var(--text-muted); }
+    /* Secciones */
+    .section-title { font-size: 1.1rem; font-weight: 700; color: var(--text); margin: 20px 0 10px 0; display: flex; justify-content: space-between; align-items: center; }
     
-    .status-badge { background: rgba(234, 179, 8, 0.15); color: #facc15; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; display: inline-block; }
-    .status-badge.active { background: rgba(74, 222, 128, 0.15); color: #4ade80; }
+    /* Tarjetas de ofertas / publicaciones */
+    .card-list { display: flex; flex-direction: column; gap: 10px; }
+    .offer-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 16px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+    .offer-info h4 { margin: 0 0 4px 0; font-size: 1rem; color: var(--text); }
+    .offer-info p { margin: 0; font-size: 0.85rem; color: var(--text-muted); }
+    .badge { background: #e0e7ff; color: var(--primary); font-size: 0.75rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; }
 
-    .btn-action { background: #10b981; color: #fff; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 700; font-size: 0.8rem; cursor: pointer; }
-    .btn-action:hover { background: #059669; }
+    .empty-state { text-align: center; padding: 24px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; color: var(--text-muted); font-size: 0.9rem; }
 
-    /* Estado si no está logueado */
-    #authGuard { display: none; text-align: center; padding: 40px 20px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; margin-top: 20px; }
-    #authGuard h2 { color: #f87171; margin-bottom: 10px; }
-    .btn-login-redirect { display: inline-block; background: var(--primary); color: #fff; text-decoration: none; padding: 10px 20px; border-radius: 8px; font-weight: 700; margin-top: 15px; }
+    /* Botón de acción rápida */
+    .btn-action { display: block; width: 100%; text-align: center; background: var(--primary); color: #fff; text-decoration: none; padding: 12px; border-radius: 12px; font-weight: 700; font-size: 0.95rem; margin-top: 15px; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
 
-    /* Navegación Inferior */
-    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 1000; }
-    .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); text-decoration: none; font-size: 0.75rem; font-weight: 600; gap: 2px; }
-    .nav-item.active { color: #60a5fa; }
+    /* MENÚ DESPLEGABLE INFERIOR */
+    .menu-overlay { 
+      position: fixed; 
+      top: 0; left: 0; right: 0; bottom: 0; 
+      background: rgba(15, 23, 42, 0.6); 
+      z-index: 99999; 
+      display: none; 
+      align-items: flex-end; 
+    }
+    .menu-overlay.mostrar { display: flex; }
+
+    .menu-drawer { 
+      background: #ffffff; 
+      border-top: 1px solid var(--card-border); 
+      border-top-left-radius: 20px; 
+      border-top-right-radius: 20px; 
+      width: 100%; 
+      max-height: 85vh; 
+      overflow-y: auto; 
+      padding: 20px; 
+    }
+    .menu-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); padding-bottom: 10px; margin-bottom: 10px; }
+    .menu-close { background: none; border: none; color: #0f172a; font-size: 1.8rem; cursor: pointer; }
+    .menu-item-link { display: flex; align-items: center; gap: 10px; padding: 12px; background: #f8fafc; border: 1px solid var(--card-border); border-radius: 8px; color: #4f46e5; text-decoration: none; margin-bottom: 8px; font-weight: 600; font-size: 0.95rem; }
+
+    /* Barra de navegación inferior */
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 9999; box-shadow: 0 -4px 10px rgba(0,0,0,0.03); }
+    .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); text-decoration: none; font-size: 0.75rem; font-weight: 600; gap: 2px; cursor: pointer; background: none; border: none; }
+    .nav-item.active { color: #4f46e5; }
     .nav-item .icon { font-size: 1.2rem; }
   </style>
 </head>
 <body>
 
-  <nav class="navbar">
-    <div class="navbar-inner">
-      <a href="index.html" class="logo">🤝 Compartí</a>
-      <button class="btn-login-nav" id="navAuthBtn" onclick="window.location.href='index.html'">Ingresar</button>
-    </div>
-  </nav>
-
-  <div class="main-container">
+  <div class="container">
     
-    <!-- CONTENIDO SI ESTÁ LOGUEADO -->
-    <div id="contentLogged" style="display: none;">
-      <h2 class="section-title">📂 Mis Grupos y Suscripciones</h2>
-      
-      <!-- Banner informativo de seguridad -->
-      <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid var(--primary); border-radius: 12px; padding: 14px; margin-bottom: 16px; font-size: 0.85rem; line-height: 1.4;">
-        <span style="font-weight: 700; color: #60a5fa;">🛡️ Seguridad Garantizada:</span> Al unirte, tenés <strong>24 horas de prueba</strong>. Si confirmas que ingresaste correctamente, arranca el periodo de retención de 10 días para proteger tus fondos contra estafas.
-      </div>
-
-      <!-- Lista dinámica de grupos unidos -->
-      <div id="listaMisGrupos">
-        <!-- Se llena con JavaScript -->
-      </div>
+    <!-- Tarjeta de Perfil -->
+    <div class="profile-header">
+      <div class="profile-avatar">👤</div>
+      <h2 class="profile-name">Mi Cuenta</h2>
+      <p class="profile-email">usuario@comparti.app</p>
     </div>
 
-    <!-- AVISO SI NO ESTÁ LOGUEADO -->
-    <div id="authGuard">
-      <h2>🔒 Acceso Restringido</h2>
-      <p style="color: var(--text-muted); font-size: 0.9rem;">Necesitas iniciar sesión para ver tus grupos y gestionar tus ingresos.</p>
-      <a href="index.html" class="btn-login-redirect">Ir a Iniciar Sesión</a>
+    <!-- Mis Publicaciones (Cuentas que comparto) -->
+    <div class="section-title">
+      <span>📤 Mis Publicaciones</span>
+    </div>
+    <div class="card-list" id="listaMisPublicaciones">
+      <!-- Se carga dinámicamente con JS -->
+    </div>
+
+    <a href="publicar.html" class="btn-action">Publicar nueva suscripción</a>
+
+    <!-- Mis Compras / Suscripciones Activas -->
+    <div class="section-title" style="margin-top: 30px;">
+      <span>💳 Suscripciones Activas</span>
+    </div>
+    <div class="card-list">
+      <div class="offer-card">
+        <div class="offer-info">
+          <h4>🎬 Netflix (Plan Estándar)</h4>
+          <p>Grupo de Ana M. • Vence en 22 días</p>
+        </div>
+        <span class="badge">Activo</span>
+      </div>
     </div>
 
   </div>
 
+  <!-- MENÚ DESPLEGABLE INFERIOR -->
+  <div class="menu-overlay" id="menuOverlay" onclick="cerrarMenuFuera(event)">
+    <div class="menu-drawer">
+      <div class="menu-header">
+        <h3 style="margin:0; color:#0f172a;">Menú Principal</h3>
+        <button class="menu-close" onclick="cerrarMenu()">&times;</button>
+      </div>
+      <a href="explorar.html" class="menu-item-link"><span>➕</span> Comprar una suscripción</a>
+      <a href="publicar.html" class="menu-item-link"><span>📤</span> Compartir una suscripción</a>
+      <a href="mis-ofertas.html" class="menu-item-link"><span>💳</span> Mis Suscripciones / Grupos</a>
+      <div class="menu-item-link" onclick="cerrarMenu()" style="justify-content:center; background:#f1f5f9; margin-top: 10px; cursor:pointer;">Cerrar menú</div>
+    </div>
+  </div>
+
+  <!-- BARRA DE NAVEGACIÓN INFERIOR -->
   <div class="bottom-nav">
-    <a href="index.html" class="nav-item">
-      <span class="icon">🏠</span>
-      <span>Inicio</span>
-    </a>
-    <a href="explorar.html" class="nav-item">
-      <span class="icon">🔍</span>
-      <span>Explorar</span>
-    </a>
-    <a href="publicar.html" class="nav-item">
-      <span class="icon">➕</span>
-      <span>Publicar</span>
-    </a>
-    <a href="mis-ofertas.html" class="nav-item active">
-      <span class="icon">📂</span>
-      <span>Mis Ofertas</span>
-    </a>
+    <a href="index.html" class="nav-item"><span class="icon">🏠</span><span>Inicio</span></a>
+    <a href="explorar.html" class="nav-item"><span class="icon">💳</span><span>Billetera</span></a>
+    <a href="mis-ofertas.html" class="nav-item active"><span class="icon">👤</span><span>Mi perfil</span></a>
+    <button class="nav-item" onclick="abrirMenu()"><span class="icon">☰</span><span>Menú</span></button>
   </div>
 
   <script>
     window.onload = function() {
-      const logueado = localStorage.getItem('usuarioLogueado');
-      if (logueado === 'true') {
-        document.getElementById('navAuthBtn').innerText = '👤 Mi Cuenta';
-        document.getElementById('contentLogged').style.display = 'block';
-        document.getElementById('authGuard').style.display = 'none';
-        renderMisGrupos();
-      } else {
-        document.getElementById('contentLogged').style.display = 'none';
-        document.getElementById('authGuard').style.display = 'block';
-      }
-    };
+      const contenedor = document.getElementById('listaMisPublicaciones');
+      let misPublicaciones = JSON.parse(localStorage.getItem('misPublicaciones') || '[]');
 
-    function renderMisGrupos() {
-      const contenedor = document.getElementById('listaMisGrupos');
-      let grupos = JSON.parse(localStorage.getItem('misGruposUnidos') || '[]');
-
-      // Si no tiene grupos unidos de prueba, le cargamos uno por defecto para demo
-      if (grupos.length === 0) {
-        grupos = [{ servicio: 'Disney+ (Premium)', admin: 'Ana_Gomez', precio: '4.000', estado: 'Esperando Confirmación de Ingreso' }];
-        localStorage.setItem('misGruposUnidos', JSON.stringify(grupos));
+      if (misPublicaciones.length === 0) {
+        contenedor.innerHTML = `<div class="empty-state">Aún no has publicado ninguna suscripción para compartir.</div>`;
+        return;
       }
 
       contenedor.innerHTML = '';
-      grupos.forEach((g, index) => {
+      misPublicaciones.forEach((pub, index) => {
         const card = document.createElement('div');
-        card.className = 'my-offer-card';
-        
-        let badgeHtml = '';
-        let botonHtml = '';
-
-        if (g.estado === 'Esperando Confirmación de Ingreso') {
-          badgeHtml = `<span class="status-badge">⏳ Pendiente de Ingreso</span>`;
-          botonHtml = `<button class="btn-action" onclick="confirmarIngreso(${index})">✅ Confirmar que pude ingresar</button>`;
-        } else {
-          badgeHtml = `<span class="status-badge active">🔒 Protegido (Retención 10 días)</span>`;
-          botonHtml = `<button style="background:var(--card-bg); border:1px solid var(--card-border); color:#fff; padding:6px 12px; border-radius:8px; font-size:0.75rem; cursor:pointer;" onclick="alert('Estás protegido. Quedan días en curso para liberar fondos al administrador.')">Ver Estado</button>`;
-        }
-
+        card.className = 'offer-card';
         card.innerHTML = `
-          <div class="my-offer-info">
-            <h3>🎬 ${g.servicio}</h3>
-            <p>Admin: <strong>${g.admin}</strong> • Precio: $${g.precio} /mes</p>
-            <div>${badgeHtml}</div>
+          <div class="offer-info">
+            <h4>${pub.servicio} (${pub.plan || 'Estándar'})</h4>
+            <p>${pub.lugares} lugares disponibles • $${pub.precio} / mes</p>
           </div>
-          <div>${botonHtml}</div>
+          <span class="badge" style="background: #dcfce7; color: #166534;">Publicado</span>
         `;
         contenedor.appendChild(card);
       });
+    };
+
+    function abrirMenu() {
+      document.getElementById('menuOverlay').classList.add('mostrar');
     }
 
-    function confirmarIngreso(index) {
-      let grupos = JSON.parse(localStorage.getItem('misGruposUnidos') || '[]');
-      
-      const conf = confirm("¿Estás seguro de que pudiste ingresar a la cuenta correctamente con los datos provistos?\n\nAl confirmar, se activarán las 24hs de prueba finalizadas y comenzará el periodo de protección de fondos por 10 días.");
-      
-      if (conf) {
-        grupos[index].estado = 'Protegido';
-        localStorage.setItem('misGruposUnidos', JSON.stringify(grupos));
-        alert("¡Ingreso confirmado con éxito! Tu dinero está resguardado de forma segura.");
-        renderMisGrupos();
+    function cerrarMenu() {
+      document.getElementById('menuOverlay').classList.remove('mostrar');
+    }
+
+    function cerrarMenuFuera(e) {
+      if (e.target.id === 'menuOverlay') {
+        cerrarMenu();
       }
     }
   </script>
