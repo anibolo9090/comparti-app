@@ -17,7 +17,6 @@
       --card-border: #e2e8f0; 
       --text: #0f172a; 
       --text-muted: #64748b; 
-      --whatsapp: #25d366;
     }
     * { box-sizing: border-box; }
     body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
@@ -28,10 +27,10 @@
     .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-top: 8px; }
     .brand-logo { font-size: 1.25rem; font-weight: 800; color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 6px; }
     
-    .user-profile-pill { display: none; align-items: center; gap: 8px; background: #ffffff; border: 1px solid var(--card-border); padding: 6px 14px; border-radius: 30px; font-size: 0.85rem; font-weight: 600; color: var(--text); box-shadow: 0 1px 2px rgba(0,0,0,0.02); cursor: pointer; }
+    .user-profile-pill { display: flex; align-items: center; gap: 8px; background: #ffffff; border: 1px solid var(--card-border); padding: 6px 14px; border-radius: 30px; font-size: 0.85rem; font-weight: 600; color: var(--text); box-shadow: 0 1px 2px rgba(0,0,0,0.02); cursor: pointer; }
     .user-profile-pill .avatar-dot { width: 8px; height: 8px; background: #16a34a; border-radius: 50%; }
 
-    .btn-login-small { background: var(--primary); color: #fff; padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; text-decoration: none; box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2); border: none; cursor: pointer; display: inline-block; }
+    .btn-login-small { background: var(--primary); color: #fff; padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; text-decoration: none; box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2); border: none; cursor: pointer; }
     .btn-login-small:hover { background: #4338ca; }
 
     /* HERO SECTION MEJORADA */
@@ -64,12 +63,6 @@
     .services-preview { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 16px; }
     .service-mini-chip { background: var(--card-bg); border: 1px solid var(--card-border); padding: 8px 14px; border-radius: 20px; font-size: 0.82rem; font-weight: 600; white-space: nowrap; display: flex; align-items: center; gap: 6px; }
 
-    /* ESTILOS NUEVOS PARA INSIGNIAS DE VERIFICACIÓN */
-    .badge-verified { background: #dcfce7; color: #166534; font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 10px; display: inline-flex; align-items: center; gap: 3px; }
-    .badge-unverified { background: #f1f5f9; color: var(--text-muted); font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 10px; display: inline-flex; align-items: center; gap: 3px; }
-    .btn-whatsapp { background: var(--whatsapp); color: #fff; width: 100%; border: none; padding: 12px; border-radius: 12px; font-weight: 700; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3); }
-    .btn-whatsapp:hover { background: #22bf5b; }
-
     /* MODAL DE LOGIN / REGISTRO */
     .auth-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); z-index: 999999; display: none; align-items: flex-end; backdrop-filter: blur(2px); }
     .auth-overlay.mostrar { display: flex; }
@@ -85,7 +78,8 @@
     .divider::before { margin-right: .5em; }
     .divider::after { margin-left: .5em; }
 
-    .btn-google-container { display: flex; justify-content: center; width: 100%; margin-bottom: 10px; }
+    .btn-google { display: inline-flex; align-items: center; justify-content: center; gap: 10px; background: #ffffff; color: #374151; border: 1px solid #cbd5e1; padding: 12px 20px; border-radius: 12px; font-weight: 600; font-size: 0.95rem; cursor: pointer; width: 100%; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+    .btn-google:hover { background: #f8fafc; }
 
     /* MENÚ FLOTANTE */
     .menu-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); z-index: 99999; display: none; align-items: flex-end; backdrop-filter: blur(2px); }
@@ -123,15 +117,9 @@
     <div class="top-bar">
       <a href="index.html" class="brand-logo">⚡ Compartí</a>
       
-      <!-- BOTÓN FIJO DE INICIO DE SESIÓN Y PERFIL (Controlados por ID para evitar fallos) -->
+      <!-- CONTENEDOR DINÁMICO DE USUARIO -->
       <div id="contenedorHeaderDerecha">
-        <button id="btnLoginUnico" class="btn-login-small">Iniciar sesión</button>
-        <button id="btnPerfilUnico" class="user-profile-pill">
-          <span class="avatar-dot"></span>
-          <span id="nombreUsuarioTexto">Mi Perfil</span>
-          <span id="badgeWapHeader"></span>
-          <span style="font-size: 0.7rem; color: var(--text-muted); margin-left: 2px;">▼</span>
-        </button>
+        <button onclick="abrirAuthModal()" class="btn-login-small">Iniciar sesión</button>
       </div>
     </div>
 
@@ -193,8 +181,10 @@
         <button class="menu-close" onclick="cerrarAuthModal()">&times;</button>
       </div>
 
-      <!-- Contenedor oficial para el botón de Google -->
-      <div id="buttonDivGoogle" class="btn-google-container"></div>
+      <button class="btn-google" onclick="manejarLoginGoogle()">
+        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.13 0-5.78-2.11-6.73-4.96H1.18v3.15C3.15 21.32 7.23 24 12 24z"/><path fill="#FBBC05" d="M5.27 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.6H1.18C.43 8.13 0 9.87 0 12s.43 3.87 1.18 5.4l4.09-3.16z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.23 0 3.15 2.68 1.18 6.6l4.09 3.15c.95-2.85 3.6-4.96 6.73-4.96z"/></svg>
+        Continuar con Google
+      </button>
 
       <div class="divider">o con correo electrónico</div>
 
@@ -240,36 +230,9 @@
       
       <div class="menu-list">
         <button onclick="editarNombreUsuario(event)" class="menu-item-clean"><span>✏️ Editar nombre de usuario</span><span class="arrow">›</span></button>
-        <button onclick="abrirModalWhatsapp()" class="menu-item-clean">
-          <span>📱 Verificar WhatsApp</span>
-          <span id="estadoWapMenu"><span class="badge-unverified">Pendiente</span></span>
-        </button>
         <a href="mis-ofertas.html" class="menu-item-clean"><span>👤 Ver perfil completo</span><span class="arrow">›</span></a>
         <button onclick="cerrarSesion()" class="menu-item-clean menu-item-logout"><span>🚪 Cerrar sesión</span><span class="arrow">›</span></button>
       </div>
-    </div>
-  </div>
-
-  <!-- MODAL PARA INGRESAR Y VALIDAR WHATSAPP -->
-  <div class="auth-overlay" id="whatsappModal" onclick="cerrarWhatsappFuera(event)">
-    <div class="auth-drawer">
-      <div class="menu-header-top">
-        <h3 class="menu-title">Verificar WhatsApp</h3>
-        <button class="menu-close" onclick="cerrarModalWhatsapp()">&times;</button>
-      </div>
-      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">
-        Ingresá tu número con código de área para validar tu cuenta y generar mayor confianza en los grupos.
-      </p>
-
-      <form onsubmit="guardarVerificacionWhatsapp(event)">
-        <div class="form-group">
-          <label class="form-label">Número de WhatsApp</label>
-          <input type="tel" id="whatsappInput" class="form-input" placeholder="+54 9 11 1234 5678" required>
-        </div>
-        <button type="submit" class="btn-whatsapp">
-          <span>💬 Guardar y Verificar</span>
-        </button>
-      </form>
     </div>
   </div>
 
@@ -283,82 +246,102 @@
   </div>
 
   <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      // Inicializar SDK Google
+    window.onload = function () {
       if (typeof google !== 'undefined') {
         google.accounts.id.initialize({
           client_id: "572281007707-5k25l8rvq23sj6lh7h1f0u4speips678.apps.googleusercontent.com",
           callback: manejarRespuestaGoogle
         });
-        
-        const googleBtnContainer = document.getElementById("buttonDivGoogle");
-        if (googleBtnContainer) {
-          google.accounts.id.renderButton(
-            googleBtnContainer,
-            { theme: "outline", size: "large", width: "100%", locale: "es" }
-          );
-        }
       }
 
-      // Enlazar eventos de forma robusta por ID (Evita que el botón quede "muerto")
-      const btnLogin = document.getElementById('btnLoginUnico');
-      if (btnLogin) {
-        btnLogin.addEventListener('click', function(e) {
-          e.preventDefault();
-          abrirAuthModal();
-        });
-      }
-
-      const btnPerfil = document.getElementById('btnPerfilUnico');
-      if (btnPerfil) {
-        btnPerfil.addEventListener('click', function(e) {
-          e.preventDefault();
-          abrirMenuUsuario();
-        });
-      }
-
-      // Validar estado de sesión actual en el navegador
       const sesion = localStorage.getItem('sesionActiva');
       const nombreUsuario = localStorage.getItem('usuarioNombre') || 'Mi Perfil';
-      const whatsappVerificado = localStorage.getItem('whatsappVerificado');
+      const contenedorDerecha = document.getElementById('contenedorHeaderDerecha');
       
-      if (whatsappVerificado === 'true') {
-        const estadoWap = document.getElementById('estadoWapMenu');
-        if (estadoWap) {
-          estadoWap.innerHTML = `<span class="badge-verified">✓ Verificado</span>`;
-        }
-        const badgeHeader = document.getElementById('badgeWapHeader');
-        if (badgeHeader) {
-          badgeHeader.innerHTML = `<span style="font-size: 0.65rem; background: #dcfce7; color: #166534; padding: 1px 5px; border-radius: 4px; font-weight:700;">✓ WA</span>`;
-        }
+      if (sesion === 'true' && contenedorDerecha) {
+        contenedorDerecha.innerHTML = `
+          <button onclick="abrirMenuUsuario()" class="user-profile-pill">
+            <span class="avatar-dot"></span>
+            <span>${nombreUsuario}</span>
+            <span style="font-size: 0.7rem; color: var(--text-muted); margin-left: 2px;">▼</span>
+          </button>
+        `;
       }
-      
-      if (sesion === 'true') {
-        if (btnLogin) btnLogin.style.display = 'none';
-        if (btnPerfil) btnPerfil.style.display = 'flex';
-        const txtNombre = document.getElementById('nombreUsuarioTexto');
-        if (txtNombre) txtNombre.textContent = nombreUsuario;
-      } else {
-        if (btnLogin) btnLogin.style.display = 'inline-block';
-        if (btnPerfil) btnPerfil.style.display = 'none';
-      }
-    });
+    };
 
-    function abrirAuthModal() { 
-      const modal = document.getElementById('authModal');
-      if (modal) modal.classList.add('mostrar'); 
-    }
-    
-    function cerrarAuthModal() { 
-      const modal = document.getElementById('authModal');
-      if (modal) modal.classList.remove('mostrar'); 
-    }
-    
-    function cerrarAuthFuera(e) { 
-      if (e.target.id === 'authModal') cerrarAuthModal(); 
+    function abrirAuthModal() { document.getElementById('authModal').classList.add('mostrar'); }
+    function cerrarAuthModal() { document.getElementById('authModal').classList.remove('mostrar'); }
+    function cerrarAuthFuera(e) { if (e.target.id === 'authModal') cerrarAuthModal(); }
+
+    function manejarLoginGoogle() {
+      if (typeof google !== 'undefined') {
+        google.accounts.id.prompt((notification) => {
+          if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+            console.log("Prompt de Google no mostrado.");
+          }
+        });
+      } else {
+        alert("El servicio de Google no está disponible en este momento.");
+      }
     }
 
     function manejarRespuestaGoogle(response) {
       try {
         const base64Url = response.credential.split('.')[1];
-        const base64 
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        
+        const payload = JSON.parse(jsonPayload);
+        
+        localStorage.setItem('sesionActiva', 'true');
+        localStorage.setItem('usuarioNombre', payload.name || payload.email);
+        
+        cerrarAuthModal();
+        location.reload();
+      } catch (error) {
+        console.error("Error al procesar la credencial de Google:", error);
+      }
+    }
+
+    function realizarLoginEmail(e) {
+      e.preventDefault();
+      const email = document.getElementById('emailInput').value;
+      localStorage.setItem('sesionActiva', 'true');
+      localStorage.setItem('usuarioNombre', email);
+      location.reload();
+    }
+
+    function abrirMenuUsuario() {
+      document.getElementById('menuUsuarioOverlay').classList.add('mostrar');
+    }
+    function cerrarMenuUsuario() {
+      document.getElementById('menuUsuarioOverlay').classList.remove('mostrar');
+    }
+    function cerrarMenuUsuarioFuera(e) {
+      if (e.target.id === 'menuUsuarioOverlay') cerrarMenuUsuario();
+    }
+
+    function editarNombreUsuario(e) {
+      e.preventDefault();
+      const nombreActual = localStorage.getItem('usuarioNombre') || '';
+      const nuevoNombre = prompt("Ingresa tu nuevo nombre de usuario:", nombreActual);
+      if (nuevoNombre && nuevoNombre.trim() !== "") {
+        localStorage.setItem('usuarioNombre', nuevoNombre.trim());
+        location.reload();
+      }
+    }
+
+    function abrirMenu() { document.getElementById('menuOverlay').classList.add('mostrar'); }
+    function cerrarMenu() { document.getElementById('menuOverlay').classList.remove('mostrar'); }
+    function cerrarMenuFuera(e) { if (e.target.id === 'menuOverlay') cerrarMenu(); }
+    
+    function cerrarSesion() {
+      localStorage.clear();
+      sessionStorage.clear();
+      window.location.replace('index.html');
+    }
+  </script>
+</body>
+</html>
