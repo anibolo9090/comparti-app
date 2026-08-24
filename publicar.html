@@ -44,10 +44,8 @@
       const cupos = parseInt(document.getElementById('l').value);
       const precio = parseFloat(document.getElementById('pr').value);
 
-      // URL base del proyecto limpia
       const supabaseUrl = 'https://xygatgvzdniivzwndaxy.supabase.co';
-      // Clave anon correcta
-      const apikey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh5Z2F0Z3Z6ZDniaXZ6d25kYXh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc0MDU1MTcsImV4cCI6MjEwMjk4MTUxN30.oSoJcTxCw69F0AXmVVw5LFeF0HjdCSwHd_yOH4HwbS8';
+      const apikey = 'Sb_publishable_fDfrz9tONWlI3ETRbanG3w_cXYsFVif';
 
       try {
         const res = await fetch(`${supabaseUrl}/rest/v1/suscripciones`, {
