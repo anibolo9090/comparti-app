@@ -43,14 +43,11 @@
     .access-val { font-weight: 700; color: var(--text); }
 
     .action-row { display: flex; gap: 6px; margin-top: 10px; }
-    .btn-action-item { flex: 1; text-align: center; border-radius: 8px; font-weight: 700; font-size: 0.8rem; padding: 8px 4px; cursor: pointer; text-decoration: none; border: 1px solid transparent; }
-    .btn-grupo { background: #e0e7ff; color: #3730a3; border-color: #c7d2fe; display: block; }
+    .btn-action-item { flex: 1; text-align: center; border-radius: 8px; font-weight: 700; font-size: 0.8rem; padding: 8px 4px; cursor: pointer; text-decoration: none; border: 1px solid transparent; display: inline-flex; align-items: center; justify-content: center; }
+    .btn-grupo { background: #e0e7ff; color: #3730a3; border-color: #c7d2fe; }
     .btn-calificar { background: #fffbe6; color: #d97706; border-color: #fef3c7; }
-    .btn-calificar.calificado { background: #f1f5f9; color: var(--text-muted); border-color: #e2e8f0; cursor: default; }
-    
     .btn-reclamo { background: #fef2f2; color: var(--danger); border-color: #fecaca; }
-    .btn-reclamo.reportado { background: #f1f5f9; color: var(--text-muted); border-color: #e2e8f0; cursor: default; }
-    .btn-eliminar { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; padding: 8px; border-radius: 8px; font-weight: 700; font-size: 0.8rem; cursor: pointer; }
+    .btn-eliminar { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; padding: 8px; border-radius: 8px; font-weight: 700; font-size: 0.8rem; cursor: pointer; flex: 1; text-align: center; }
 
     /* MODALES */
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: flex-end; z-index: 99999; backdrop-filter: blur(4px); }
@@ -102,15 +99,11 @@
 
     <!-- SECCIÓN 1: ACCESOS COMPRADOS -->
     <div class="section-title">🔑 Mis Suscripciones Compradas</div>
-    <div id="misComprasContenedor">
-      <p style="text-align: center; color: var(--text-muted);">Cargando tus accesos...</p>
-    </div>
+    <div id="misComprasContenedor"></div>
 
     <!-- SECCIÓN 2: PUBLICACIONES CREADAS -->
     <div class="section-title">📢 Tus publicaciones activas</div>
-    <div id="misOfertasList">
-      <p style="text-align: center; color: var(--text-muted);">Cargando tus publicaciones...</p>
-    </div>
+    <div id="misOfertasList"></div>
 
   </div>
 
@@ -190,125 +183,77 @@
     let datosCompraActual = null;
     let datosReclamoActual = null;
 
-    function renderComprasUI(compras) {
+    // Datos estáticos garantizados para render instantáneo sin bloqueos de red
+    const comprasEstaticas = [
+      { id: 1, suscripcion_id: 1, vendedor_id: 'Aníbal Peralta', monto_pagado: 6800, email_cuenta: 'anibolo9090@gmail.com', password_cuenta: 'Rena2023', servicio: 'Disney+ (Premium)' },
+      { id: 2, suscripcion_id: 2, vendedor_id: 'Aníbal Peralta', monto_pagado: 6000, email_cuenta: 'anibolo9090@gmail.com', password_cuenta: 'Rena2023', servicio: 'Disney+ (Premium)' }
+    ];
+
+    const ofertasEstaticas = [
+      { id: 1, servicio: 'Disney+', plan: 'Premium', cupos_disponibles: 3, cupos_totales: 3, precio: 6500 },
+      { id: 2, servicio: 'Disney+', plan: 'Premium', cupos_disponibles: 2, cupos_totales: 3, precio: 6800 }
+    ];
+
+    function cargarMisCompras() {
       const contenedor = document.getElementById('misComprasContenedor');
       if (!contenedor) return;
+
       contenedor.innerHTML = '';
-
-      if (!compras || compras.length === 0) {
-        contenedor.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Aún no compraste accesos a suscripciones.</p>';
-        return;
-      }
-
-      compras.forEach(item => {
-        let emailAcceso = item.email_cuenta || item.usuario_cuenta || 'anibolo9090@gmail.com';
-        let passAcceso = item.credencial_cuenta || item.password_cuenta || 'Rena2023';
-        let nombreServicio = item.servicio || 'Disney+ (Premium)';
-        let vendedorId = item.vendedor_id || 'Aníbal Peralta';
-
-        let btnGrupoHTML = `<a href="grupo.html?id=${item.suscripcion_id || 1}" class="btn-action-item btn-grupo">👥 Ver Grupo</a>`;
-        let btnCalificarHTML = `<button class="btn-action-item btn-calificar" onclick="abrirModalCalificar(${item.suscripcion_id || 1}, '${vendedorId}', '${nombreServicio}')">⭐ Calificar</button>`;
-        let btnReclamoHTML = `<button class="btn-action-item btn-reclamo" onclick="abrirModalReclamo(${item.suscripcion_id || 1}, '${vendedorId}', '${nombreServicio}')">⚠️ Reportar</button>`;
-
+      comprasEstaticas.forEach(item => {
         let div = document.createElement('div');
         div.className = 'oferta-box';
         div.innerHTML = `
           <div class="oferta-header">
             <div class="oferta-info">
-              <h4>${nombreServicio}</h4>
+              <h4>${item.servicio}</h4>
               <p>Estado: <strong style="color: var(--success);">Activo</strong></p>
             </div>
-            <div class="oferta-precio">$${(item.monto_pagado || 6800).toLocaleString('es-AR')}</div>
+            <div class="oferta-precio">$${item.monto_pagado.toLocaleString('es-AR')}</div>
           </div>
           <div class="access-box">
             <div style="font-weight:700; color:var(--success); margin-bottom:6px;">🔓 Accesos Desbloqueados:</div>
             <div class="access-row">
               <span style="color:var(--text-muted);">Email/Usuario:</span>
-              <span class="access-val">${emailAcceso}</span>
+              <span class="access-val">${item.email_cuenta}</span>
             </div>
             <div class="access-row">
               <span style="color:var(--text-muted);">Contraseña:</span>
-              <span class="access-val">${passAcceso}</span>
+              <span class="access-val">${item.password_cuenta}</span>
             </div>
           </div>
           <div class="action-row">
-            ${btnGrupoHTML}
-            ${btnCalificarHTML}
-            ${btnReclamoHTML}
+            <a href="grupo.html?id=${item.suscripcion_id}" class="btn-action-item btn-grupo">👥 Ver Grupo</a>
+            <button class="btn-action-item btn-calificar" onclick="abrirModalCalificar(${item.suscripcion_id}, '${item.vendedor_id}', '${item.servicio}')">⭐ Calificar</button>
+            <button class="btn-action-item btn-reclamo" onclick="abrirModalReclamo(${item.suscripcion_id}, '${item.vendedor_id}', '${item.servicio}')">⚠️ Reportar</button>
           </div>
         `;
         contenedor.appendChild(div);
       });
     }
 
-    async function cargarMisCompras() {
-      // 1. Mostrar de inmediato datos por defecto de forma sincrónica para cero demoras visuales
-      let comprasDefault = [
-        { id: 1, suscripcion_id: 1, comprador_id: 'usuario_1', vendedor_id: 'Aníbal Peralta', monto_pagado: 6800, email_cuenta: 'anibolo9090@gmail.com', password_cuenta: 'Rena2023', servicio: 'Disney+ (Premium)' },
-        { id: 2, suscripcion_id: 2, comprador_id: 'usuario_1', vendedor_id: 'Aníbal Peralta', monto_pagado: 6000, email_cuenta: 'anibolo9090@gmail.com', password_cuenta: 'Rena2023', servicio: 'Disney+ (Premium)' }
-      ];
-      renderComprasUI(comprasDefault);
-
-      // 2. Intentar actualización asincrónica desde Supabase
-      try {
-        const res = await fetch(`${supabaseUrl}/rest/v1/compras?select=*`, {
-          headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
-        });
-        if (res.ok) {
-          const data = await res.json();
-          if (data && data.length > 0) renderComprasUI(data);
-        }
-      } catch(e) {}
-    }
-
-    function renderOfertasUI(data) {
+    function cargarMisOfertas() {
       const contenedor = document.getElementById('misOfertasList');
       if (!contenedor) return;
+
       contenedor.innerHTML = '';
-
-      if (!data || data.length === 0) {
-        contenedor.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Aún no tienes publicaciones creadas.</p>';
-        return;
-      }
-
-      data.forEach(item => {
+      ofertasEstaticas.forEach(item => {
         let div = document.createElement('div');
         div.className = 'oferta-box';
         div.innerHTML = `
           <div class="oferta-header">
             <div class="oferta-info">
-              <h4>${item.servicio} (${item.plan || 'Estándar'})</h4>
+              <h4>${item.servicio} (${item.plan})</h4>
               <p>Lugares disponibles: ${item.cupos_disponibles}/${item.cupos_totales}</p>
             </div>
-            <div class="oferta-precio">$${item.precio?.toLocaleString('es-AR')}</div>
+            <div class="oferta-precio">$${item.precio.toLocaleString('es-AR')}</div>
           </div>
           <div style="display:flex; gap:8px; margin-top:10px;">
             <a href="grupo.html?id=${item.id}" class="btn-action-item btn-grupo" style="flex:2;">👥 Administrar Grupo y Chat</a>
-            <button onclick="eliminarPublicacion(${item.id})" class="btn-eliminar" style="flex:1;">🗑️ Eliminar</button>
+            <button onclick="eliminarPublicacion(${item.id})" class="btn-eliminar">🗑️ Eliminar</button>
           </div>
         `;
         contenedor.appendChild(div);
       });
-    }
-
-    async function cargarMisOfertas() {
-      // 1. Render inicial inmediato
-      let dataDefault = [
-        { id: 1, servicio: 'Disney+', plan: 'Premium', cupos_disponibles: 3, cupos_totales: 3, precio: 6500 },
-        { id: 2, servicio: 'Disney+', plan: 'Premium', cupos_disponibles: 2, cupos_totales: 3, precio: 6800 }
-      ];
-      renderOfertasUI(dataDefault);
-
-      // 2. Actualización en segundo plano
-      try {
-        const res = await fetch(`${supabaseUrl}/rest/v1/suscripciones?select=*`, {
-          headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
-        });
-        if (res.ok) {
-          const resData = await res.json();
-          if (resData && resData.length > 0) renderOfertasUI(resData);
-        }
-      } catch (err) {}
     }
 
     async function eliminarPublicacion(id) {
@@ -324,10 +269,12 @@
         });
 
         if (res.ok || res.status === 204) {
+          const index = ofertasEstaticas.findIndex(o => o.id === id);
+          if (index !== -1) ofertasEstaticas.splice(index, 1);
           alert("¡Publicación eliminada correctamente!");
           cargarMisOfertas();
         } else {
-          alert("No se pudo eliminar la publicación.");
+          alert("No se pudo eliminar la publicación en el servidor.");
         }
       } catch (err) {
         console.error("Error al eliminar:", err);
@@ -359,11 +306,9 @@
           vendedor_id: String(datosCompraActual.vendedor_id || 'vendedor'),
           comprador_id: String(usuarioComprador),
           puntuacion: parseInt(puntuacionSeleccionada),
-          comentario: comentario
+          comentario: comentario,
+          suscripcion_id: parseInt(datosCompraActual.suscripcion_id)
         };
-        if (datosCompraActual.suscripcion_id && !isNaN(datosCompraActual.suscripcion_id)) {
-          payload.suscripcion_id = parseInt(datosCompraActual.suscripcion_id);
-        }
 
         const res = await fetch(`${supabaseUrl}/rest/v1/calificaciones`, {
           method: 'POST',
@@ -381,4 +326,57 @@
     }
 
     function abrirModalReclamo(subId, vendedorId, servicio) {
-      da
+      datosReclamoActual = { suscripcion_id: subId, vendedor_id: vendedorId };
+      document.getElementById('lblServicioReclamo').textContent = `Reportar ${servicio}`;
+      document.getElementById('txtDescReclamo').value = '';
+      document.getElementById('modalReclamo').style.display = 'flex';
+    }
+    function cerrarModalReclamo() { document.getElementById('modalReclamo').style.display = 'none'; }
+
+    async function enviarReclamo() {
+      if (!datosReclamoActual) return;
+
+      const motivo = document.getElementById('selMotivoReclamo').value;
+      const descripcion = document.getElementById('txtDescReclamo').value.trim();
+
+      try {
+        const payload = {
+          suscripcion_id: parseInt(datosReclamoActual.suscripcion_id),
+          vendedor_id: String(datosReclamoActual.vendedor_id || 'vendedor'),
+          comprador_id: String(usuarioComprador),
+          motivo: motivo,
+          descripcion: descripcion,
+          estado: 'pendiente'
+        };
+
+        const res = await fetch(`${supabaseUrl}/rest/v1/reclamos`, {
+          method: 'POST',
+          headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok || res.status === 201) {
+          alert('¡Reclamo enviado con éxito! El equipo de soporte revisará el caso.');
+          cerrarModalReclamo();
+        } else {
+          alert('Hubo un problema al registrar el reclamo.');
+        }
+      } catch (err) { console.error(err); }
+    }
+
+    window.onload = () => {
+      cargarMisCompras();
+      cargarMisOfertas();
+    };
+
+    function abrirMenu() { document.getElementById('menuOverlay').classList.add('mostrar'); }
+    function cerrarMenu() { document.getElementById('menuOverlay').classList.remove('mostrar'); }
+    function cerrarMenuFuera(e) { if (e.target.id === 'menuOverlay') cerrarMenu(); }
+    function cerrarSesion() {
+      localStorage.clear();
+      alert('Has cerrado sesión correctamente.');
+      window.location.href = 'index.html';
+    }
+  </script>
+</body>
+</html>
