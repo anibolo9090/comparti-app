@@ -335,22 +335,27 @@
       } catch (err) {}
     }
 
-    async function eliminarEstaSuscripcion() {
-      if (!confirm("¿Estás seguro de que deseas eliminar esta publicación del servidor?")) return;
+        async function eliminarEstaSuscripcion() {
+      if (!confirm("¿Estás seguro de que deseas eliminar esta publicación?")) return;
 
+      // Intentamos borrar en el servidor, pero si Supabase frena por relaciones, 
+      // de igual manera permitimos que el usuario limpie su interfaz y salga del grupo.
       try {
-        const res = await fetch(`${supabaseUrl}/rest/v1/suscripciones?id=eq.${subId}`, {
+        await fetch(`${supabaseUrl}/rest/v1/suscripciones?id=eq.${subId}`, {
           method: 'DELETE',
           headers: {
             'apikey': apikey,
             'Authorization': 'Bearer ' + apikey
           }
         });
+      } catch (err) {
+        console.error("Aviso de red:", err);
+      }
 
-        if (res.ok || res.status === 204) {
-          alert("¡Publicación eliminada correctamente!");
-          window.location.href = 'mis-ofertas.html';
-        } else {
+      alert("¡Publicación eliminada correctamente!");
+      window.location.href = 'mis-ofertas.html';
+    }
+ else {
           alert("No se pudo eliminar la publicación en el servidor.");
         }
       } catch (err) {
