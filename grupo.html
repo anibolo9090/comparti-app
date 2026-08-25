@@ -204,29 +204,73 @@
     }
 
     function renderMiembros() {
+        async function renderMiembros() {
       const contenedor = document.getElementById('contenedorMiembros');
-      const lista = [
-        { nombre: 'Aníbal P.', inicial: 'AP', admin: true },
-        { nombre: 'Martín G.', inicial: 'MG', admin: false },
-        { nombre: 'Laura R.', inicial: 'LR', admin: false }
-      ];
+      if (!contenedor) return;
 
-      contenedor.innerHTML = '';
-      lista.forEach(m => {
-        let div = document.createElement('div');
-        div.className = 'member-item';
-        
-        let crown = m.admin ? `<div class="badge-admin" title="Creador del grupo">👑</div>` : '';
-        let classAdmin = m.admin ? 'admin' : '';
+      try {
+        // Consultar quiénes compraron este grupo
+        const res = await fetch(`${supabaseUrl}/rest/v1/compras?suscripcion_id=eq.${subId}&select=comprador_id,vendedor_id`, {
+          headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
+        });
 
-        div.innerHTML = `
-          <div class="member-avatar ${classAdmin}">${m.inicial}</div>
-          ${crown}
-          <div class="member-name">${m.nombre}</div>
-        `;
-        contenedor.appendChild(div);
-      });
+        let miembros = [];
+
+        if (res.ok) {
+          const compras = await res.json();
+          if (compras && compras.length > 0) {
+            // Vendedor / Admin del grupo
+            const vendedor = compras[0].vendedor_id || 'Aníbal P.';
+            miembros.push({ nombre: vendedor, inicial: obtenerIniciales(vendedor), admin: true });
+
+            // Compradores unidos
+            compras.forEach(c => {
+              const nom = c.comprador_id || 'Usuario';
+              if (!miembros.some(m => m.nombre === nom)) {
+                miembros.push({ nombre: nom, inicial: obtenerIniciales(nom), admin: false });
+              }
+            });
+          }
+        }
+
+        // Si aún no hay compras registradas en Supabase, mostramos el grupo demostrativo
+        if (miembros.length === 0) {
+          miembros = [
+            { nombre: 'Aníbal P.', inicial: 'AP', admin: true },
+            { nombre: 'Martín G.', inicial: 'MG', admin: false },
+            { nombre: 'Laura R.', inicial: 'LR', admin: false }
+          ];
+        }
+
+        contenedor.innerHTML = '';
+        miembros.forEach(m => {
+          let div = document.createElement('div');
+          div.className = 'member-item';
+          let crown = m.admin ? `<div class="badge-admin" title="Creador del grupo">👑</div>` : '';
+          let classAdmin = m.admin ? 'admin' : '';
+
+          div.innerHTML = `
+            <div class="member-avatar ${classAdmin}">${m.inicial}</div>
+            ${crown}
+            <div class="member-name">${m.nombre}</div>
+          `;
+          contenedor.appendChild(div);
+        });
+
+      } catch (err) {
+        console.error("Error al renderizar miembros:", err);
+      }
     }
+
+    function obtenerIniciales(nombre) {
+      if (!nombre) return 'U';
+      const partes = nombre.trim().split(' ');
+      if (partes.length >= 2) {
+        return (partes[0][0] + partes[1][0]).toUpperCase();
+      }
+      return nombre.substring(0, 2).toUpperCase();
+    }
+
 
     async function cargarMensajes() {
       const container = document.getElementById('chatContainer');
