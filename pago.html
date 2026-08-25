@@ -286,6 +286,8 @@
 
         // 4. Registrar la compra en la tabla 'compras' (Rol de Intermediario)
         let postCompra = await fetch(`${supabaseUrl}/rest/v1/compras`, {
+                // 4. Registrar la compra en la tabla 'compras'
+        let postCompra = await fetch(`${supabaseUrl}/rest/v1/compras`, {
           method: 'POST',
           headers: {
             'apikey': apikey,
@@ -298,7 +300,7 @@
             comprador_id: usuarioComprador,
             vendedor_id: vendedorId,
             monto_pagado: precioServicio,
-            estado_pago: 'retenido' // El dinero queda retenido por la plataforma
+            estado_pago: 'retenido'
           })
         });
 
@@ -306,6 +308,28 @@
           alert("Error al registrar la transacción de compra.");
           return;
         }
+
+        // 4b. Acreditar el monto en el 'saldo_retenido' de la billetera del VENDEDOR
+        let resWalletVendedor = await fetch(`${supabaseUrl}/rest/v1/billetera?usuario_id=eq.${vendedorId}&select=*`, {
+          headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
+        });
+        let datosWalletVendedor = await resWalletVendedor.json();
+
+        if (datosWalletVendedor && datosWalletVendedor.length > 0) {
+          let vRow = datosWalletVendedor[0];
+          let actualRetenido = parseFloat(vRow.saldo_retenido || 0);
+          
+          await fetch(`${supabaseUrl}/rest/v1/billetera?id=eq.${vRow.id}`, {
+            method: 'PATCH',
+            headers: {
+              'apikey': apikey,
+              'Authorization': 'Bearer ' + apikey,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ saldo_retenido: actualRetenido + precioServicio })
+          });
+        }
+
 
         // 5. Restar un cupo disponible en la suscripción
         let nuevosCupos = cuposActuales - 1;
