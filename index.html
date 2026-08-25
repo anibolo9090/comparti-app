@@ -17,7 +17,6 @@
       --card-border: #e2e8f0; 
       --text: #0f172a; 
       --text-muted: #64748b; 
-      --warning: #f59e0b;
     }
     * { box-sizing: border-box; }
     body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
@@ -61,18 +60,8 @@
     .featured-btn { background: #ffffff; color: var(--primary); padding: 8px 16px; border-radius: 10px; font-weight: 700; font-size: 0.85rem; text-decoration: none; box-shadow: 0 2px 6px rgba(0,0,0,0.1); white-space: nowrap; }
 
     /* POPULARES CHIPS */
-    .services-preview { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 24px; }
+    .services-preview { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 16px; }
     .service-mini-chip { background: var(--card-bg); border: 1px solid var(--card-border); padding: 8px 14px; border-radius: 20px; font-size: 0.82rem; font-weight: 600; white-space: nowrap; display: flex; align-items: center; gap: 6px; }
-
-    /* TARJETAS DE GRUPOS PUBLICADOS CON REPUTACIÓN */
-    .grupo-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; justify-content: space-between; align-items: center; }
-    .grupo-main { display: flex; flex-direction: column; gap: 4px; }
-    .grupo-titulo { font-size: 1rem; font-weight: 700; color: var(--text); margin: 0; }
-    .grupo-vendedor { font-size: 0.82rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
-    .badge-reputacion { font-size: 0.78rem; color: var(--warning); font-weight: 700; background: #fffbe6; border: 1px solid #fef3c7; padding: 2px 6px; border-radius: 6px; display: inline-flex; align-items: center; gap: 3px; }
-    .grupo-precio { font-size: 1.15rem; font-weight: 800; color: var(--primary); text-align: right; }
-    .grupo-cupos { font-size: 0.75rem; color: var(--text-muted); text-align: right; }
-    .btn-unirse { background: var(--primary); color: white; padding: 6px 14px; border-radius: 8px; text-decoration: none; font-size: 0.85rem; font-weight: 700; display: inline-block; margin-top: 6px; }
 
     /* MODAL DE LOGIN / REGISTRO */
     .auth-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); z-index: 999999; display: none; align-items: flex-end; backdrop-filter: blur(2px); }
@@ -181,15 +170,6 @@
       <div class="service-mini-chip">☁️ YouTube Premium</div>
       <div class="service-mini-chip">🍏 Apple One</div>
     </div>
-
-    <!-- SECCIÓN DE GRUPOS DISPONIBLES CON REPUTACIÓN -->
-    <div class="section-title">
-      <span>🔥 Grupos destacados</span>
-      <a href="explorar.html" style="font-size: 0.85rem; color: var(--primary); text-decoration: none;">Ver todos ›</a>
-    </div>
-    <div id="contenedorGruposDestacados">
-      <p style="text-align: center; color: var(--text-muted); font-size: 0.85rem;">Cargando grupos recomendados...</p>
-    </div>
     
   </div>
 
@@ -265,7 +245,7 @@
     <button class="nav-item" onclick="abrirMenu()"><span class="icon">☰</span><span>Menú</span></button>
   </div>
 
-  <script>
+    <script>
     const supabaseUrl = 'https://xygatgvzdniivzwndaxy.supabase.co';
     const apikey = 'sb_publishable_fDfrz9tONWlI3ETRbanG3w_cXYsFVif';
 
@@ -294,35 +274,17 @@
       cargarGruposDestacados();
     };
 
-    // Función para calcular las estrellas del vendedor
-    async function obtenerReputacionVendedor(vendedorId) {
-      if (!vendedorId) return null;
-      try {
-        let res = await fetch(`${supabaseUrl}/rest/v1/calificaciones?vendedor_id=eq.${encodeURIComponent(vendedorId)}&select=puntuacion`, {
-          headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
-        });
-        if (!res.ok) return null;
-        let data = await res.json();
-        if (!data || data.length === 0) return null;
-
-        let suma = data.reduce((acc, curr) => acc + curr.puntuacion, 0);
-        let promedio = (suma / data.length).toFixed(1);
-        return { promedio, total: data.length };
-      } catch (e) {
-        return null;
-      }
-    }
-
-    // Cargar grupos destacados con reputación en vivo
     async function cargarGruposDestacados() {
       const contenedor = document.getElementById('contenedorGruposDestacados');
+      if (!contenedor) return;
+
       try {
         let res = await fetch(`${supabaseUrl}/rest/v1/suscripciones?cupos_disponibles=gt.0&select=*&limit=3`, {
           headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
         });
 
         if (!res.ok) {
-          contenedor.innerHTML = '<p style="text-align:center; color:var(--text-muted); font-size:0.85rem;">No hay grupos disponibles en este momento.</p>';
+          contenedor.innerHTML = '<p style="text-align:center; color:var(--text-muted); font-size:0.85rem;">No hay grupos disponibles.</p>';
           return;
         }
 
@@ -336,4 +298,103 @@
 
         for (let g of grupos) {
           let vendedorId = g.usuario || 'Aníbal Peralta';
-          let rep = 
+          let repTexto = '⭐ Nuevo';
+
+          try {
+            let resCal = await fetch(`${supabaseUrl}/rest/v1/calificaciones?vendedor_id=eq.${encodeURIComponent(vendedorId)}&select=puntuacion`, {
+              headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
+            });
+            if (resCal.ok) {
+              let cData = await resCal.json();
+              if (cData && cData.length > 0) {
+                let suma = cData.reduce((acc, c) => acc + c.puntuacion, 0);
+                let prom = (suma / cData.length).toFixed(1);
+                repTexto = `⭐ ${prom} (${cData.length})`;
+              }
+            }
+          } catch(e) {}
+
+          let div = document.createElement('div');
+          div.className = 'grupo-card';
+          div.style = 'background:#fff; border:1px solid #e2e8f0; border-radius:16px; padding:16px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;';
+          div.innerHTML = `
+            <div>
+              <h4 style="margin:0 0 4px 0; font-size:1rem; color:#0f172a;">${g.servicio} (${g.plan || 'Plan'})</h4>
+              <div style="font-size:0.82rem; color:#64748b; display:flex; gap:6px; align-items:center;">
+                <span>Por: ${vendedorId}</span>
+                <span style="color:#f59e0b; font-weight:700; background:#fffbe6; padding:2px 6px; border-radius:6px; border:1px solid #fef3c7;">${repTexto}</span>
+              </div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:1.15rem; font-weight:800; color:#4f46e5;">$${g.precio?.toLocaleString('es-AR')}</div>
+              <a href="pago.html?id=${g.id}" style="background:#4f46e5; color:#fff; padding:6px 12px; border-radius:8px; text-decoration:none; font-size:0.82rem; font-weight:700; display:inline-block; margin-top:4px;">Unirse</a>
+            </div>
+          `;
+          contenedor.appendChild(div);
+        }
+      } catch (err) {
+        console.error("Error:", err);
+        contenedor.innerHTML = '<p style="text-align:center; color:var(--text-muted); font-size:0.85rem;">Error al cargar grupos.</p>';
+      }
+    }
+
+    function abrirAuthModal() { document.getElementById('authModal').classList.add('mostrar'); }
+    function cerrarAuthModal() { document.getElementById('authModal').classList.remove('mostrar'); }
+    function cerrarAuthFuera(e) { if (e.target.id === 'authModal') cerrarAuthModal(); }
+
+    function manejarLoginGoogle() {
+      if (typeof google !== 'undefined') {
+        google.accounts.id.prompt();
+      } else {
+        alert("El servicio de Google no está disponible.");
+      }
+    }
+
+    function manejarRespuestaGoogle(response) {
+      try {
+        const base64Url = response.credential.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+        const payload = JSON.parse(jsonPayload);
+        localStorage.setItem('sesionActiva', 'true');
+        localStorage.setItem('usuarioNombre', payload.name || payload.email);
+        cerrarAuthModal();
+        location.reload();
+      } catch (error) { console.error(error); }
+    }
+
+    function realizarLoginEmail(e) {
+      e.preventDefault();
+      const email = document.getElementById('emailInput').value;
+      localStorage.setItem('sesionActiva', 'true');
+      localStorage.setItem('usuarioNombre', email);
+      location.reload();
+    }
+
+    function abrirMenuUsuario() { document.getElementById('menuUsuarioOverlay').classList.add('mostrar'); }
+    function cerrarMenuUsuario() { document.getElementById('menuUsuarioOverlay').classList.remove('mostrar'); }
+    function cerrarMenuUsuarioFuera(e) { if (e.target.id === 'menuUsuarioOverlay') cerrarMenuUsuario(); }
+
+    function editarNombreUsuario(e) {
+      e.preventDefault();
+      const nombreActual = localStorage.getItem('usuarioNombre') || '';
+      const nuevoNombre = prompt("Ingresa tu nuevo nombre de usuario:", nombreActual);
+      if (nuevoNombre && nuevoNombre.trim() !== "") {
+        localStorage.setItem('usuarioNombre', nuevoNombre.trim());
+        location.reload();
+      }
+    }
+
+    function abrirMenu() { document.getElementById('menuOverlay').classList.add('mostrar'); }
+    function cerrarMenu() { document.getElementById('menuOverlay').classList.remove('mostrar'); }
+    function cerrarMenuFuera(e) { if (e.target.id === 'menuOverlay') cerrarMenu(); }
+    
+    function cerrarSesion() {
+      localStorage.clear();
+      sessionStorage.clear();
+      window.location.replace('index.html');
+    }
+  </script>
+
+</body>
+</html>
