@@ -72,7 +72,7 @@
     </div>
   </div>
 
-  <script>
+    <script>
     const SUPABASE_URL = 'https://xygatgvzdniivzwndaxy.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh5Z2F0Z3Z6ZG5paXZ6d25kYXh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc0MDU1MTcsImV4cCI6MjEwMjk4MTUxN30.oSoJcTxCw69F0AXmVVw5LFeF0HjdCSwHd_yOH4HwbS8';
     const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -97,9 +97,20 @@
       } else {
         status.className = 'success';
         status.innerText = '¡Sesión iniciada correctamente!';
-        setTimeout(() => { window.location.href = 'publicar.html'; }, 1000);
+        
+        // GUARDAR DATOS DE SESIÓN LOCALMENTE PARA AISLAR EL DISPOSITIVO
+        localStorage.setItem('usuarioEmail', data.user.email);
+        localStorage.setItem('usuarioId', data.user.id);
+        // Extraemos un nombre legible del correo para la interfaz
+        const nombreGenerico = data.user.email.split('@')[0];
+        localStorage.setItem('usuarioNombre', nombreGenerico.charAt(0).toUpperCase() + nombreGenerico.slice(1));
+
+        setTimeout(() => { 
+          window.location.href = 'mis-ofertas.html'; 
+        }, 1000);
       }
     });
   </script>
+
 </body>
 </html>
