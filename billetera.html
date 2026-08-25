@@ -12,17 +12,21 @@
       --card-bg: #ffffff;
       --text-main: #1e293b;
       --text-muted: #64748b;
+      --success: #16a34a;
+      --danger: #dc2626;
       --warning: #f97316;
       --warning-bg: #fff7ed;
       --warning-border: #ffedd5;
+      --border: #e2e8f0;
     }
+    * { box-sizing: border-box; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background-color: var(--bg-color);
       margin: 0;
       padding: 16px;
       color: var(--text-main);
-      padding-bottom: 80px;
+      padding-bottom: 90px;
     }
     .wallet-hero {
       background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
@@ -134,6 +138,53 @@
       background: #e2e8f0;
     }
 
+    /* HISTORIAL DE MOVIMIENTOS */
+    .tx-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .tx-item:last-child {
+      border-bottom: none;
+    }
+    .tx-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .tx-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+    .tx-icon.ingreso { background: #dcfce7; color: var(--success); }
+    .tx-icon.egreso { background: #fee2e2; color: var(--danger); }
+    .tx-icon.retenido { background: #ffedd5; color: var(--warning); }
+    
+    .tx-details h4 {
+      margin: 0 0 2px 0;
+      font-size: 0.95rem;
+      color: var(--text-main);
+    }
+    .tx-details p {
+      margin: 0;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .tx-amount {
+      font-size: 1rem;
+      font-weight: 700;
+    }
+    .tx-amount.ingreso { color: var(--success); }
+    .tx-amount.egreso { color: var(--danger); }
+    .tx-amount.retenido { color: var(--warning); }
+
     /* Modal de Pago */
     .modal-overlay {
       position: fixed;
@@ -158,48 +209,25 @@
       from { transform: translateY(100%); }
       to { transform: translateY(0); }
     }
-    .modal-title {
-      font-size: 1.2rem;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-    .modal-subtitle {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      margin-bottom: 20px;
-    }
+    .modal-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+    .modal-subtitle { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px; }
     .payment-option {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 16px;
-      border: 2px solid #f1f5f9;
-      border-radius: 14px;
-      margin-bottom: 12px;
-      cursor: pointer;
-      transition: all 0.2s;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px; border: 2px solid #f1f5f9; border-radius: 14px;
+      margin-bottom: 12px; cursor: pointer; transition: all 0.2s;
     }
-    .payment-option:hover {
-      border-color: var(--primary);
-      background: #f8fafc;
-    }
-    .payment-info {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-weight: 600;
-    }
+    .payment-option:hover { border-color: var(--primary); background: #f8fafc; }
+    .payment-info { display: flex; align-items: center; gap: 12px; font-weight: 600; }
     .btn-close {
-      width: 100%;
-      background: #f1f5f9;
-      border: none;
-      padding: 14px;
-      border-radius: 12px;
-      font-weight: 600;
-      color: var(--text-muted);
-      cursor: pointer;
-      margin-top: 10px;
+      width: 100%; background: #f1f5f9; border: none; padding: 14px;
+      border-radius: 12px; font-weight: 600; color: var(--text-muted); cursor: pointer; margin-top: 10px;
     }
+
+    /* Barra de navegación inferior */
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 9999; box-shadow: 0 -4px 10px rgba(0,0,0,0.03); }
+    .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); text-decoration: none; font-size: 0.75rem; font-weight: 600; gap: 2px; cursor: pointer; background: none; border: none; }
+    .nav-item.active { color: #4f46e5; }
+    .nav-item .icon { font-size: 1.2rem; }
   </style>
 </head>
 <body>
@@ -233,6 +261,14 @@
     </div>
   </div>
 
+  <!-- SECCIÓN: ÚLTIMOS MOVIMIENTOS -->
+  <div class="section-card">
+    <h3>📋 Últimos Movimientos</h3>
+    <div id="txList">
+      <p style="text-align: center; color: var(--text-muted); font-size: 0.85rem;">Cargando movimientos...</p>
+    </div>
+  </div>
+
   <!-- Modal de Selección de Medio de Pago -->
   <div class="modal-overlay" id="modalPago">
     <div class="modal-content">
@@ -240,21 +276,24 @@
       <div class="modal-subtitle" id="modalSubtítulo">Recarga de saldo: $0</div>
       
       <div class="payment-option" onclick="procesarPago('Mercado Pago')">
-        <div class="payment-info">
-          <span>💙 Mercado Pago (Dinero en cuenta / QR)</span>
-        </div>
+        <div class="payment-info"><span>💙 Mercado Pago (Dinero en cuenta / QR)</span></div>
         <span>➔</span>
       </div>
 
       <div class="payment-option" onclick="procesarPago('Tarjeta de Crédito/Débito')">
-        <div class="payment-info">
-          <span>💳 Tarjeta de Crédito o Débito</span>
-        </div>
+        <div class="payment-info"><span>💳 Tarjeta de Crédito o Débito</span></div>
         <span>➔</span>
       </div>
 
       <button class="btn-close" onclick="cerrarModal()">Cancelar</button>
     </div>
+  </div>
+
+  <!-- BARRA DE NAVEGACIÓN INFERIOR -->
+  <div class="bottom-nav">
+    <a href="index.html" class="nav-item"><span class="icon">🏠</span><span>Inicio</span></a>
+    <a href="billetera.html" class="nav-item active"><span class="icon">💳</span><span>Billetera</span></a>
+    <a href="mis-ofertas.html" class="nav-item"><span class="icon">👤</span><span>Mi perfil</span></a>
   </div>
 
   <script>
@@ -277,27 +316,63 @@
           
           document.getElementById('lblSaldo').textContent = `$${Number(saldoActual).toLocaleString('es-AR')}`;
           document.getElementById('lblRetenido').textContent = `$${Number(saldoRetenido).toLocaleString('es-AR')}`;
-        } else {
-          await crearBilleteraInicial();
         }
       } catch (err) {
-        console.error("Error:", err);
+        console.error("Error al obtener saldo:", err);
       }
     }
 
-    async function crearBilleteraInicial() {
-      await fetch(`${supabaseUrl}/rest/v1/billetera`, {
-        method: 'POST',
-        headers: {
-          'apikey': apikey,
-          'Authorization': 'Bearer ' + apikey,
-          'Content-Type': 'application/json',
-          'Prefer': 'return=representation'
-        },
-        body: JSON.stringify({ usuario_id: usuarioActual, saldo: 0, saldo_retenido: 0 })
-      });
-      document.getElementById('lblSaldo').textContent = "$0";
-      document.getElementById('lblRetenido').textContent = "$0";
+    async function cargarMovimientos() {
+      const contenedor = document.getElementById('txList');
+      try {
+        // Consultar compras donde el usuario es Comprador o Vendedor
+        let res = await fetch(`${supabaseUrl}/rest/v1/compras?or=(comprador_id.eq.${usuarioActual},vendedor_id.eq.${usuarioActual})&select=*,suscripciones(servicio)&order=fecha_compra.desc`, {
+          headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
+        });
+
+        if (!res.ok) {
+          contenedor.innerHTML = '<p style="text-align:center; color:var(--text-muted); font-size:0.85rem;">No hay movimientos registrados.</p>';
+          return;
+        }
+
+        let compras = await res.json();
+        contenedor.innerHTML = '';
+
+        if (compras.length === 0) {
+          contenedor.innerHTML = '<p style="text-align:center; color:var(--text-muted); font-size:0.85rem;">Aún no realizaste transacciones.</p>';
+          return;
+        }
+
+        compras.forEach(item => {
+          const esComprador = item.comprador_id === usuarioActual;
+          const servicioNombre = item.suscripciones?.servicio || 'Suscripción';
+          const fecha = new Date(item.fecha_compra || Date.now()).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+
+          let icono = esComprador ? '🛒' : (item.estado_pago === 'retenido' ? '⏳' : '💰');
+          let claseIcono = esComprador ? 'egreso' : (item.estado_pago === 'retenido' ? 'retenido' : 'ingreso');
+          let signo = esComprador ? '-' : '+';
+          let titulo = esComprador ? `Compra: ${servicioNombre}` : `Venta: ${servicioNombre}`;
+          let subtitulo = esComprador ? `Pago realizado (${fecha})` : (item.estado_pago === 'retenido' ? `En garantía (${fecha})` : `Liberado (${fecha})`);
+
+          let div = document.createElement('div');
+          div.className = 'tx-item';
+          div.innerHTML = `
+            <div class="tx-left">
+              <div class="tx-icon ${claseIcono}">${icono}</div>
+              <div class="tx-details">
+                <h4>${titulo}</h4>
+                <p>${subtitulo}</p>
+              </div>
+            </div>
+            <div class="tx-amount ${claseIcono}">${signo}$${item.monto_pagado?.toLocaleString('es-AR')}</div>
+          `;
+          contenedor.appendChild(div);
+        });
+
+      } catch (err) {
+        console.error("Error al cargar movimientos:", err);
+        contenedor.innerHTML = '<p style="text-align:center; color:var(--text-muted); font-size:0.85rem;">Error al cargar el historial.</p>';
+      }
     }
 
     function abrirModal(monto) {
@@ -319,57 +394,36 @@
           headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
         });
         let data = await res.json();
-        
-        let saldoViejo = 0;
-        let existeRegistro = false;
-
-        if (data && data.length > 0) {
-          saldoViejo = parseFloat(data[0].saldo) || 0;
-          existeRegistro = true;
-        }
-
+        let saldoViejo = (data && data.length > 0) ? (parseFloat(data[0].saldo) || 0) : 0;
         let nuevoSaldo = saldoViejo + montoSeleccionado;
 
-        let updateRes;
-
-        if (existeRegistro) {
-          updateRes = await fetch(`${supabaseUrl}/rest/v1/billetera?usuario_id=eq.${usuarioActual}`, {
-            method: 'PATCH',
-            headers: {
-              'apikey': apikey,
-              'Authorization': 'Bearer ' + apikey,
-              'Content-Type': 'application/json',
-              'Prefer': 'return=minimal'
-            },
-            body: JSON.stringify({ saldo: nuevoSaldo, actualizado_at: new Date() })
-          });
-        } else {
-          updateRes = await fetch(`${supabaseUrl}/rest/v1/billetera`, {
-            method: 'POST',
-            headers: {
-              'apikey': apikey,
-              'Authorization': 'Bearer ' + apikey,
-              'Content-Type': 'application/json',
-              'Prefer': 'return=minimal'
-            },
-            body: JSON.stringify({ usuario_id: usuarioActual, saldo: nuevoSaldo, saldo_retenido: 0 })
-          });
-        }
+        let updateRes = await fetch(`${supabaseUrl}/rest/v1/billetera?usuario_id=eq.${usuarioActual}`, {
+          method: 'PATCH',
+          headers: {
+            'apikey': apikey,
+            'Authorization': 'Bearer ' + apikey,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({ saldo: nuevoSaldo, actualizado_at: new Date() })
+        });
 
         if (updateRes.ok || updateRes.status === 204) {
-          alert(`¡Pago aprobado con éxito! Se acreditaron $${montoSeleccionado.toLocaleString('es-AR')} en tu billetera.`);
-          setTimeout(obtenerSaldo, 500);
-        } else {
-          let errText = await updateRes.text();
-          console.error("Error del servidor:", errText);
-          alert("Hubo un error al actualizar el saldo en la base de datos.");
+          alert(`¡Pago aprobado! Se acreditaron $${montoSeleccionado.toLocaleString('es-AR')}.`);
+          setTimeout(() => {
+            obtenerSaldo();
+            cargarMovimientos();
+          }, 500);
         }
       } catch (err) {
-        console.error("Error al procesar acreditación:", err);
+        console.error("Error al acreditar:", err);
       }
     }
 
-    window.onload = obtenerSaldo;
+    window.onload = () => {
+      obtenerSaldo();
+      cargarMovimientos();
+    };
   </script>
 </body>
 </html>
