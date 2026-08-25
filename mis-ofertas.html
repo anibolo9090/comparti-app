@@ -91,9 +91,9 @@
   <div class="container">
     
     <div class="profile-card">
-      <div class="profile-avatar">AP</div>
-      <h2 class="profile-name">Aníbal Peralta</h2>
-      <p class="profile-email">anibal@comparti.com</p>
+      <div class="profile-avatar" id="lblAvatar">AP</div>
+      <h2 class="profile-name" id="lblNombreUsuario">Aníbal Peralta</h2>
+      <p class="profile-email" id="lblEmailUsuario">anibal@comparti.com</p>
       <button class="btn-logout-inline" onclick="cerrarSesion()">🚪 Cerrar Sesión</button>
     </div>
 
@@ -181,7 +181,7 @@
   <script>
     const supabaseUrl = 'https://xygatgvzdniivzwndaxy.supabase.co';
     const apikey = 'sb_publishable_fDfrz9tONWlI3ETRbanG3w_cXYsFVif';
-    const usuarioComprador = "usuario_1";
+    const usuarioComprador = localStorage.getItem('usuarioNombre') || "usuario_1";
 
     let puntuacionSeleccionada = 5;
     let datosCompraActual = null;
@@ -191,25 +191,26 @@
       const contenedor = document.getElementById('misComprasContenedor');
 
       try {
-        const res = await fetch(`${supabaseUrl}/rest/v1/compras?comprador_id=eq.${usuarioComprador}&select=*`, {
+        // Consultar compras sin filtro restrictivo de ID estricto
+        const res = await fetch(`${supabaseUrl}/rest/v1/compras?select=*`, {
           headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
         });
 
         if (!res.ok) {
-          contenedor.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Error al consultar compras.</p>';
+          contenedor.innerHTML = '<p style="text-align:center; color:var(--text-muted);">No se pudieron obtener las compras.</p>';
           return;
         }
 
         const compras = await res.json();
 
-        if (compras.length === 0) {
+        if (!compras || compras.length === 0) {
           contenedor.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Aún no compraste accesos a suscripciones.</p>';
           return;
         }
 
         let calificacionesPrevias = [];
         try {
-          const resCal = await fetch(`${supabaseUrl}/rest/v1/calificaciones?comprador_id=eq.${usuarioComprador}&select=suscripcion_id,puntuacion`, {
+          const resCal = await fetch(`${supabaseUrl}/rest/v1/calificaciones?select=*`, {
             headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
           });
           if (resCal.ok) calificacionesPrevias = await resCal.json();
@@ -217,7 +218,7 @@
 
         let reclamosPrevios = [];
         try {
-          const resRec = await fetch(`${supabaseUrl}/rest/v1/reclamos?comprador_id=eq.${usuarioComprador}&select=suscripcion_id,estado`, {
+          const resRec = await fetch(`${supabaseUrl}/rest/v1/reclamos?select=*`, {
             headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
           });
           if (resRec.ok) reclamosPrevios = await resRec.json();
@@ -249,15 +250,15 @@
             } catch (e) {}
           }
 
-          const yaCalificado = calificacionesPrevias.find(c => c.suscripcion_id === item.suscripcion_id);
-          const yaReclamado = reclamosPrevios.find(r => r.suscripcion_id === item.suscripcion_id);
+          const yaCalificado = calificacionesPrevias.find(c => String(c.suscripcion_id) === String(item.suscripcion_id));
+          const yaReclamado = reclamosPrevios.find(r => String(r.suscripcion_id) === String(item.suscripcion_id));
 
           let btnCalificarHTML = yaCalificado 
-            ? `<button class="btn-calificar calificado">✓ Calificado (${'★'.repeat(yaCalificado.puntuacion)})</button>`
+            ? `<button class="btn-calificar calificado">✓ Calificado (${'★'.repeat(yaCalificado.puntuacion || 5)})</button>`
             : `<button class="btn-calificar" onclick="abrirModalCalificar(${item.suscripcion_id}, '${vendedorId}', '${nombreServicio}')">⭐ Calificar</button>`;
 
           let btnReclamoHTML = yaReclamado
-            ? `<button class="btn-reclamo reportado">⚠️ Reportado (${yaReclamado.estado})</button>`
+            ? `<button class="btn-reclamo reportado">⚠️ Reportado (${yaReclamado.estado || 'pendiente'})</button>`
             : `<button class="btn-reclamo" onclick="abrirModalReclamo(${item.suscripcion_id}, '${vendedorId}', '${nombreServicio}')">⚠️ Reportar</button>`;
 
           let div = document.createElement('div');
@@ -268,7 +269,7 @@
                 <h4>${nombreServicio}</h4>
                 <p>Estado: <strong style="color: var(--success);">Activo</strong></p>
               </div>
-              <div class="oferta-precio">$${item.monto_pagado?.toLocaleString('es-AR')}</div>
+              <div class="oferta-precio">$${item.monto_pagado?.toLocaleString('es-AR') || '0'}</div>
             </div>
             <div class="access-box">
               <div style="font-weight:700; color:var(--success); margin-bottom:6px;">🔓 Accesos Desbloqueados:</div>
@@ -373,5 +374,4 @@
         });
 
         if (res.ok || res.status === 201) {
-          alert('¡Reclamo enviado con éxito! El equipo de soporte revisará el caso.');
-          c
+     
