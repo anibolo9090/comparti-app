@@ -12,6 +12,9 @@
       --card-bg: #ffffff;
       --text-main: #1e293b;
       --text-muted: #64748b;
+      --warning: #f97316;
+      --warning-bg: #fff7ed;
+      --warning-border: #ffedd5;
     }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -27,7 +30,7 @@
       padding: 24px;
       border-radius: 20px;
       box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.3);
-      margin-bottom: 20px;
+      margin-bottom: 16px;
       text-align: center;
     }
     .wallet-hero h2 {
@@ -64,6 +67,41 @@
       color: var(--primary-dark);
       border: none;
     }
+
+    /* Caja para Saldo Retenido */
+    .retained-card {
+      background: var(--warning-bg);
+      border: 1px solid var(--warning-border);
+      padding: 16px 20px;
+      border-radius: 16px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .retained-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .retained-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #c2410c;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .retained-desc {
+      font-size: 0.75rem;
+      color: #ea580c;
+      margin-top: 2px;
+    }
+    .retained-amount {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #c2410c;
+    }
+
     .section-card {
       background: var(--card-bg);
       padding: 20px;
@@ -168,12 +206,21 @@
 
   <!-- Tarjeta de Saldo Principal -->
   <div class="wallet-hero">
-    <h2>Dinero en cuenta</h2>
+    <h2>Dinero disponible</h2>
     <p class="balance-amount" id="lblSaldo">Cargando...</p>
     <div class="action-buttons">
       <button class="btn-action primary" onclick="abrirModal(5000)">+ Cargar saldo</button>
       <button class="btn-action" onclick="alert('Próximamente opción de retiro')">Retirar</button>
     </div>
+  </div>
+
+  <!-- Tarjeta de Saldo Retenido (Garantía) -->
+  <div class="retained-card">
+    <div class="retained-info">
+      <span class="retained-title">⏳ Saldo en Garantía</span>
+      <span class="retained-desc">Se libera 15 días tras cada venta</span>
+    </div>
+    <div class="retained-amount" id="lblRetenido">$0</div>
   </div>
 
   <!-- Sección de Recarga Rápida -->
@@ -226,7 +273,10 @@
 
         if (data && data.length > 0) {
           const saldoActual = data[0].saldo || 0;
+          const saldoRetenido = data[0].saldo_retenido || 0;
+          
           document.getElementById('lblSaldo').textContent = `$${Number(saldoActual).toLocaleString('es-AR')}`;
+          document.getElementById('lblRetenido').textContent = `$${Number(saldoRetenido).toLocaleString('es-AR')}`;
         } else {
           await crearBilleteraInicial();
         }
@@ -244,9 +294,10 @@
           'Content-Type': 'application/json',
           'Prefer': 'return=representation'
         },
-        body: JSON.stringify({ usuario_id: usuarioActual, saldo: 0 })
+        body: JSON.stringify({ usuario_id: usuarioActual, saldo: 0, saldo_retenido: 0 })
       });
       document.getElementById('lblSaldo').textContent = "$0";
+      document.getElementById('lblRetenido').textContent = "$0";
     }
 
     function abrirModal(monto) {
@@ -259,12 +310,11 @@
       document.getElementById('modalPago').style.display = 'none';
     }
 
-        async function procesarPago(metodo) {
+    async function procesarPago(metodo) {
       cerrarModal();
       alert(`Procesando pago con ${metodo} por $${montoSeleccionado.toLocaleString('es-AR')}...`);
 
       try {
-        // 1. Primero consultamos si el usuario ya tiene un registro en la tabla
         let res = await fetch(`${supabaseUrl}/rest/v1/billetera?usuario_id=eq.${usuarioActual}&select=*`, {
           headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
         });
@@ -283,7 +333,6 @@
         let updateRes;
 
         if (existeRegistro) {
-          // 2A. Si ya existe, hacemos un PATCH para actualizar
           updateRes = await fetch(`${supabaseUrl}/rest/v1/billetera?usuario_id=eq.${usuarioActual}`, {
             method: 'PATCH',
             headers: {
@@ -295,7 +344,6 @@
             body: JSON.stringify({ saldo: nuevoSaldo, actualizado_at: new Date() })
           });
         } else {
-          // 2B. Si por alguna razón no existía, lo creamos con POST
           updateRes = await fetch(`${supabaseUrl}/rest/v1/billetera`, {
             method: 'POST',
             headers: {
@@ -304,13 +352,12 @@
               'Content-Type': 'application/json',
               'Prefer': 'return=minimal'
             },
-            body: JSON.stringify({ usuario_id: usuarioActual, saldo: nuevoSaldo })
+            body: JSON.stringify({ usuario_id: usuarioActual, saldo: nuevoSaldo, saldo_retenido: 0 })
           });
         }
 
         if (updateRes.ok || updateRes.status === 204) {
           alert(`¡Pago aprobado con éxito! Se acreditaron $${montoSeleccionado.toLocaleString('es-AR')} en tu billetera.`);
-          // Esperamos medio segundo para que Supabase procese el cambio y refrescamos
           setTimeout(obtenerSaldo, 500);
         } else {
           let errText = await updateRes.text();
@@ -321,7 +368,6 @@
         console.error("Error al procesar acreditación:", err);
       }
     }
-
 
     window.onload = obtenerSaldo;
   </script>
