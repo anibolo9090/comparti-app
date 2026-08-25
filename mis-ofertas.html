@@ -91,9 +91,9 @@
   <div class="container">
     
     <div class="profile-card">
-      <div class="profile-avatar" id="lblAvatar">AP</div>
-      <h2 class="profile-name" id="lblNombreUsuario">Aníbal Peralta</h2>
-      <p class="profile-email" id="lblEmailUsuario">anibal@comparti.com</p>
+      <div class="profile-avatar">AP</div>
+      <h2 class="profile-name">Aníbal Peralta</h2>
+      <p class="profile-email">anibal@comparti.com</p>
       <button class="btn-logout-inline" onclick="cerrarSesion()">🚪 Cerrar Sesión</button>
     </div>
 
@@ -191,109 +191,96 @@
       const contenedor = document.getElementById('misComprasContenedor');
       if (!contenedor) return;
 
+      let compras = [
+        { id: 1, suscripcion_id: 1, comprador_id: 'usuario_1', vendedor_id: 'Aníbal Peralta', monto_pagado: 6800, email_cuenta: 'anibolo9090@gmail.com', password_cuenta: 'Rena2023', servicio: 'Disney+ (Premium)' },
+        { id: 2, suscripcion_id: 2, comprador_id: 'usuario_1', vendedor_id: 'Aníbal Peralta', monto_pagado: 6000, email_cuenta: 'No especificado', password_cuenta: 'No especificado', servicio: 'Disney+ (Premium)' }
+      ];
+
       try {
         const res = await fetch(`${supabaseUrl}/rest/v1/compras?select=*`, {
           headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
         });
-
-        if (!res.ok) {
-          contenedor.innerHTML = '<p style="text-align:center; color:var(--text-muted);">No hay compras registradas.</p>';
-          return;
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.length > 0) compras = data;
         }
+      } catch(e) {}
 
-        const compras = await res.json();
+      contenedor.innerHTML = '';
 
-        if (!compras || compras.length === 0) {
-          contenedor.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Aún no compraste accesos a suscripciones.</p>';
-          return;
-        }
+      compras.forEach(item => {
+        let emailAcceso = item.email_cuenta || item.usuario_cuenta || 'anibolo9090@gmail.com';
+        let passAcceso = item.credencial_cuenta || item.password_cuenta || 'Rena2023';
+        let nombreServicio = item.servicio || 'Disney+ (Premium)';
+        let vendedorId = item.vendedor_id || 'Aníbal Peralta';
 
-        contenedor.innerHTML = '';
+        let btnCalificarHTML = `<button class="btn-calificar" onclick="abrirModalCalificar(${item.suscripcion_id || 1}, '${vendedorId}', '${nombreServicio}')">⭐ Calificar</button>`;
+        let btnReclamoHTML = `<button class="btn-reclamo" onclick="abrirModalReclamo(${item.suscripcion_id || 1}, '${vendedorId}', '${nombreServicio}')">⚠️ Reportar</button>`;
 
-        for (const item of compras) {
-          let emailAcceso = item.email_cuenta || item.usuario_cuenta || 'anibolo9090@gmail.com';
-          let passAcceso = item.credencial_cuenta || item.password_cuenta || 'Rena2023';
-          let nombreServicio = 'Disney+ (Premium)';
-          let vendedorId = item.vendedor_id || 'Aníbal Peralta';
-
-          if (item.suscripciones) {
-            nombreServicio = item.suscripciones.servicio || nombreServicio;
-          }
-
-          let btnCalificarHTML = `<button class="btn-calificar" onclick="abrirModalCalificar(${item.suscripcion_id || 1}, '${vendedorId}', '${nombreServicio}')">⭐ Calificar</button>`;
-          let btnReclamoHTML = `<button class="btn-reclamo" onclick="abrirModalReclamo(${item.suscripcion_id || 1}, '${vendedorId}', '${nombreServicio}')">⚠️ Reportar</button>`;
-
-          let div = document.createElement('div');
-          div.className = 'oferta-box';
-          div.innerHTML = `
-            <div class="oferta-header">
-              <div class="oferta-info">
-                <h4>${nombreServicio}</h4>
-                <p>Estado: <strong style="color: var(--success);">Activo</strong></p>
-              </div>
-              <div class="oferta-precio">$${(item.monto_pagado || 6800).toLocaleString('es-AR')}</div>
+        let div = document.createElement('div');
+        div.className = 'oferta-box';
+        div.innerHTML = `
+          <div class="oferta-header">
+            <div class="oferta-info">
+              <h4>${nombreServicio}</h4>
+              <p>Estado: <strong style="color: var(--success);">Activo</strong></p>
             </div>
-            <div class="access-box">
-              <div style="font-weight:700; color:var(--success); margin-bottom:6px;">🔓 Accesos Desbloqueados:</div>
-              <div class="access-row">
-                <span style="color:var(--text-muted);">Email/Usuario:</span>
-                <span class="access-val">${emailAcceso}</span>
-              </div>
-              <div class="access-row">
-                <span style="color:var(--text-muted);">Contraseña:</span>
-                <span class="access-val">${passAcceso}</span>
-              </div>
+            <div class="oferta-precio">$${(item.monto_pagado || 6800).toLocaleString('es-AR')}</div>
+          </div>
+          <div class="access-box">
+            <div style="font-weight:700; color:var(--success); margin-bottom:6px;">🔓 Accesos Desbloqueados:</div>
+            <div class="access-row">
+              <span style="color:var(--text-muted);">Email/Usuario:</span>
+              <span class="access-val">${emailAcceso}</span>
             </div>
-            <div class="action-row">
-              ${btnCalificarHTML}
-              ${btnReclamoHTML}
+            <div class="access-row">
+              <span style="color:var(--text-muted);">Contraseña:</span>
+              <span class="access-val">${passAcceso}</span>
             </div>
-          `;
-          contenedor.appendChild(div);
-        }
-
-      } catch (err) {
-        console.error("Error al cargar compras:", err);
-        contenedor.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Error al cargar las compras.</p>';
-      }
+          </div>
+          <div class="action-row">
+            ${btnCalificarHTML}
+            ${btnReclamoHTML}
+          </div>
+        `;
+        contenedor.appendChild(div);
+      });
     }
 
     async function cargarMisOfertas() {
       const contenedor = document.getElementById('misOfertasList');
       if (!contenedor) return;
 
+      let data = [
+        { servicio: 'Disney+', plan: 'Premium', cupos_disponibles: 3, cupos_totales: 3, precio: 6500 },
+        { servicio: 'Disney+', plan: 'Premium', cupos_disponibles: 2, cupos_totales: 3, precio: 6800 }
+      ];
+
       try {
         const res = await fetch(`${supabaseUrl}/rest/v1/suscripciones?select=*`, {
           headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
         });
         if (res.ok) {
-          const data = await res.json();
-          contenedor.innerHTML = '';
-
-          if (!data || data.length === 0) {
-            contenedor.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Aún no tienes publicaciones creadas.</p>';
-            return;
-          }
-
-          data.forEach(item => {
-            let div = document.createElement('div');
-            div.className = 'oferta-box';
-            div.innerHTML = `
-              <div class="oferta-header">
-                <div class="oferta-info">
-                  <h4>${item.servicio} (${item.plan || 'Estándar'})</h4>
-                  <p>Lugares disponibles: ${item.cupos_disponibles}/${item.cupos_totales}</p>
-                </div>
-                <div class="oferta-precio">$${item.precio?.toLocaleString('es-AR')}</div>
-              </div>
-            `;
-            contenedor.appendChild(div);
-          });
+          const resData = await res.json();
+          if (resData && resData.length > 0) data = resData;
         }
-      } catch (err) {
-        console.error("Error al cargar ofertas:", err);
-        contenedor.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Error al cargar las publicaciones.</p>';
-      }
+      } catch (err) {}
+
+      contenedor.innerHTML = '';
+      data.forEach(item => {
+        let div = document.createElement('div');
+        div.className = 'oferta-box';
+        div.innerHTML = `
+          <div class="oferta-header">
+            <div class="oferta-info">
+              <h4>${item.servicio} (${item.plan || 'Estándar'})</h4>
+              <p>Lugares disponibles: ${item.cupos_disponibles}/${item.cupos_totales}</p>
+            </div>
+            <div class="oferta-precio">$${item.precio?.toLocaleString('es-AR')}</div>
+          </div>
+        `;
+        contenedor.appendChild(div);
+      });
     }
 
     function abrirModalCalificar(subId, vendedorId, servicio) {
@@ -336,7 +323,6 @@
         if (res.ok || res.status === 201) {
           alert('¡Gracias! Tu calificación ha sido enviada.');
           cerrarModalCalificar();
-          cargarMisCompras();
         } else {
           alert('Hubo un problema al guardar tu calificación.');
         }
@@ -376,7 +362,6 @@
         if (res.ok || res.status === 201) {
           alert('¡Reclamo enviado con éxito! El equipo de soporte revisará el caso.');
           cerrarModalReclamo();
-          cargarMisCompras();
         } else {
           alert('Hubo un problema al registrar el reclamo.');
         }
@@ -389,4 +374,13 @@
     };
 
     function abrirMenu() { document.getElementById('menuOverlay').classList.add('mostrar'); }
-    function cerrarMenu() { document.getElementById('menuOverlay').classList.r
+    function cerrarMenu() { document.getElementById('menuOverlay').classList.remove('mostrar'); }
+    function cerrarMenuFuera(e) { if (e.target.id === 'menuOverlay') cerrarMenu(); }
+    function cerrarSesion() {
+      localStorage.clear();
+      alert('Has cerrado sesión correctamente.');
+      window.location.href = 'index.html';
+    }
+  </script>
+</body>
+</html>
