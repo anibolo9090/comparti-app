@@ -42,12 +42,11 @@
     .access-row:last-child { margin-bottom: 0; }
     .access-val { font-weight: 700; color: var(--text); }
 
-    .action-row { display: flex; gap: 8px; margin-top: 10px; }
-    .btn-calificar { flex: 1; background: #fffbe6; color: #d97706; border: 1px solid #fef3c7; padding: 8px; border-radius: 8px; font-weight: 700; font-size: 0.82rem; cursor: pointer; text-align: center; }
-    .btn-calificar.calificado { background: #f1f5f9; color: var(--text-muted); border-color: #e2e8f0; cursor: default; }
-    
-    .btn-reclamo { flex: 1; background: #fef2f2; color: var(--danger); border: 1px solid #fecaca; padding: 8px; border-radius: 8px; font-weight: 700; font-size: 0.82rem; cursor: pointer; text-align: center; }
-    .btn-reclamo.reportado { background: #f1f5f9; color: var(--text-muted); border-color: #e2e8f0; cursor: default; }
+    .action-row { display: flex; gap: 6px; margin-top: 10px; }
+    .btn-action-item { flex: 1; text-align: center; border-radius: 8px; font-weight: 700; font-size: 0.8rem; padding: 8px 4px; cursor: pointer; text-decoration: none; border: 1px solid transparent; }
+    .btn-grupo { background: #e0e7ff; color: #3730a3; border-color: #c7d2fe; display: block; }
+    .btn-calificar { background: #fffbe6; color: #d97706; border-color: #fef3c7; }
+    .btn-reclamo { background: #fef2f2; color: var(--danger); border-color: #fecaca; }
 
     /* MODALES */
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: flex-end; z-index: 99999; backdrop-filter: blur(4px); }
@@ -193,7 +192,7 @@
 
       let compras = [
         { id: 1, suscripcion_id: 1, comprador_id: 'usuario_1', vendedor_id: 'Aníbal Peralta', monto_pagado: 6800, email_cuenta: 'anibolo9090@gmail.com', password_cuenta: 'Rena2023', servicio: 'Disney+ (Premium)' },
-        { id: 2, suscripcion_id: 2, comprador_id: 'usuario_1', vendedor_id: 'Aníbal Peralta', monto_pagado: 6000, email_cuenta: 'No especificado', password_cuenta: 'No especificado', servicio: 'Disney+ (Premium)' }
+        { id: 2, suscripcion_id: 2, comprador_id: 'usuario_1', vendedor_id: 'Aníbal Peralta', monto_pagado: 6000, email_cuenta: 'anibolo9090@gmail.com', password_cuenta: 'Rena2023', servicio: 'Disney+ (Premium)' }
       ];
 
       try {
@@ -214,8 +213,9 @@
         let nombreServicio = item.servicio || 'Disney+ (Premium)';
         let vendedorId = item.vendedor_id || 'Aníbal Peralta';
 
-        let btnCalificarHTML = `<button class="btn-calificar" onclick="abrirModalCalificar(${item.suscripcion_id || 1}, '${vendedorId}', '${nombreServicio}')">⭐ Calificar</button>`;
-        let btnReclamoHTML = `<button class="btn-reclamo" onclick="abrirModalReclamo(${item.suscripcion_id || 1}, '${vendedorId}', '${nombreServicio}')">⚠️ Reportar</button>`;
+        let btnGrupoHTML = `<a href="grupo.html?id=${item.suscripcion_id || 1}" class="btn-action-item btn-grupo">👥 Ver Grupo</a>`;
+        let btnCalificarHTML = `<button class="btn-action-item btn-calificar" onclick="abrirModalCalificar(${item.suscripcion_id || 1}, '${vendedorId}', '${nombreServicio}')">⭐ Calificar</button>`;
+        let btnReclamoHTML = `<button class="btn-action-item btn-reclamo" onclick="abrirModalReclamo(${item.suscripcion_id || 1}, '${vendedorId}', '${nombreServicio}')">⚠️ Reportar</button>`;
 
         let div = document.createElement('div');
         div.className = 'oferta-box';
@@ -239,6 +239,7 @@
             </div>
           </div>
           <div class="action-row">
+            ${btnGrupoHTML}
             ${btnCalificarHTML}
             ${btnReclamoHTML}
           </div>
@@ -252,8 +253,8 @@
       if (!contenedor) return;
 
       let data = [
-        { servicio: 'Disney+', plan: 'Premium', cupos_disponibles: 3, cupos_totales: 3, precio: 6500 },
-        { servicio: 'Disney+', plan: 'Premium', cupos_disponibles: 2, cupos_totales: 3, precio: 6800 }
+        { id: 1, servicio: 'Disney+', plan: 'Premium', cupos_disponibles: 3, cupos_totales: 3, precio: 6500 },
+        { id: 2, servicio: 'Disney+', plan: 'Premium', cupos_disponibles: 2, cupos_totales: 3, precio: 6800 }
       ];
 
       try {
@@ -277,6 +278,9 @@
               <p>Lugares disponibles: ${item.cupos_disponibles}/${item.cupos_totales}</p>
             </div>
             <div class="oferta-precio">$${item.precio?.toLocaleString('es-AR')}</div>
+          </div>
+          <div style="margin-top:10px;">
+            <a href="grupo.html?id=${item.id}" class="btn-action-item btn-grupo" style="display:block;">👥 Administrar Grupo y Chat</a>
           </div>
         `;
         contenedor.appendChild(div);
@@ -383,4 +387,4 @@
     }
   </script>
 </body>
-</html>
+</ht
