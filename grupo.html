@@ -335,34 +335,37 @@
       } catch (err) {}
     }
 
-        async function eliminarEstaSuscripcion() {
-      if (!confirm("¿Estás seguro de que deseas eliminar esta publicación?")) return;
+            async function eliminarEstaSuscripcion() {
+      if (!confirm("¿Estás seguro de que deseas eliminar esta publicación del servidor?")) return;
 
-      // Intentamos borrar en el servidor, pero si Supabase frena por relaciones, 
-      // de igual manera permitimos que el usuario limpie su interfaz y salga del grupo.
       try {
-        await fetch(`${supabaseUrl}/rest/v1/suscripciones?id=eq.${subId}`, {
+        // Borramos primero los registros dependientes en compras
+        await fetch(`${supabaseUrl}/rest/v1/compras?suscripcion_id=eq.${subId}`, {
+          method: 'DELETE',
+          headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
+        });
+
+        // Borramos la suscripción principal de forma definitiva
+        const res = await fetch(`${supabaseUrl}/rest/v1/suscripciones?id=eq.${subId}`, {
           method: 'DELETE',
           headers: {
             'apikey': apikey,
             'Authorization': 'Bearer ' + apikey
           }
         });
-      } catch (err) {
-        console.error("Aviso de red:", err);
-      }
 
-      alert("¡Publicación eliminada correctamente!");
-      window.location.href = 'mis-ofertas.html';
-    }
- else {
-          alert("No se pudo eliminar la publicación en el servidor.");
+        if (res.ok || res.status === 204) {
+          alert("¡Publicación eliminada correctamente del servidor!");
+          window.location.href = 'mis-ofertas.html';
+        } else {
+          alert("El servidor rechazó la eliminación.");
         }
       } catch (err) {
         console.error("Error al eliminar:", err);
-        alert("Ocurrió un error de conexión.");
+        alert("Ocurrió un error de red al intentar borrar.");
       }
     }
+
 
     window.onload = () => {
       cargarDetalleGrupo();
