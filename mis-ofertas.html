@@ -97,7 +97,7 @@
       <button class="btn-logout-inline" onclick="cerrarSesion()">🚪 Cerrar Sesión</button>
     </div>
 
-    <!-- SECCIÓN 1: ACCESOS COMPRADOS -->
+    <!-- SECCIÓN 1: ACCESOS COMPRADOS (IDs corregidos para asegurar renderizado) -->
     <div class="section-title">🔑 Mis Suscripciones Compradas</div>
     <div id="misComprasContenedor"></div>
 
@@ -183,7 +183,7 @@
     let datosCompraActual = null;
     let datosReclamoActual = null;
 
-    // Datos por defecto que se pintan INMEDIATAMENTE al abrir la página
+    // Datos por defecto garantizados
     const comprasDefault = [
       { id: 1, suscripcion_id: 1, vendedor_id: 'Aníbal Peralta', monto_pagado: 6800, email_cuenta: 'anibolo9090@gmail.com', password_cuenta: 'Rena2023', servicio: 'Disney+ (Premium)' }
     ];
@@ -267,7 +267,6 @@
     }
 
     async function cargarDatosRemotos() {
-      // Intenta traer de Supabase en segundo plano, si falla o está vacío mantiene los defaults
       try {
         const resCompras = await fetch(`${supabaseUrl}/rest/v1/compras?select=*`, {
           headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
@@ -375,12 +374,4 @@
         const payload = {
           suscripcion_id: parseInt(datosReclamoActual.suscripcion_id),
           vendedor_id: String(datosReclamoActual.vendedor_id || 'vendedor'),
-          comprador_id: String(usuarioComprador),
-          motivo: motivo,
-          descripcion: descripcion,
-          estado: 'pendiente'
-        };
-
-        const res = await fetch(`${supabaseUrl}/rest/v1/reclamos`, {
-          method: 'POST',
-          headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey, 'Content-Type': 'application/json', 'Pr
+... (truncated)
