@@ -13,6 +13,7 @@
       --card-border: #e2e8f0; 
       --text: #0f172a; 
       --text-muted: #64748b; 
+      --warning: #f59e0b;
     }
     * { box-sizing: border-box; }
     body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
@@ -35,11 +36,14 @@
     @media(min-width: 600px) { .card-grid { grid-template-columns: 1fr 1fr; } }
 
     .sub-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 18px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: space-between; }
-    .sub-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+    .sub-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
     .sub-title { font-size: 1.1rem; font-weight: 700; color: var(--text); margin: 0; }
     .sub-plan { font-size: 0.85rem; color: var(--text-muted); margin-top: 2px; }
     .sub-precio { font-size: 1.25rem; font-weight: 800; color: var(--primary); }
     
+    .vendedor-info { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 0.82rem; color: var(--text-muted); }
+    .badge-reputacion { font-size: 0.78rem; color: var(--warning); font-weight: 700; background: #fffbe6; border: 1px solid #fef3c7; padding: 2px 6px; border-radius: 6px; display: inline-flex; align-items: center; gap: 3px; }
+
     .badge-cupos { display: inline-block; background: #e0e7ff; color: #3730a3; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; margin-bottom: 12px; }
     
     .btn-comprar { width: 100%; background: var(--primary); color: #fff; border: none; padding: 10px; border-radius: 10px; font-weight: 700; font-size: 0.9rem; cursor: pointer; text-align: center; text-decoration: none; display: block; }
@@ -171,14 +175,32 @@
       }
     }
 
-        function mostrarSuscripciones(lista) {
+    async function mostrarSuscripciones(lista) {
       const grid = document.getElementById('gridSuscripciones');
       grid.innerHTML = '';
       if (lista.length === 0) {
         grid.innerHTML = '<p style="text-align:center; color:var(--text-muted); grid-column:span 2;">No hay suscripciones disponibles por el momento.</p>';
         return;
       }
-      lista.forEach(item => {
+
+      for (const item of lista) {
+        let vendedorId = item.usuario || 'Aníbal Peralta';
+        let repTexto = '⭐ Nuevo';
+
+        try {
+          let resCal = await fetch(`${supabaseUrl}/rest/v1/calificaciones?vendedor_id=eq.${encodeURIComponent(vendedorId)}&select=puntuacion`, {
+            headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
+          });
+          if (resCal.ok) {
+            let cData = await resCal.json();
+            if (cData && cData.length > 0) {
+              let suma = cData.reduce((acc, c) => acc + c.puntuacion, 0);
+              let prom = (suma / cData.length).toFixed(1);
+              repTexto = `⭐ ${prom} (${cData.length})`;
+            }
+          }
+        } catch(e) {}
+
         let card = document.createElement('div');
         card.className = 'sub-card';
         card.innerHTML = `
@@ -190,16 +212,19 @@
               </div>
               <div class="sub-precio">$${item.precio?.toLocaleString('es-AR') || '0'}</div>
             </div>
+            
+            <div class="vendedor-info">
+              <span>Por: ${vendedorId}</span>
+              <span class="badge-reputacion">${repTexto}</span>
+            </div>
+
             <div class="badge-cupos">👤 Quedan ${item.cupos_disponibles} lugares</div>
           </div>
           <a href="pago.html?id=${item.id || 1}" class="btn-comprar">Comprar lugar</a>
-
-
         `;
         grid.appendChild(card);
-      });
+      }
     }
-
 
     function filtrar(categoria, elementoBtn) {
       document.querySelectorAll('.filtro-chip').forEach(btn => btn.classList.remove('active'));
