@@ -13,6 +13,7 @@
       --card-border: #e2e8f0; 
       --text: #0f172a; 
       --text-muted: #64748b; 
+      --success: #16a34a;
     }
     * { box-sizing: border-box; }
     body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
@@ -28,10 +29,17 @@
 
     .section-title { font-size: 1.1rem; font-weight: 700; color: var(--text); margin: 24px 0 12px 0; }
 
-    .oferta-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+    .oferta-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+    .oferta-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
     .oferta-info h4 { margin: 0 0 4px 0; font-size: 1rem; color: var(--text); }
     .oferta-info p { margin: 0; font-size: 0.85rem; color: var(--text-muted); }
     .oferta-precio { font-size: 1.1rem; font-weight: 800; color: var(--primary); }
+
+    /* Estilo para las credenciales desbloqueadas */
+    .access-box { background: #f0fdf4; border: 1px dashed var(--success); border-radius: 10px; padding: 12px; margin-top: 10px; font-size: 0.85rem; }
+    .access-row { display: flex; justify-content: space-between; margin-bottom: 4px; }
+    .access-row:last-child { margin-bottom: 0; }
+    .access-val { font-weight: 700; color: var(--text); }
 
     /* MENÚ FLOTANTE MINIMALISTA */
     .menu-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); z-index: 99999; display: none; align-items: flex-end; backdrop-filter: blur(2px); }
@@ -74,7 +82,14 @@
       <button class="btn-logout-inline" onclick="cerrarSesion()">🚪 Cerrar Sesión</button>
     </div>
 
-    <div class="section-title">Tus publicaciones activas</div>
+    <!-- SECCIÓN 1: ACCESOS COMPRADOS -->
+    <div class="section-title">🔑 Mis Suscripciones Compradas</div>
+    <div id="misComprasContenedor">
+      <p style="text-align: center; color: var(--text-muted);">Cargando tus accesos...</p>
+    </div>
+
+    <!-- SECCIÓN 2: PUBLICACIONES CREADAS -->
+    <div class="section-title">📢 Tus publicaciones activas</div>
     <div id="misOfertasList">
       <p style="text-align: center; color: var(--text-muted);">Cargando tus publicaciones...</p>
     </div>
@@ -127,6 +142,57 @@
     const supabaseUrl = 'https://xygatgvzdniivzwndaxy.supabase.co';
     const apikey = 'sb_publishable_fDfrz9tONWlI3ETRbanG3w_cXYsFVif';
 
+    // 1. Cargar las compras del usuario actual y mostrar sus datos de acceso
+    async function cargarMisCompras() {
+      const usuarioComprador = "usuario_1";
+      const contenedor = document.getElementById('misComprasContenedor');
+
+      try {
+        const res = await fetch(`${supabaseUrl}/rest/v1/compras?comprador_id=eq.${usuarioComprador}&select=*`, {
+          headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
+        });
+
+        if (res.ok) {
+          const compras = await res.json();
+          contenedor.innerHTML = '';
+
+          if (compras.length === 0) {
+            contenedor.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Aún no compraste accesos a suscripciones.</p>';
+            return;
+          }
+
+          compras.forEach(item => {
+            let div = document.createElement('div');
+            div.className = 'oferta-box';
+            div.innerHTML = `
+              <div class="oferta-header">
+                <div class="oferta-info">
+                  <h4>Suscripción #${item.suscripcion_id}</h4>
+                  <p>Estado: <strong style="color: var(--success);">Activo</strong></p>
+                </div>
+                <div class="oferta-precio">$${item.monto_pagado?.toLocaleString('es-AR')}</div>
+              </div>
+              <div class="access-box">
+                <div style="font-weight:700; color:var(--success); margin-bottom:6px;">🔓 Accesos Desbloqueados:</div>
+                <div class="access-row">
+                  <span style="color:var(--text-muted);">Email/Usuario:</span>
+                  <span class="access-val">${item.email_cuenta || 'En proceso'}</span>
+                </div>
+                <div class="access-row">
+                  <span style="color:var(--text-muted);">Contraseña:</span>
+                  <span class="access-val">${item.credencial_cuenta || 'En proceso'}</span>
+                </div>
+              </div>
+            `;
+            contenedor.appendChild(div);
+          });
+        }
+      } catch (err) {
+        console.error("Error al cargar compras:", err);
+      }
+    }
+
+    // 2. Cargar las suscripciones que el usuario publicó para vender
     async function cargarMisOfertas() {
       try {
         const res = await fetch(`${supabaseUrl}/rest/v1/suscripciones?usuario=eq.Anibal%20Peralta&select=*`, {
@@ -136,28 +202,34 @@
           const data = await res.json();
           const contenedor = document.getElementById('misOfertasList');
           contenedor.innerHTML = '';
+
           if (data.length === 0) {
             contenedor.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Aún no tienes publicaciones creadas.</p>';
             return;
           }
+
           data.forEach(item => {
             let div = document.createElement('div');
             div.className = 'oferta-box';
             div.innerHTML = `
-              <div class="oferta-info">
-                <h4>${item.servicio} (${item.plan || 'Estándar'})</h4>
-                <p>Lugares disponibles: ${item.cupos_disponibles}/${item.cupos_totales}</p>
+              <div class="oferta-header">
+                <div class="oferta-info">
+                  <h4>${item.servicio} (${item.plan || 'Estándar'})</h4>
+                  <p>Lugares disponibles: ${item.cupos_disponibles}/${item.cupos_totales}</p>
+                </div>
+                <div class="oferta-precio">$${item.precio?.toLocaleString('es-AR')}</div>
               </div>
-              <div class="oferta-precio">$${item.precio?.toLocaleString('es-AR')}</div>
             `;
             contenedor.appendChild(div);
           });
         }
       } catch (err) {
-        console.eror(err);
+        console.error("Error al cargar ofertas:", err);
       }
     }
 
+    // Ejecutar ambas consultas al iniciar
+    cargarMisCompras();
     cargarMisOfertas();
 
     function abrirMenu() { document.getElementById('menuOverlay').classList.add('mostrar'); }
