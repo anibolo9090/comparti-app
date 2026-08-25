@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detalle del Grupo — Compartí</title>
+
+  <style>
+    :root { 
+      --primary: #4f46e5; 
+      --bg: #f8fafc; 
+      --card-bg: #ffffff; 
+      --card-border: #e2e8f0; 
+      --text: #0f172a; 
+      --text-muted: #64748b; 
+      --accent-yellow: #fef3c7;
+      --accent-yellow-text: #b45309;
+    }
+    * { box-sizing: border-box; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
+    
+    .container { max-width: 600px; margin: 0 auto; padding: 16px; }
+
+    /* HEADER */
+    .top-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .btn-back { background: #ffffff; border: 1px solid var(--card-border); border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; text-decoration: none; color: var(--text); font-weight: bold; }
+    .group-title { font-size: 1.3rem; font-weight: 800; text-align: center; flex: 1; margin: 0; }
+
+    /* TARJETAS DE RESUMEN */
+    .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+    .summary-card { background: #ffffff; border: 1px solid var(--card-border); border-radius: 16px; padding: 16px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+    .summary-label { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px; }
+    .summary-val { font-size: 1.4rem; font-weight: 800; color: var(--text); }
+    .summary-sub { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
+
+    /* SECCIÓN MIEMBROS */
+    .members-box { background: #fef9c3; border: 1px solid #fef08a; border-radius: 20px; padding: 20px; margin-bottom: 20px; }
+    .members-title { font-size: 1.15rem; font-weight: 800; text-align: center; color: #713f12; margin-bottom: 16px; }
+    .members-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; }
+    .member-item { display: flex; flex-direction: column; align-items: center; width: 70px; }
+    .member-avatar { width: 56px; height: 56px; border-radius: 50%; background: #eab308; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem; border: 3px solid #facc15; box-shadow: 0 2px 6px rgba(0,0,0,0.1); margin-bottom: 6px; }
+    .member-name { font-size: 0.78rem; font-weight: 600; color: #713f12; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+
+    /* CREDENCIALES */
+    .credentials-box { background: #ffffff; border: 1px solid var(--card-border); border-radius: 16px; padding: 18px; margin-bottom: 20px; }
+    .box-title { font-size: 1.05rem; font-weight: 800; text-align: center; margin-bottom: 14px; }
+    .field-group { margin-bottom: 12px; }
+    .field-group:last-child { margin-bottom: 0; }
+    .field-input-wrap { display: flex; align-items: center; background: #f8fafc; border: 1px solid var(--card-border); border-radius: 12px; padding: 10px 14px; }
+    .field-icon { margin-right: 10px; font-size: 1.1rem; }
+    .field-val { flex: 1; font-weight: 600; font-size: 0.9rem; color: var(--text); border: none; background: transparent; }
+
+    /* SECCIÓN CHAT INTEGRADO */
+    .chat-section { background: #ffffff; border: 1px solid var(--card-border); border-radius: 16px; padding: 16px; }
+    .chat-history { max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; padding-right: 4px; }
+    .chat-bubble { max-width: 85%; padding: 8px 12px; border-radius: 12px; font-size: 0.85rem; }
+    .chat-bubble.propio { align-self: flex-end; background: var(--primary); color: white; }
+    .chat-bubble.ajeno { align-self: flex-start; background: #f1f5f9; color: var(--text); }
+    .chat-user { font-weight: 700; font-size: 0.72rem; margin-bottom: 2px; opacity: 0.9; }
+
+    .chat-input-wrap { display: flex; gap: 8px; }
+    .chat-input { flex: 1; background: #f8fafc; border: 1px solid var(--card-border); padding: 10px 14px; border-radius: 20px; font-size: 0.85rem; outline: none; }
+    .chat-btn { background: var(--primary); color: white; border: none; padding: 10px 16px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; cursor: pointer; }
+
+    /* BARRA INFERIOR */
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 9999; }
+    .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); text-decoration: none; font-size: 0.75rem; font-weight: 600; gap: 2px; }
+    .nav-item.active { color: #4f46e5; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <div class="top-header">
+      <a href="mis-ofertas.html" class="btn-back">‹</a>
+      <h2 class="group-title" id="lblTituloServicio">Disney+ Premium</h2>
+      <div style="width: 36px;"></div>
+    </div>
+
+    <!-- TARJETAS DE DATOS -->
+    <div class="summary-grid">
+      <div class="summary-card">
+        <div class="summary-label">Recibes</div>
+        <div class="summary-val" id="lblPrecio">$6.099</div>
+        <div class="summary-sub">por usuario</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">Cupos</div>
+        <div class="summary-val" id="lblCupos">3</div>
+        <div class="summary-sub">compartidos</div>
+      </div>
+    </div>
+
+    <!-- MIEMBROS EN TU GRUPO -->
+    <div class="members-box">
+      <div class="members-title">Miembros en tu grupo</div>
+      <div class="members-grid" id="contenedorMiembros">
+        <!-- Render dinámico -->
+      </div>
+    </div>
+
+    <!-- CREDENCIALES DE ACCESO -->
+    <div class="credentials-box">
+      <div class="box-title">Credenciales del Servicio</div>
+      <div class="field-group">
+        <div class="field-input-wrap">
+          <span class="field-icon">👤</span>
+          <input type="text" id="txtEmailCred" class="field-val" readonly value="anibolo9090@gmail.com">
+        </div>
+      </div>
+      <div class="field-group">
+        <div class="field-input-wrap">
+          <span class="field-icon">🔑</span>
+          <input type="text" id="txtPassCred" class="field-val" readonly value="Rena2023">
+        </div>
+      </div>
+    </div>
+
+    <!-- CHAT INTEGRADO DEL GRUPO -->
+    <div class="chat-section">
+      <div class="box-title" style="margin-bottom: 10px; text-align: left;">💬 Chat del Grupo</div>
+      <div class="chat-history" id="chatContainer">
+        <!-- Mensajes -->
+      </div>
+      <div class="chat-input-wrap">
+        <input type="text" id="txtMensaje" class="chat-input" placeholder="Escribí un mensaje al grupo..." onkeypress="if(event.key==='Enter') enviarMensaje()">
+        <button class="chat-btn" onclick="enviarMensaje()">Enviar</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="bottom-nav">
+    <a href="index.html" class="nav-item"><span style="font-size:1.2rem;">🏠</span><span>Inicio</span></a>
+    <a href="billetera.html" class="nav-item"><span style="font-size:1.2rem;">💳</span><span>Billetera</span></a>
+    <a href="mis-ofertas.html" class="nav-item active"><span style="font-size:1.2rem;">👤</span><span>Mi perfil</span></a>
+    <a href="index.html" class="nav-item"><span style="font-size:1.2rem;">☰</span><span>Menú</span></a>
+  </div>
+
+  <script>
+    const supabaseUrl = 'https://xygatgvzdniivzwndaxy.supabase.co';
+    const apikey = 'sb_publishable_fDfrz9tONWlI3ETRbanG3w_cXYsFVif';
+
+    const params = new URLSearchParams(window.location.search);
+    const subId = params.get('id') || '1';
+    const usuarioActual = localStorage.getItem('usuarioNombre') || 'Tú';
+
+    async function cargarDetalleGrupo() {
+      try {
+        const res = await fetch(`${supabaseUrl}/rest/v1/suscripciones?id=eq.${subId}&select=*`, {
+          headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.length > 0) {
+            const item = data[0];
+            document.getElementById('lblTituloServicio').textContent = `${item.servicio} ${item.plan || ''}`;
+            document.getElementById('lblPrecio').textContent = `$${item.precio?.toLocaleString('es-AR')}`;
+            document.getElementById('lblCupos').textContent = `${item.cupos_disponibles}`;
+            if (item.email_cuenta) document.getElementById('txtEmailCred').value = item.email_cuenta;
+            if (item.password_cuenta || item.credencial_cuenta) document.getElementById('txtPassCred').value = item.password_cuenta || item.credencial_cuenta;
+          }
+        }
+      } catch(e) {}
+
+      // Cargar miembros
+      renderMiembros();
+      // Cargar chat
+      cargarMensajes();
+    }
+
+    function renderMiembros() {
+      const contenedor = document.getElementById('contenedorMiembros');
+      const lista = [
+        { nombre: 'Tú', inicial: 'A' },
+        { nombre: 'Milesilva', inicial: 'M' },
+        { nombre: 'Lu', inicial: 'L' },
+        { nombre: 'Mariano', inicial: 'M' }
+      ];
+
+      contenedor.innerHTML = '';
+      lista.forEach(m => {
+        let div = document.createElement('div');
+        div.className = 'member-item';
+        div.innerHTML = `
+          <div class="member-avatar">${m.inicial}</div>
+          <div class="member-name">${m.nombre}</div>
+        `;
+        contenedor.appendChild(div);
+      });
+    }
+
+    async function cargarMensajes() {
+      const container = document.getElementById('chatContainer');
+      try {
+        const res = await fetch(`${supabaseUrl}/rest/v1/mensajes?suscripcion_id=eq.${subId}&select=*&order=fecha.asc`, {
+          headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
+        });
+
+        if (!res.ok) return;
+
+        const mensajes = await res.json();
+        container.innerHTML = '';
+
+        if (mensajes.length === 0) {
+          container.innerHTML = '<p style="text-align:center; color:var(--text-muted); font-size:0.8rem;">No hay mensajes todavía.</p>';
+          return;
+        }
+
+        mensajes.forEach(msg => {
+          const esPropio = msg.remitente_id === usuarioActual || msg.remitente_id === 'usuario_1';
+          let div = document.createElement('div');
+          div.className = `chat-bubble ${esPropio ? 'propio' : 'ajeno'}`;
+          div.innerHTML = `
+            <div class="chat-user">${esPropio ? 'Tú' : msg.remitente_id}</div>
+            <div>${msg.mensaje}</div>
+          `;
+          container.appendChild(div);
+        });
+
+        container.scrollTop = container.scrollHeight;
+      } catch(e) {}
+    }
+
+    async function enviarMensaje() {
+      const input = document.getElementById('txtMensaje');
+      const texto = input.value.trim();
+      if (!texto) return;
+
+      input.value = '';
+
+      try {
+        const payload = {
+          suscripcion_id: parseInt(subId),
+          remitente_id: usuarioActual,
+          destinatario_id: 'grupo',
+          mensaje: texto
+        };
+
+        await fetch(`${supabaseUrl}/rest/v1/mensajes`, {
+          method: 'POST',
+          headers: {
+            'apikey': apikey,
+            'Authorization': 'Bearer ' + apikey,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        cargarMensajes();
+      } catch (err) {}
+    }
+
+    window.onload = () => {
+      cargarDetalleGrupo();
+      setInterval(cargarMensajes, 4000);
+    };
+  </script>
+</body>
+</html>
