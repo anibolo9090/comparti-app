@@ -14,6 +14,7 @@
       --text: #0f172a; 
       --text-muted: #64748b; 
       --success: #16a34a;
+      --warning: #f59e0b;
     }
     * { box-sizing: border-box; }
     body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
@@ -41,16 +42,27 @@
     .access-row:last-child { margin-bottom: 0; }
     .access-val { font-weight: 700; color: var(--text); }
 
+    /* Botón de Calificar */
+    .btn-calificar { width: 100%; margin-top: 10px; background: #fffbe6; color: #d97706; border: 1px solid #fef3c7; padding: 8px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; cursor: pointer; text-align: center; }
+    .btn-calificar.calificado { background: #f1f5f9; color: var(--text-muted); border-color: #e2e8f0; cursor: default; }
+
+    /* MODAL DE CALIFICACIÓN */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: flex-end; z-index: 99999; backdrop-filter: blur(4px); }
+    .modal-content { background: white; width: 100%; max-width: 500px; padding: 24px; border-radius: 24px 24px 0 0; box-shadow: 0 -10px 25px rgba(0,0,0,0.1); animation: slideUp 0.3s ease-out; text-align: center; }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    
+    .stars-selector { display: flex; justify-content: center; gap: 8px; margin: 16px 0; font-size: 2rem; cursor: pointer; }
+    .star-item { color: #cbd5e1; transition: color 0.2s; }
+    .star-item.active { color: #f59e0b; }
+
+    .comment-input { width: 100%; padding: 12px; border: 1px solid var(--card-border); border-radius: 10px; font-family: inherit; font-size: 0.9rem; margin-bottom: 16px; resize: none; }
+    .btn-submit-rating { width: 100%; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: 700; font-size: 1rem; cursor: pointer; }
+    .btn-close-modal { width: 100%; background: #f1f5f9; color: var(--text-muted); border: none; padding: 10px; border-radius: 10px; font-weight: 600; margin-top: 8px; cursor: pointer; }
+
     /* MENÚ FLOTANTE MINIMALISTA */
     .menu-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); z-index: 99999; display: none; align-items: flex-end; backdrop-filter: blur(2px); }
     .menu-overlay.mostrar { display: flex; }
-    
     .menu-drawer { background: #ffffff; border-top-left-radius: 24px; border-top-right-radius: 24px; width: 100%; max-height: 85vh; overflow-y: auto; padding: 24px 20px; box-shadow: 0 -10px 25px rgba(0,0,0,0.1); animation: slideUp 0.3s ease-out; }
-    
-    @keyframes slideUp {
-      from { transform: translateY(100%); }
-      to { transform: translateY(0); }
-    }
 
     .menu-header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
     .menu-title { font-size: 1.35rem; font-weight: 700; color: var(--text); margin: 0; }
@@ -60,7 +72,6 @@
     .menu-item-clean { display: flex; align-items: center; justify-content: space-between; padding: 16px 4px; color: var(--text); text-decoration: none; font-size: 1.05rem; font-weight: 500; border-bottom: 1px solid #f1f5f9; }
     .menu-item-clean:last-child { border-bottom: none; }
     .menu-item-clean .arrow { color: #94a3b8; font-size: 1.2rem; font-weight: bold; }
-
     .menu-item-logout { color: #dc2626; font-weight: 600; margin-top: 8px; border-top: 1px solid var(--card-border); border-bottom: none; }
     .menu-item-logout .arrow { color: #dc2626; }
 
@@ -96,6 +107,27 @@
 
   </div>
 
+  <!-- MODAL DE CALIFICACIÓN -->
+  <div class="modal-overlay" id="modalCalificar">
+    <div class="modal-content">
+      <h3 style="margin:0 0 6px 0;">Calificar servicio</h3>
+      <p style="margin:0; font-size:0.85rem; color:var(--text-muted);" id="lblNombreVendedor">¿Qué tal fue tu experiencia?</p>
+
+      <div class="stars-selector" id="starsContainer">
+        <span class="star-item" onclick="setEstrellas(1)">★</span>
+        <span class="star-item" onclick="setEstrellas(2)">★</span>
+        <span class="star-item" onclick="setEstrellas(3)">★</span>
+        <span class="star-item" onclick="setEstrellas(4)">★</span>
+        <span class="star-item active" onclick="setEstrellas(5)">★</span>
+      </div>
+
+      <textarea class="comment-input" id="txtComentario" rows="3" placeholder="Escribí un breve comentario (opcional)..."></textarea>
+
+      <button class="btn-submit-rating" onclick="guardarCalificacion()">Enviar Calificación</button>
+      <button class="btn-close-modal" onclick="cerrarModalCalificar()">Cancelar</button>
+    </div>
+  </div>
+
   <!-- MENÚ FLOTANTE MINIMALISTA -->
   <div class="menu-overlay" id="menuOverlay" onclick="cerrarMenuFuera(event)">
     <div class="menu-drawer">
@@ -105,27 +137,11 @@
       </div>
       
       <div class="menu-list">
-        <a href="explorar.html" class="menu-item-clean">
-          <span>Explorar Grupos</span>
-          <span class="arrow">›</span>
-        </a>
-        <a href="publicar.html" class="menu-item-clean">
-          <span>Publicar Suscripción</span>
-          <span class="arrow">›</span>
-        </a>
-        <a href="mis-ofertas.html" class="menu-item-clean">
-          <span>Mis Suscripciones / Perfil</span>
-          <span class="arrow">›</span>
-        </a>
-        <a href="billetera.html" class="menu-item-clean">
-          <span>Billetera</span>
-          <span class="arrow">›</span>
-        </a>
-        
-        <a href="#" onclick="cerrarSesion()" class="menu-item-clean menu-item-logout">
-          <span>Cerrar sesión</span>
-          <span class="arrow">›</span>
-        </a>
+        <a href="explorar.html" class="menu-item-clean"><span>Explorar Grupos</span><span class="arrow">›</span></a>
+        <a href="publicar.html" class="menu-item-clean"><span>Publicar Suscripción</span><span class="arrow">›</span></a>
+        <a href="mis-ofertas.html" class="menu-item-clean"><span>Mis Suscripciones / Perfil</span><span class="arrow">›</span></a>
+        <a href="billetera.html" class="menu-item-clean"><span>Billetera</span><span class="arrow">›</span></a>
+        <a href="#" onclick="cerrarSesion()" class="menu-item-clean menu-item-logout"><span>Cerrar sesión</span><span class="arrow">›</span></a>
       </div>
     </div>
   </div>
@@ -141,91 +157,163 @@
   <script>
     const supabaseUrl = 'https://xygatgvzdniivzwndaxy.supabase.co';
     const apikey = 'sb_publishable_fDfrz9tONWlI3ETRbanG3w_cXYsFVif';
+    const usuarioComprador = "usuario_1";
 
-    // 1. Cargar compras de forma directa y segura (sin depender de relaciones en Supabase)
-async function cargarMisCompras() {
-  const usuarioComprador = "usuario_1";
-  const contenedor = document.getElementById('misComprasContenedor');
+    let puntuacionSeleccionada = 5;
+    let datosCompraActual = null;
 
-  try {
-    // Consultar las compras de este comprador
-    const res = await fetch(`${supabaseUrl}/rest/v1/compras?comprador_id=eq.${usuarioComprador}&select=*`, {
-      headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
-    });
+    // 1. Cargar las compras del usuario
+    async function cargarMisCompras() {
+      const contenedor = document.getElementById('misComprasContenedor');
 
-    if (!res.ok) {
-      contenedor.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Error al consultar compras.</p>';
-      return;
-    }
+      try {
+        const res = await fetch(`${supabaseUrl}/rest/v1/compras?comprador_id=eq.${usuarioComprador}&select=*`, {
+          headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
+        });
 
-    const compras = await res.json();
-    contenedor.innerHTML = '';
-
-    if (compras.length === 0) {
-      contenedor.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Aún no compraste accesos a suscripciones.</p>';
-      return;
-    }
-
-    // Recorremos cada compra para armar la tarjeta
-    for (const item of compras) {
-      let emailAcceso = item.email_cuenta || item.usuario_cuenta;
-      let passAcceso = item.credencial_cuenta || item.password_cuenta;
-      let nombreServicio = `Suscripción #${item.suscripcion_id}`;
-
-      // Si las credenciales no se guardaron en la fila 'compras', las traemos de la suscripción original
-      if (!emailAcceso || !passAcceso) {
-        try {
-          const resSub = await fetch(`${supabaseUrl}/rest/v1/suscripciones?id=eq.${item.suscripcion_id}&select=*`, {
-            headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
-          });
-          if (resSub.ok) {
-            const dataSub = await resSub.json();
-            if (dataSub && dataSub.length > 0) {
-              const sub = dataSub[0];
-              emailAcceso = emailAcceso || sub.email_cuenta || sub.usuario_cuenta || 'No especificado';
-              passAcceso = passAcceso || sub.credencial_cuenta || sub.password_cuenta || 'No especificado';
-              nombreServicio = `${sub.servicio} (${sub.plan || 'Plan'})`;
-            }
-          }
-        } catch (e) {
-          console.error("Error al obtener detalle de suscripción:", e);
+        if (!res.ok) {
+          contenedor.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Error al consultar compras.</p>';
+          return;
         }
-      }
 
-      let div = document.createElement('div');
-      div.className = 'oferta-box';
-      div.innerHTML = `
-        <div class="oferta-header">
-          <div class="oferta-info">
-            <h4>${nombreServicio}</h4>
-            <p>Estado: <strong style="color: var(--success);">Activo</strong></p>
-          </div>
-          <div class="oferta-precio">$${item.monto_pagado?.toLocaleString('es-AR')}</div>
-        </div>
-        <div class="access-box">
-          <div style="font-weight:700; color:var(--success); margin-bottom:6px;">🔓 Accesos Desbloqueados:</div>
-          <div class="access-row">
-            <span style="color:var(--text-muted);">Email/Usuario:</span>
-            <span class="access-val">${emailAcceso || 'No disponible'}</span>
-          </div>
-          <div class="access-row">
-            <span style="color:var(--text-muted);">Contraseña:</span>
-            <span class="access-val">${passAcceso || 'No disponible'}</span>
-          </div>
-        </div>
-      `;
-      contenedor.appendChild(div);
+        const compras = await res.json();
+        
+        // Consultar calificaciones previas del usuario
+        const resCal = await fetch(`${supabaseUrl}/rest/v1/calificaciones?comprador_id=eq.${usuarioComprador}&select=suscripcion_id,puntuacion`, {
+          headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
+        });
+        const calificacionesPrevias = resCal.ok ? await resCal.json() : [];
+
+        contenedor.innerHTML = '';
+
+        if (compras.length === 0) {
+          contenedor.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Aún no compraste accesos a suscripciones.</p>';
+          return;
+        }
+
+        for (const item of compras) {
+          let emailAcceso = item.email_cuenta || item.usuario_cuenta;
+          let passAcceso = item.credencial_cuenta || item.password_cuenta;
+          let nombreServicio = `Suscripción #${item.suscripcion_id}`;
+          let vendedorId = item.vendedor_id || 'vendedor';
+
+          if (!emailAcceso || !passAcceso) {
+            try {
+              const resSub = await fetch(`${supabaseUrl}/rest/v1/suscripciones?id=eq.${item.suscripcion_id}&select=*`, {
+                headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
+              });
+              if (resSub.ok) {
+                const dataSub = await resSub.json();
+                if (dataSub && dataSub.length > 0) {
+                  const sub = dataSub[0];
+                  emailAcceso = emailAcceso || sub.email_cuenta || sub.usuario_cuenta || 'No especificado';
+                  passAcceso = passAcceso || sub.credencial_cuenta || sub.password_cuenta || 'No especificado';
+                  nombreServicio = `${sub.servicio} (${sub.plan || 'Plan'})`;
+                  vendedorId = sub.usuario || vendedorId;
+                }
+              }
+            } catch (e) { console.error(e); }
+          }
+
+          // Verificar si esta suscripción ya fue calificada
+          const yaCalificado = calificacionesPrevias.find(c => c.suscripcion_id === item.suscripcion_id);
+
+          let botonCalificarHTML = yaCalificado 
+            ? `<button class="btn-calificar calificado">✓ Calificado con ${'★'.repeat(yaCalificado.puntuacion)}</button>`
+            : `<button class="btn-calificar" onclick="abrirModalCalificar(${item.suscripcion_id}, '${vendedorId}', '${nombreServicio}')">⭐ Calificar Vendedor</button>`;
+
+          let div = document.createElement('div');
+          div.className = 'oferta-box';
+          div.innerHTML = `
+            <div class="oferta-header">
+              <div class="oferta-info">
+                <h4>${nombreServicio}</h4>
+                <p>Estado: <strong style="color: var(--success);">Activo</strong></p>
+              </div>
+              <div class="oferta-precio">$${item.monto_pagado?.toLocaleString('es-AR')}</div>
+            </div>
+            <div class="access-box">
+              <div style="font-weight:700; color:var(--success); margin-bottom:6px;">🔓 Accesos Desbloqueados:</div>
+              <div class="access-row">
+                <span style="color:var(--text-muted);">Email/Usuario:</span>
+                <span class="access-val">${emailAcceso || 'No disponible'}</span>
+              </div>
+              <div class="access-row">
+                <span style="color:var(--text-muted);">Contraseña:</span>
+                <span class="access-val">${passAcceso || 'No disponible'}</span>
+              </div>
+            </div>
+            ${botonCalificarHTML}
+          `;
+          contenedor.appendChild(div);
+        }
+
+      } catch (err) {
+        console.error("Error al cargar compras:", err);
+      }
     }
 
-  } catch (err) {
-    console.error("Error al cargar compras:", err);
-    contenedor.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Error de conexión.</p>';
-  }
-}
+    // Modal & Estrellas
+    function abrirModalCalificar(subId, vendedorId, servicio) {
+      datosCompraActual = { suscripcion_id: subId, vendedor_id: vendedorId };
+      document.getElementById('lblNombreVendedor').textContent = `¿Qué tal fue tu experiencia con ${servicio}?`;
+      setEstrellas(5);
+      document.getElementById('txtComentario').value = '';
+      document.getElementById('modalCalificar').style.display = 'flex';
+    }
 
+    function cerrarModalCalificar() {
+      document.getElementById('modalCalificar').style.display = 'none';
+    }
 
+    function setEstrellas(cant) {
+      puntuacionSeleccionada = cant;
+      const stars = document.querySelectorAll('#starsContainer .star-item');
+      stars.forEach((star, index) => {
+        if (index < cant) {
+          star.classList.add('active');
+        } else {
+          star.classList.remove('active');
+        }
+      });
+    }
 
-    // 2. Cargar las suscripciones que el usuario publicó para vender
+    async function guardarCalificacion() {
+      if (!datosCompraActual) return;
+
+      const comentario = document.getElementById('txtComentario').value.trim();
+
+      try {
+        const res = await fetch(`${supabaseUrl}/rest/v1/calificaciones`, {
+          method: 'POST',
+          headers: {
+            'apikey': apikey,
+            'Authorization': 'Bearer ' + apikey,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({
+            suscripcion_id: datosCompraActual.suscripcion_id,
+            vendedor_id: datosCompraActual.vendedor_id,
+            comprador_id: usuarioComprador,
+            puntuacion: puntuacionSeleccionada,
+            comentario: comentario
+          })
+        });
+
+        if (res.ok || res.status === 201) {
+          alert('¡Gracias! Tu calificación ha sido enviada.');
+          cerrarModalCalificar();
+          cargarMisCompras(); // Recargar lista para actualizar botón
+        } else {
+          alert('Hubo un problema al guardar tu calificación.');
+        }
+      } catch (err) {
+        console.error("Error al guardar calificación:", err);
+      }
+    }
+
+    // 2. Cargar las publicaciones del usuario
     async function cargarMisOfertas() {
       try {
         const res = await fetch(`${supabaseUrl}/rest/v1/suscripciones?usuario=eq.Anibal%20Peralta&select=*`, {
@@ -261,9 +349,10 @@ async function cargarMisCompras() {
       }
     }
 
-    // Ejecutar ambas consultas al iniciar
-    cargarMisCompras();
-    cargarMisOfertas();
+    window.onload = () => {
+      cargarMisCompras();
+      cargarMisOfertas();
+    };
 
     function abrirMenu() { document.getElementById('menuOverlay').classList.add('mostrar'); }
     function cerrarMenu() { document.getElementById('menuOverlay').classList.remove('mostrar'); }
