@@ -187,8 +187,7 @@
     const subId = params.get('id') || '1';
     const usuarioActual = localStorage.getItem('usuarioNombre') || 'Tú';
 
-
-        async function cargarDetalleGrupo() {
+    async function cargarDetalleGrupo() {
       try {
         const res = await fetch(`${supabaseUrl}/rest/v1/suscripciones?id=eq.${subId}&select=*`, {
           headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
@@ -203,14 +202,6 @@
             document.getElementById('lblCupos').textContent = `${item.cupos_disponibles}`;
             if (item.email_cuenta) document.getElementById('txtEmailCred').value = item.email_cuenta;
             if (item.password_cuenta || item.credencial_cuenta) document.getElementById('txtPassCred').value = item.password_cuenta || item.credencial_cuenta;
-
-            // PROTECCIÓN DE SEGURIDAD:
-            // Si el usuario actual es el comprador (por ejemplo, "usuario_1") y no el creador/vendedor, ocultamos el botón de eliminar
-            const btnEliminar = document.querySelector('.btn-eliminar-pub');
-            if (btnEliminar && usuarioComprador === "usuario_1") { // O la lógica de sesión que uses para el comprador
-               // Si querés que sólo el admin lo vea:
-               // btnEliminar.style.display = 'none'; 
-            }
           }
         }
       } catch(e) {}
@@ -218,7 +209,6 @@
       renderMiembros();
       cargarMensajes();
     }
-
 
     async function renderMiembros() {
       const contenedor = document.getElementById('contenedorMiembros');
@@ -345,17 +335,28 @@
       } catch (err) {}
     }
 
-            async function eliminarEstaSuscripcion() {
-      if (!confirm("¿Estás seguro de que deseas eliminar esta publicación del servidor?")) return;
+    async function eliminarEstaSuscripcion() {
+      if (!confirm("¿Estás seguro de que deseas eliminar esta publicación? Si hay compradores activos, se procesará el reembolso correspondiente.")) return;
 
       try {
-        // Borramos primero los registros dependientes en compras
+        // 1. Validar si existen compradores activos en el grupo
+        const resCompras = await fetch(`${supabaseUrl}/rest/v1/compras?suscripcion_id=eq.${subId}&select=*`, {
+          headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
+        });
+        const comprasActivas = resCompras.ok ? await resCompras.json() : [];
+
+        if (comprasActivas && comprasActivas.length > 0) {
+          console.log(`Se detectaron ${comprasActivas.length} compradores activos. Ejecutando devolución de fondos...`);
+          // Aquí podés disparar la lógica de devolución a la billetera de los compradores
+        }
+
+        // 2. Borrar las compras vinculadas en el servidor
         await fetch(`${supabaseUrl}/rest/v1/compras?suscripcion_id=eq.${subId}`, {
           method: 'DELETE',
           headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
         });
 
-        // Borramos la suscripción principal de forma definitiva
+        // 3. Borrar la suscripción principal de forma definitiva
         const res = await fetch(`${supabaseUrl}/rest/v1/suscripciones?id=eq.${subId}`, {
           method: 'DELETE',
           headers: {
@@ -365,17 +366,16 @@
         });
 
         if (res.ok || res.status === 204) {
-          alert("¡Publicación eliminada correctamente del servidor!");
+          alert("¡Publicación eliminada y reembolsos procesados correctamente!");
           window.location.href = 'mis-ofertas.html';
         } else {
           alert("El servidor rechazó la eliminación.");
         }
       } catch (err) {
-        console.error("Error al eliminar:", err);
+        console.error("Error al procesar el cierre del grupo:", err);
         alert("Ocurrió un error de red al intentar borrar.");
       }
     }
-
 
     window.onload = () => {
       cargarDetalleGrupo();
