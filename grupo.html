@@ -187,7 +187,8 @@
     const subId = params.get('id') || '1';
     const usuarioActual = localStorage.getItem('usuarioNombre') || 'Tú';
 
-    async function cargarDetalleGrupo() {
+
+        async function cargarDetalleGrupo() {
       try {
         const res = await fetch(`${supabaseUrl}/rest/v1/suscripciones?id=eq.${subId}&select=*`, {
           headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
@@ -202,6 +203,14 @@
             document.getElementById('lblCupos').textContent = `${item.cupos_disponibles}`;
             if (item.email_cuenta) document.getElementById('txtEmailCred').value = item.email_cuenta;
             if (item.password_cuenta || item.credencial_cuenta) document.getElementById('txtPassCred').value = item.password_cuenta || item.credencial_cuenta;
+
+            // PROTECCIÓN DE SEGURIDAD:
+            // Si el usuario actual es el comprador (por ejemplo, "usuario_1") y no el creador/vendedor, ocultamos el botón de eliminar
+            const btnEliminar = document.querySelector('.btn-eliminar-pub');
+            if (btnEliminar && usuarioComprador === "usuario_1") { // O la lógica de sesión que uses para el comprador
+               // Si querés que sólo el admin lo vea:
+               // btnEliminar.style.display = 'none'; 
+            }
           }
         }
       } catch(e) {}
@@ -209,6 +218,7 @@
       renderMiembros();
       cargarMensajes();
     }
+
 
     async function renderMiembros() {
       const contenedor = document.getElementById('contenedorMiembros');
