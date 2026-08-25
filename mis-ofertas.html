@@ -190,28 +190,15 @@
     let datosCompraActual = null;
     let datosReclamoActual = null;
 
-    async function cargarMisCompras() {
+    function renderComprasUI(compras) {
       const contenedor = document.getElementById('misComprasContenedor');
       if (!contenedor) return;
-
-      let compras = [
-        { id: 1, suscripcion_id: 1, comprador_id: 'usuario_1', vendedor_id: 'Aníbal Peralta', monto_pagado: 6800, email_cuenta: 'anibolo9090@gmail.com', password_cuenta: 'Rena2023', servicio: 'Disney+ (Premium)' },
-        { id: 2, suscripcion_id: 2, comprador_id: 'usuario_1', vendedor_id: 'Aníbal Peralta', monto_pagado: 6000, email_cuenta: 'anibolo9090@gmail.com', password_cuenta: 'Rena2023', servicio: 'Disney+ (Premium)' }
-      ];
-
-      try {
-        const res = await fetch(`${supabaseUrl}/rest/v1/compras?select=*`, {
-          headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
-        });
-        if (res.ok) {
-          const data = await res.json();
-          if (data && data.length > 0) compras = data;
-        }
-      } catch(e) {
-        console.error("Error cargando compras:", e);
-      }
-
       contenedor.innerHTML = '';
+
+      if (!compras || compras.length === 0) {
+        contenedor.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Aún no compraste accesos a suscripciones.</p>';
+        return;
+      }
 
       compras.forEach(item => {
         let emailAcceso = item.email_cuenta || item.usuario_cuenta || 'anibolo9090@gmail.com';
@@ -254,28 +241,36 @@
       });
     }
 
-    async function cargarMisOfertas() {
-      const contenedor = document.getElementById('misOfertasList');
-      if (!contenedor) return;
-
-      let data = [
-        { id: 1, servicio: 'Disney+', plan: 'Premium', cupos_disponibles: 3, cupos_totales: 3, precio: 6500 },
-        { id: 2, servicio: 'Disney+', plan: 'Premium', cupos_disponibles: 2, cupos_totales: 3, precio: 6800 }
+    async function cargarMisCompras() {
+      // 1. Mostrar de inmediato datos por defecto de forma sincrónica para cero demoras visuales
+      let comprasDefault = [
+        { id: 1, suscripcion_id: 1, comprador_id: 'usuario_1', vendedor_id: 'Aníbal Peralta', monto_pagado: 6800, email_cuenta: 'anibolo9090@gmail.com', password_cuenta: 'Rena2023', servicio: 'Disney+ (Premium)' },
+        { id: 2, suscripcion_id: 2, comprador_id: 'usuario_1', vendedor_id: 'Aníbal Peralta', monto_pagado: 6000, email_cuenta: 'anibolo9090@gmail.com', password_cuenta: 'Rena2023', servicio: 'Disney+ (Premium)' }
       ];
+      renderComprasUI(comprasDefault);
 
+      // 2. Intentar actualización asincrónica desde Supabase
       try {
-        const res = await fetch(`${supabaseUrl}/rest/v1/suscripciones?select=*`, {
+        const res = await fetch(`${supabaseUrl}/rest/v1/compras?select=*`, {
           headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
         });
         if (res.ok) {
-          const resData = await res.json();
-          if (resData && resData.length > 0) data = resData;
+          const data = await res.json();
+          if (data && data.length > 0) renderComprasUI(data);
         }
-      } catch (err) {
-        console.error("Error cargando ofertas:", err);
+      } catch(e) {}
+    }
+
+    function renderOfertasUI(data) {
+      const contenedor = document.getElementById('misOfertasList');
+      if (!contenedor) return;
+      contenedor.innerHTML = '';
+
+      if (!data || data.length === 0) {
+        contenedor.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Aún no tienes publicaciones creadas.</p>';
+        return;
       }
 
-      contenedor.innerHTML = '';
       data.forEach(item => {
         let div = document.createElement('div');
         div.className = 'oferta-box';
@@ -294,6 +289,26 @@
         `;
         contenedor.appendChild(div);
       });
+    }
+
+    async function cargarMisOfertas() {
+      // 1. Render inicial inmediato
+      let dataDefault = [
+        { id: 1, servicio: 'Disney+', plan: 'Premium', cupos_disponibles: 3, cupos_totales: 3, precio: 6500 },
+        { id: 2, servicio: 'Disney+', plan: 'Premium', cupos_disponibles: 2, cupos_totales: 3, precio: 6800 }
+      ];
+      renderOfertasUI(dataDefault);
+
+      // 2. Actualización en segundo plano
+      try {
+        const res = await fetch(`${supabaseUrl}/rest/v1/suscripciones?select=*`, {
+          headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
+        });
+        if (res.ok) {
+          const resData = await res.json();
+          if (resData && resData.length > 0) renderOfertasUI(resData);
+        }
+      } catch (err) {}
     }
 
     async function eliminarPublicacion(id) {
@@ -366,19 +381,4 @@
     }
 
     function abrirModalReclamo(subId, vendedorId, servicio) {
-      datosReclamoActual = { suscripcion_id: subId, vendedor_id: vendedorId };
-      document.getElementById('lblServicioReclamo').textContent = `Reportar ${servicio}`;
-      document.getElementById('txtDescReclamo').value = '';
-      document.getElementById('modalReclamo').style.display = 'flex';
-    }
-    function cerrarModalReclamo() { document.getElementById('modalReclamo').style.display = 'none'; }
-
-    async function enviarReclamo() {
-      if (!datosReclamoActual) return;
-
-      const motivo = document.getElementById('selMotivoReclamo').value;
-      const descripcion = document.getElementById('txtDescReclamo').value.trim();
-
-      try {
-        const payload = {
-          suscripcion_id: parseInt(datosRec
+      da
