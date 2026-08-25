@@ -201,25 +201,29 @@
         }
 
         const compras = await res.json();
-        
-        // Consultar calificaciones previas
-        const resCal = await fetch(`${supabaseUrl}/rest/v1/calificaciones?comprador_id=eq.${usuarioComprador}&select=suscripcion_id,puntuacion`, {
-          headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
-        });
-        const calificacionesPrevias = resCal.ok ? await resCal.json() : [];
-
-        // Consultar reclamos previos
-        const resRec = await fetch(`${supabaseUrl}/rest/v1/reclamos?comprador_id=eq.${usuarioComprador}&select=suscripcion_id,estado`, {
-          headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
-        });
-        const reclamosPrevios = resRec.ok ? await resRec.json() : [];
-
-        contenedor.innerHTML = '';
 
         if (compras.length === 0) {
           contenedor.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Aún no compraste accesos a suscripciones.</p>';
           return;
         }
+
+        let calificacionesPrevias = [];
+        try {
+          const resCal = await fetch(`${supabaseUrl}/rest/v1/calificaciones?comprador_id=eq.${usuarioComprador}&select=suscripcion_id,puntuacion`, {
+            headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
+          });
+          if (resCal.ok) calificacionesPrevias = await resCal.json();
+        } catch(e) {}
+
+        let reclamosPrevios = [];
+        try {
+          const resRec = await fetch(`${supabaseUrl}/rest/v1/reclamos?comprador_id=eq.${usuarioComprador}&select=suscripcion_id,estado`, {
+            headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
+          });
+          if (resRec.ok) reclamosPrevios = await resRec.json();
+        } catch(e) {}
+
+        contenedor.innerHTML = '';
 
         for (const item of compras) {
           let emailAcceso = item.email_cuenta || item.usuario_cuenta;
@@ -242,7 +246,7 @@
                   vendedorId = sub.usuario || vendedorId;
                 }
               }
-            } catch (e) { console.error(e); }
+            } catch (e) {}
           }
 
           const yaCalificado = calificacionesPrevias.find(c => c.suscripcion_id === item.suscripcion_id);
@@ -287,10 +291,10 @@
 
       } catch (err) {
         console.error("Error al cargar compras:", err);
+        contenedor.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Error al cargar las compras.</p>';
       }
     }
 
-    // Modal Calificar
     function abrirModalCalificar(subId, vendedorId, servicio) {
       datosCompraActual = { suscripcion_id: subId, vendedor_id: vendedorId };
       document.getElementById('lblNombreVendedor').textContent = `¿Qué tal fue tu experiencia con ${servicio}?`;
@@ -338,7 +342,6 @@
       } catch (err) { console.error(err); }
     }
 
-    // Modal Reclamo
     function abrirModalReclamo(subId, vendedorId, servicio) {
       datosReclamoActual = { suscripcion_id: subId, vendedor_id: vendedorId };
       document.getElementById('lblServicioReclamo').textContent = `Reportar ${servicio}`;
@@ -370,7 +373,5 @@
         });
 
         if (res.ok || res.status === 201) {
-          alert('¡Reclamo enviado con éxito! El equipo de soporte revisará el caso y congelará la liberación del saldo en garantía.');
-          cerrarModalReclamo();
-          cargarMisCompras();
-        } else {
+          alert('¡Reclamo enviado con éxito! El equipo de soporte revisará el caso.');
+          c
