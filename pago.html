@@ -284,8 +284,7 @@
           return;
         }
 
-        // 4. Registrar la compra en la tabla 'compras' (Rol de Intermediario)
-        let postCompra = await fetch(`${supabaseUrl}/rest/v1/compras`, {
+    
                 // 4. Registrar la compra en la tabla 'compras'
         let postCompra = await fetch(`${supabaseUrl}/rest/v1/compras`, {
           method: 'POST',
