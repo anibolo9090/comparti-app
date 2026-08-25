@@ -97,7 +97,7 @@
       <button class="btn-logout-inline" onclick="cerrarSesion()">🚪 Cerrar Sesión</button>
     </div>
 
-    <!-- SECCIÓN 1: ACCESOS COMPRADOS (IDs corregidos para asegurar renderizado) -->
+    <!-- SECCIÓN 1: ACCESOS COMPRADOS -->
     <div class="section-title">🔑 Mis Suscripciones Compradas</div>
     <div id="misComprasContenedor"></div>
 
@@ -183,7 +183,6 @@
     let datosCompraActual = null;
     let datosReclamoActual = null;
 
-    // Datos por defecto garantizados
     const comprasDefault = [
       { id: 1, suscripcion_id: 1, vendedor_id: 'Aníbal Peralta', monto_pagado: 6800, email_cuenta: 'anibolo9090@gmail.com', password_cuenta: 'Rena2023', servicio: 'Disney+ (Premium)' }
     ];
@@ -374,4 +373,17 @@
         const payload = {
           suscripcion_id: parseInt(datosReclamoActual.suscripcion_id),
           vendedor_id: String(datosReclamoActual.vendedor_id || 'vendedor'),
-... (truncated)
+          comprador_id: String(usuarioComprador),
+          motivo: motivo,
+          descripcion: descripcion,
+          estado: 'pendiente'
+        };
+
+        const res = await fetch(`${supabaseUrl}/rest/v1/reclamos`, {
+          method: 'POST',
+          headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok || res.status === 201) {
+          alert('¡Reclamo enviado con éxito! E
