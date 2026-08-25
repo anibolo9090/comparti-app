@@ -46,7 +46,11 @@
     .btn-action-item { flex: 1; text-align: center; border-radius: 8px; font-weight: 700; font-size: 0.8rem; padding: 8px 4px; cursor: pointer; text-decoration: none; border: 1px solid transparent; }
     .btn-grupo { background: #e0e7ff; color: #3730a3; border-color: #c7d2fe; display: block; }
     .btn-calificar { background: #fffbe6; color: #d97706; border-color: #fef3c7; }
+    .btn-calificar.calificado { background: #f1f5f9; color: var(--text-muted); border-color: #e2e8f0; cursor: default; }
+    
     .btn-reclamo { background: #fef2f2; color: var(--danger); border-color: #fecaca; }
+    .btn-reclamo.reportado { background: #f1f5f9; color: var(--text-muted); border-color: #e2e8f0; cursor: default; }
+    .btn-eliminar { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; padding: 8px; border-radius: 8px; font-weight: 700; font-size: 0.8rem; cursor: pointer; }
 
     /* MODALES */
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: flex-end; z-index: 99999; backdrop-filter: blur(4px); }
@@ -203,7 +207,9 @@
           const data = await res.json();
           if (data && data.length > 0) compras = data;
         }
-      } catch(e) {}
+      } catch(e) {
+        console.error("Error cargando compras:", e);
+      }
 
       contenedor.innerHTML = '';
 
@@ -265,7 +271,9 @@
           const resData = await res.json();
           if (resData && resData.length > 0) data = resData;
         }
-      } catch (err) {}
+      } catch (err) {
+        console.error("Error cargando ofertas:", err);
+      }
 
       contenedor.innerHTML = '';
       data.forEach(item => {
@@ -279,12 +287,36 @@
             </div>
             <div class="oferta-precio">$${item.precio?.toLocaleString('es-AR')}</div>
           </div>
-          <div style="margin-top:10px;">
-            <a href="grupo.html?id=${item.id}" class="btn-action-item btn-grupo" style="display:block;">👥 Administrar Grupo y Chat</a>
+          <div style="display:flex; gap:8px; margin-top:10px;">
+            <a href="grupo.html?id=${item.id}" class="btn-action-item btn-grupo" style="flex:2;">👥 Administrar Grupo y Chat</a>
+            <button onclick="eliminarPublicacion(${item.id})" class="btn-eliminar" style="flex:1;">🗑️ Eliminar</button>
           </div>
         `;
         contenedor.appendChild(div);
       });
+    }
+
+    async function eliminarPublicacion(id) {
+      if (!confirm("¿Estás seguro de que deseas eliminar esta publicación? Se eliminará del catálogo de grupos.")) return;
+
+      try {
+        const res = await fetch(`${supabaseUrl}/rest/v1/suscripciones?id=eq.${id}`, {
+          method: 'DELETE',
+          headers: {
+            'apikey': apikey,
+            'Authorization': 'Bearer ' + apikey
+          }
+        });
+
+        if (res.ok || res.status === 204) {
+          alert("¡Publicación eliminada correctamente!");
+          cargarMisOfertas();
+        } else {
+          alert("No se pudo eliminar la publicación.");
+        }
+      } catch (err) {
+        console.error("Error al eliminar:", err);
+      }
     }
 
     function abrirModalCalificar(subId, vendedorId, servicio) {
@@ -349,42 +381,4 @@
 
       try {
         const payload = {
-          suscripcion_id: parseInt(datosReclamoActual.suscripcion_id),
-          vendedor_id: String(datosReclamoActual.vendedor_id || 'vendedor'),
-          comprador_id: String(usuarioComprador),
-          motivo: motivo,
-          descripcion: descripcion,
-          estado: 'pendiente'
-        };
-
-        const res = await fetch(`${supabaseUrl}/rest/v1/reclamos`, {
-          method: 'POST',
-          headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-          body: JSON.stringify(payload)
-        });
-
-        if (res.ok || res.status === 201) {
-          alert('¡Reclamo enviado con éxito! El equipo de soporte revisará el caso.');
-          cerrarModalReclamo();
-        } else {
-          alert('Hubo un problema al registrar el reclamo.');
-        }
-      } catch (err) { console.error(err); }
-    }
-
-    window.onload = () => {
-      cargarMisCompras();
-      cargarMisOfertas();
-    };
-
-    function abrirMenu() { document.getElementById('menuOverlay').classList.add('mostrar'); }
-    function cerrarMenu() { document.getElementById('menuOverlay').classList.remove('mostrar'); }
-    function cerrarMenuFuera(e) { if (e.target.id === 'menuOverlay') cerrarMenu(); }
-    function cerrarSesion() {
-      localStorage.clear();
-      alert('Has cerrado sesión correctamente.');
-      window.location.href = 'index.html';
-    }
-  </script>
-</body>
-</ht
+          suscripcion_id: parseInt(datosRec
