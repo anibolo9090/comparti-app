@@ -143,54 +143,63 @@
     const apikey = 'sb_publishable_fDfrz9tONWlI3ETRbanG3w_cXYsFVif';
 
     // 1. Cargar las compras del usuario actual y mostrar sus datos de acceso
-    async function cargarMisCompras() {
-      const usuarioComprador = "usuario_1";
-      const contenedor = document.getElementById('misComprasContenedor');
+    // Cargar compras haciendo JOIN con la tabla suscripciones para traer los accesos reales
+async function cargarMisCompras() {
+  const usuarioComprador = "usuario_1";
+  const contenedor = document.getElementById('misComprasContenedor');
 
-      try {
-        const res = await fetch(`${supabaseUrl}/rest/v1/compras?comprador_id=eq.${usuarioComprador}&select=*`, {
-          headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
-        });
+  try {
+    // Pedimos la compra Y traemos los datos de la suscripción vinculada
+    const res = await fetch(`${supabaseUrl}/rest/v1/compras?comprador_id=eq.${usuarioComprador}&select=*,suscripciones(servicio,plan,email_cuenta,credencial_cuenta,usuario_cuenta,password_cuenta)`, {
+      headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
+    });
 
-        if (res.ok) {
-          const compras = await res.json();
-          contenedor.innerHTML = '';
+    if (res.ok) {
+      const compras = await res.json();
+      contenedor.innerHTML = '';
 
-          if (compras.length === 0) {
-            contenedor.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Aún no compraste accesos a suscripciones.</p>';
-            return;
-          }
-
-          compras.forEach(item => {
-            let div = document.createElement('div');
-            div.className = 'oferta-box';
-            div.innerHTML = `
-              <div class="oferta-header">
-                <div class="oferta-info">
-                  <h4>Suscripción #${item.suscripcion_id}</h4>
-                  <p>Estado: <strong style="color: var(--success);">Activo</strong></p>
-                </div>
-                <div class="oferta-precio">$${item.monto_pagado?.toLocaleString('es-AR')}</div>
-              </div>
-              <div class="access-box">
-                <div style="font-weight:700; color:var(--success); margin-bottom:6px;">🔓 Accesos Desbloqueados:</div>
-                <div class="access-row">
-                  <span style="color:var(--text-muted);">Email/Usuario:</span>
-                  <span class="access-val">${item.email_cuenta || 'En proceso'}</span>
-                </div>
-                <div class="access-row">
-                  <span style="color:var(--text-muted);">Contraseña:</span>
-                  <span class="access-val">${item.credencial_cuenta || 'En proceso'}</span>
-                </div>
-              </div>
-            `;
-            contenedor.appendChild(div);
-          });
-        }
-      } catch (err) {
-        console.error("Error al cargar compras:", err);
+      if (compras.length === 0) {
+        contenedor.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Aún no compraste accesos a suscripciones.</p>';
+        return;
       }
+
+      compras.forEach(item => {
+        // Buscamos las credenciales en la compra o en la relación con suscripciones
+        const sub = item.suscripciones || {};
+        const emailAcceso = item.email_cuenta || sub.email_cuenta || sub.usuario_cuenta || 'No asignado';
+        const passAcceso = item.credencial_cuenta || sub.credencial_cuenta || sub.password_cuenta || 'No asignada';
+        const nombreServicio = sub.servicio ? `${sub.servicio} (${sub.plan || 'Plan'})` : `Suscripción #${item.suscripcion_id}`;
+
+        let div = document.createElement('div');
+        div.className = 'oferta-box';
+        div.innerHTML = `
+          <div class="oferta-header">
+            <div class="oferta-info">
+              <h4>${nombreServicio}</h4>
+              <p>Estado: <strong style="color: var(--success);">Activo</strong></p>
+            </div>
+            <div class="oferta-precio">$${item.monto_pagado?.toLocaleString('es-AR')}</div>
+          </div>
+          <div class="access-box">
+            <div style="font-weight:700; color:var(--success); margin-bottom:6px;">🔓 Accesos Desbloqueados:</div>
+            <div class="access-row">
+              <span style="color:var(--text-muted);">Email/Usuario:</span>
+              <span class="access-val">${emailAcceso}</span>
+            </div>
+            <div class="access-row">
+              <span style="color:var(--text-muted);">Contraseña:</span>
+              <span class="access-val">${passAcceso}</span>
+            </div>
+          </div>
+        `;
+        contenedor.appendChild(div);
+      });
     }
+  } catch (err) {
+    console.error("Error al cargar compras:", err);
+  }
+}
+
 
     // 2. Cargar las suscripciones que el usuario publicó para vender
     async function cargarMisOfertas() {
