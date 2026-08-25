@@ -14,6 +14,7 @@
       --card-border: #e2e8f0; 
       --text: #0f172a; 
       --text-muted: #64748b; 
+      --danger: #dc2626;
     }
     * { box-sizing: border-box; }
     body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
@@ -85,7 +86,7 @@
     .field-val { flex: 1; font-weight: 600; font-size: 0.9rem; color: var(--text); border: none; background: transparent; }
 
     /* CHAT INTEGRADO */
-    .chat-section { background: #ffffff; border: 1px solid var(--card-border); border-radius: 16px; padding: 16px; }
+    .chat-section { background: #ffffff; border: 1px solid var(--card-border); border-radius: 16px; padding: 16px; margin-bottom: 20px; }
     .chat-history { max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; padding-right: 4px; }
     .chat-bubble { max-width: 85%; padding: 8px 12px; border-radius: 12px; font-size: 0.85rem; }
     .chat-bubble.propio { align-self: flex-end; background: var(--primary); color: white; }
@@ -95,6 +96,9 @@
     .chat-input-wrap { display: flex; gap: 8px; }
     .chat-input { flex: 1; background: #f8fafc; border: 1px solid var(--card-border); padding: 10px 14px; border-radius: 20px; font-size: 0.85rem; outline: none; }
     .chat-btn { background: var(--primary); color: white; border: none; padding: 10px 16px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; cursor: pointer; }
+
+    /* BOTÓN ELIMINAR */
+    .btn-eliminar-pub { background: #fef2f2; color: var(--danger); border: 1px solid #fecaca; width: 100%; padding: 12px; border-radius: 12px; font-weight: 700; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 20px; }
 
     /* BARRA INFERIOR */
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 9999; }
@@ -130,7 +134,7 @@
     <div class="members-box">
       <div class="members-title">👥 Miembros en tu grupo</div>
       <div class="members-grid" id="contenedorMiembros">
-        <!-- Render dinámico de miembros -->
+        <p style="text-align: center; color: var(--text-muted); font-size: 0.85rem;">Cargando miembros...</p>
       </div>
     </div>
 
@@ -155,13 +159,16 @@
     <div class="chat-section">
       <div class="box-title" style="margin-bottom: 10px; text-align: left;">💬 Chat del Grupo</div>
       <div class="chat-history" id="chatContainer">
-        <!-- Mensajes -->
+        <p style="text-align:center; color:var(--text-muted); font-size:0.8rem;">Cargando mensajes...</p>
       </div>
       <div class="chat-input-wrap">
         <input type="text" id="txtMensaje" class="chat-input" placeholder="Escribí un mensaje al grupo..." onkeypress="if(event.key==='Enter') enviarMensaje()">
         <button class="chat-btn" onclick="enviarMensaje()">Enviar</button>
       </div>
     </div>
+
+    <!-- BOTÓN ELIMINAR PUBLICACIÓN -->
+    <button onclick="eliminarEstaSuscripcion()" class="btn-eliminar-pub">🗑️ Eliminar esta publicación</button>
 
   </div>
 
@@ -203,13 +210,11 @@
       cargarMensajes();
     }
 
-    function renderMiembros() {
-        async function renderMiembros() {
+    async function renderMiembros() {
       const contenedor = document.getElementById('contenedorMiembros');
       if (!contenedor) return;
 
       try {
-        // Consultar quiénes compraron este grupo
         const res = await fetch(`${supabaseUrl}/rest/v1/compras?suscripcion_id=eq.${subId}&select=comprador_id,vendedor_id`, {
           headers: { 'apikey': apikey, 'Authorization': 'Bearer ' + apikey }
         });
@@ -219,11 +224,9 @@
         if (res.ok) {
           const compras = await res.json();
           if (compras && compras.length > 0) {
-            // Vendedor / Admin del grupo
             const vendedor = compras[0].vendedor_id || 'Aníbal P.';
             miembros.push({ nombre: vendedor, inicial: obtenerIniciales(vendedor), admin: true });
 
-            // Compradores unidos
             compras.forEach(c => {
               const nom = c.comprador_id || 'Usuario';
               if (!miembros.some(m => m.nombre === nom)) {
@@ -233,7 +236,6 @@
           }
         }
 
-        // Si aún no hay compras registradas en Supabase, mostramos el grupo demostrativo
         if (miembros.length === 0) {
           miembros = [
             { nombre: 'Aníbal P.', inicial: 'AP', admin: true },
@@ -270,7 +272,6 @@
       }
       return nombre.substring(0, 2).toUpperCase();
     }
-
 
     async function cargarMensajes() {
       const container = document.getElementById('chatContainer');
@@ -332,6 +333,30 @@
 
         cargarMensajes();
       } catch (err) {}
+    }
+
+    async function eliminarEstaSuscripcion() {
+      if (!confirm("¿Estás seguro de que deseas eliminar esta publicación del servidor?")) return;
+
+      try {
+        const res = await fetch(`${supabaseUrl}/rest/v1/suscripciones?id=eq.${subId}`, {
+          method: 'DELETE',
+          headers: {
+            'apikey': apikey,
+            'Authorization': 'Bearer ' + apikey
+          }
+        });
+
+        if (res.ok || res.status === 204) {
+          alert("¡Publicación eliminada correctamente!");
+          window.location.href = 'mis-ofertas.html';
+        } else {
+          alert("No se pudo eliminar la publicación en el servidor.");
+        }
+      } catch (err) {
+        console.error("Error al eliminar:", err);
+        alert("Ocurrió un error de conexión.");
+      }
     }
 
     window.onload = () => {
